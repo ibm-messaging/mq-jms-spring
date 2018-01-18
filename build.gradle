@@ -1,0 +1,169 @@
+/*
+ * Copyright © 2017 IBM Corp. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'maven'
+  apply plugin: 'maven-publish'
+  apply plugin: 'signing'
+
+  group = 'com.ibm.mq'
+  version = new File(rootDir, 'VERSION').text.trim()
+  
+  // If the version says "snapshot" anywhere assume it is not a release
+  ext.isReleaseVersion = !version.toUpperCase(Locale.ENGLISH).contains("SNAPSHOT")
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  repositories {
+    mavenCentral()
+  }
+
+  // Common dependencies
+  ext.springVersion = '4.3.12.RELEASE'
+  ext.springBootVersion = '1.5.9.RELEASE'
+  dependencies {
+    // MQ Java client
+    compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: '9.0.4.0'
+    
+    // Spring
+    compile group: 'org.springframework', name: 'spring-core', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-jms', version: springVersion
+    
+    // Testing
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+  }
+
+  // Include variable debug info in the compiled classes
+  compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+  // Fail on javac warnings
+  compileJava.options.compilerArgs << "-Werror"
+
+  // Always UTF-8
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+  }
+
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    sourceSets.all {
+      into(name + "/java", { from allJava })
+      into(name + "/resources", { from resources })
+    }
+  }
+
+  javadoc {
+    options.encoding 'UTF-8'
+    options.setMemberLevel JavadocMemberLevel.PROTECTED
+    // Add a logging listener to check for javadoc warnings and fail the build if there are any
+    boolean hasJavaDocWarnings = false;
+    doFirst {
+      getLogging().addStandardErrorListener(new StandardOutputListener() {
+        void onOutput(CharSequence output) {
+          if (output =~ "warning:") {
+            hasJavaDocWarnings = true
+          }
+        }
+      })
+    }
+    doLast {
+      if (hasJavaDocWarnings) {
+        throw new GradleException("Build failed due to javadoc warnings.");
+      }
+    }
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+  }
+
+  artifacts {
+    archives sourcesJar, javadocJar
+  }
+
+  // Load signing and repository parameters from system properties
+  ['signing.keyId', 'signing.password', 'signing.secretKeyRingFile', 'ossrhUsername', 'ossrhPassword']
+        .each { propName ->
+    //set a property with the given name if the system property is set
+    //if the system property is not set then set the property to null if it isn't a signing one
+    if (System.properties.(propName.toString()) != null || !propName.startsWith("signing")) {
+      ext.(propName.toString()) = System.properties.(propName.toString())
+    }
+  }
+
+  signing {
+    // Only apply signing when it is a release and is being published
+    required {
+      isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives")
+    }
+    // When signing, sign the archives
+    sign configurations.archives
+  }
+
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+
+        // When publishing sign the pom
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+   
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+
+        // Augment the pom with additional information
+        pom.project {
+          name rootProject.name
+          description 'Spring configuration for the official IBM MQ library for Java'
+          inceptionYear '2018'
+          packaging 'jar'
+          url 'https://github.com/ibm-messaging/mq-jms-spring'
+          licenses {
+            license {
+              name 'The Apache Software License, Version 2.0'
+              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+              distribution 'repo'
+            }
+          }
+          scm {
+            connection 'scm:git:git://github.com/ibm-messaging/mq-jms-spring.git'
+            developerConnection 'scm:git:git@github.com/ibm-messaging/mq-jms-spring.git'
+            url 'https://github.com/ibm-messaging/mq-jms-spring.git'
+          }
+          properties {
+            'project.build.sourceEncoding' 'UTF-8'
+          }
+          developers {
+            developer {
+              name 'IBM MQ'
+              url 'https://ibm.com/software/products/en/ibm-mq'
+              organization 'IBM'
+              organizationUrl 'http://www.ibm.com'
+            }
+          }
+        }
+      }
+    }
+  }
+ 
+}
