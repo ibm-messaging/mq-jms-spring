@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 IBM Corp. All rights reserved.
+ * Copyright © 2018 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -23,6 +23,7 @@ subprojects {
   
   // If the version says "snapshot" anywhere assume it is not a release
   ext.isReleaseVersion = !version.toUpperCase(Locale.ENGLISH).contains("SNAPSHOT")
+  ext.isLocalVersion =    version.toUpperCase(Locale.ENGLISH).contains("LOCAL")
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -45,8 +46,8 @@ subprojects {
     compile group: 'org.springframework', name: 'spring-jms', version: springVersion
     
     // Testing
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+    //testCompile group: 'junit', name: 'junit', version: '4.12'
+    //testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
   }
 
   // Include variable debug info in the compiled classes
@@ -122,15 +123,19 @@ subprojects {
 
         // When publishing sign the pom
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-   
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
+        
+        if (isLocalVersion) {
+          def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+          repository(url: localMavenRepo)
+        } else {
+          repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            authentication(userName: ossrhUsername, password: ossrhPassword)
+          }
 
-        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
+          snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+            authentication(userName: ossrhUsername, password: ossrhPassword)
+          } 
         }
-
         // Augment the pom with additional information
         pom.project {
           name rootProject.name

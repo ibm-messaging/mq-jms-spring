@@ -5,29 +5,26 @@ This repository contains code to help to provide Spring developers with easy con
 The library contains:
 * `mq-jms-spring-boot-starter` for [Spring Boot](https://projects.spring.io/spring-boot/) applications
 
-* [Installation and Usage](#installation-and-usage)
-* [Getting Started](#getting-started)
-* [Related Documentation](#related-documentation)
-* [Development](#development)
-    * [Contributing](CONTRIBUTING.md)
-    * [Test Suite](CONTRIBUTING.md#running-the-tests)
-    * [Using in Other Projects](#using-in-other-projects)
-    * [License](#license)
-    * [Issues](#issues)
-
 ## HEALTH WARNINGS
-This initial release is really a skeleton placeholder. It has not even been tested yet!
+This initial release has had limited testing.  
 
 The compiled code has not yet been replicated to Maven Central. Once that has happened, it will be available
-under the 'com.ibm.mq' GroupId. So the instructions below will not actually work for automatic installation of
-the jar. You will have to use your build systems to compile this package as a local dependency for now.   
+under the 'com.ibm.mq' GroupId. You will have to use your build systems to compile this package as a local dependency for now.   
 
 ## Installation and Usage
+If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the 
+generated jar into your local directory tree. It can then be referenced from the application build. 
 
 ### Spring Boot Applications
 
+
 Gradle:
-```groovy
+```
+repositories {
+   mavenLocal()
+   mavenCentral()
+}
+
 dependencies {
     compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '0.0.1'
 }
@@ -43,13 +40,13 @@ Maven:
 ~~~
 
 ## Design Approach
-The approach taken here is to follow the model for JMS applications shown in the [Spring Getting Started Guide for JMS]
-(https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms) 
+The approach taken here is to follow the model for JMS applications shown in the 
+[Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms) 
 
 The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package.  
 
-Essentially what gets configured from this package is a ConnectionFactory which the JmsTemplate implementation exploits
-to provide a simpler interface. 
+Essentially what gets configured from this package is a ConnectionFactory which Spring's JmsTemplate implementation
+exploits to provide a simpler interface. 
 
 ## Getting Started
 

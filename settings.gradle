@@ -12,5 +12,5 @@
  * and limitations under the License.
  */
 include ':mq-jms-spring-boot-starter'
-//include ':mq-jms-spring-test'  
+
 rootProject.name = 'mq-jms-spring'
