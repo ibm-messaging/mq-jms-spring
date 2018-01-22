@@ -43,28 +43,59 @@ Maven:
 The approach taken here is to follow the model for JMS applications shown in the 
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms) 
 
-The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package.  
+The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in that example) to "DEV.QUEUE.1",
+which is created automatically in the Docker-packaged MQ server.
 
 Essentially what gets configured from this package is a ConnectionFactory which Spring's JmsTemplate implementation
 exploits to provide a simpler interface. 
 
 ## Getting Started
 
-This section will contains simple examples of connecting to an MQ queue manager using the library.
+To get started quickly, you can use the default configuration settings in this package along with the
+IBM MQ for Developers container which runs the server processes.
 
-### Spring Boot Applications
+### Default Configuration
+The default options have been selected to match the 
+[MQ Docker container](https://github.com/ibm-messaging/mq-docker) development configuration.  
 
-You need to already have a running MQ queue manager, and you must provide the queue manager name as a property:
+This means that you can run a queue manager using that Docker environment and connect to it. This script
+will run the container on a Linux system.
 
+~~~
+docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \ 
+           --publish 1414:1414 \
+           --publish 9443:9443 \ 
+           --detach \
+           ibmcom/mq 
+~~~
+
+The default attributes are
+
+~~~
+mq.queueManager=QM1
+mq.channel=DEV.ADMIN.SVRCONN
+mq.connName=localhost(1414)
+mq.user=admin
+mq.password=passw0rd
+~~~
+
+### Extended Configuration Options
+If you already have a running MQ queue manager that you want to use, then you can easily modify the 
+default configuration to match by providing override values.  
+
+The queue manager name is given as 
 * `mq.queueManager`
 
 For client connections to a queue manager, you must also set
 * `mq.channel` 
 * `mq.connName`
+If both the channel and connName are not supplied, then a local queue manager is assumed. 
 
-If both the channel and connName are not supplied, then a local queue manager is assumed. You can also set
+You will probably also need to set
 * `mq.user`
 * `mq.password`
+to override the default values. These attributes can be set to an empty value, to use the local OS userid 
+automatically with no authentication (if the queue manager has been set up to allow that). 
 
 For example in an `application.properties` file:
 
@@ -76,7 +107,7 @@ mq.user=user1
 mq.password=passw0rd
 ~~~
 
-Spring Boot will create a ConnectionFactory that can then be used to interact with your queue manager.
+Spring Boot will then create a ConnectionFactory that can then be used to interact with your queue manager.
 
 ## Related documentation
 * [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)

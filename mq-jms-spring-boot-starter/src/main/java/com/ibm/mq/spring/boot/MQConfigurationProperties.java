@@ -16,27 +16,40 @@ package com.ibm.mq.spring.boot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/** There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
+* for both direct and client connections. If you use TLS for client connectivity, properties related to that
+* (keystore, certificates, ciphers etc) must be set independently.
+*
+* The default values have been set to match the defaults of the 
+* <a href="https://github.com/ibm-messaging/mq-docker">MQ Docker</a> 
+* container. 
+* 
+* <ul>
+* <li>queueManager = QM1
+* <li>connName = localhost(1414)
+* <li>channel = DEV.ADMIN.SVRCONN
+* <li>user = admin
+* <li>password = passw0rd
+* </ul>
+* 
+*/
 @ConfigurationProperties(prefix = "mq")
 public class MQConfigurationProperties {
   
-  // There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
-  // for both direct and client connections. If you use TLS for client connectivity, properties related to that
-  // (keystore, certificates, ciphers etc) must be set independently.
+	/** MQ Queue Manager */
+	private String queueManager = "QM1";
 
-	/** MQ Queue Manager. **/
-	private String queueManager;
-
-	/** Channel - for example "SYSTEM.DEF.SVRCONN". Default to null, for connection to local queue manager **/
-	private String channel = null;
+	/** Channel - for example "SYSTEM.DEF.SVRCONN" **/
+	private String channel = "DEV.ADMIN.SVRCONN";
 
 	/** Connection Name (eg 'system.example.com(1414)' ) **/
 	private String connName = "localhost(1414)";
 
 	/** MQ user */
-	private String user;
+	private String user = "admin";
 
 	/** MQ password */
-	private String password;
+	private String password = "passw0rd";
 	
   public String getQueueManager() {
 		return queueManager;

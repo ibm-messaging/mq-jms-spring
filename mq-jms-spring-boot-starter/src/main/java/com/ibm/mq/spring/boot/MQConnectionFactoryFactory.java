@@ -38,23 +38,23 @@ class MQConnectionFactoryFactory {
   }
 
   // There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
-  // for both direct and client connections. If you use TLS for client connectivity, properties related to that
+  // for both direct and client connections.
+  // 
+  // If you use TLS for client connectivity, properties related to that
   // (keystore, certificates, ciphers etc) must be set independently. That could be done in a customizer() method.
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
+   
     try {
       T cf = createConnectionFactoryInstance(factoryClass);
 
-      // Must provide a queue manager name.
+      // Should usually provide a queue manager name but it can be empty, to connect to the 
+      // default queue manager.
       String qmName = this.properties.getQueueManager();
-      if (isNullOrEmpty(qmName)) {
-        err = "Must provide queue manager name as a property";
-        throw new JMSException(err);
-      }
+      cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
 
-      cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, this.properties.getQueueManager());
-
-      // Use the channel name to decide whether to try to connect locally or as a client
+      // Use the channel name to decide whether to try to connect locally or as a client. If the queue manager
+      // code has been installed locally, then this connection will try to use native JNI bindings to match.
       String channel = this.properties.getChannel();
       String connName = this.properties.getConnName();
       if (isNullOrEmpty(channel) || isNullOrEmpty(connName)) {
@@ -103,5 +103,5 @@ class MQConnectionFactoryFactory {
     else
       return false;
   }
-
+  
 }

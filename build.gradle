@@ -44,6 +44,7 @@ subprojects {
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-jms', version: springVersion
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
     
     // Testing
     //testCompile group: 'junit', name: 'junit', version: '4.12'
