@@ -109,6 +109,15 @@ mq.password=passw0rd
 
 Spring Boot will then create a ConnectionFactory that can then be used to interact with your queue manager.
 
+#### TLS related options
+The following options all default to null, but may be used to assist with configuring TLS
+
+| Option                  | Description                                                                     |
+| ----------------------- | -----------                                                                     |
+| mq.sslCipherSuite    | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE | 
+| mq.sslCipherSpec     | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
+| mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
+
 ## Related documentation
 * [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 * [Spring Boot documentation](https://projects.spring.io/spring-boot/)
