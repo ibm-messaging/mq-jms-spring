@@ -47,8 +47,8 @@ subprojects {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
     
     // Testing
-    //testCompile group: 'junit', name: 'junit', version: '4.12'
-    //testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
   }
 
   // Include variable debug info in the compiled classes

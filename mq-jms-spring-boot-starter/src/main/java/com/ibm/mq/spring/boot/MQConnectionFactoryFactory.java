@@ -77,6 +77,12 @@ class MQConnectionFactoryFactory {
         cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
       }
 
+      if (!isNullOrEmpty(this.properties.getSslCipherSuite()))
+        cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SUITE, this.properties.getSslCipherSuite());
+
+      if (!isNullOrEmpty(this.properties.getSslCipherSpec()))
+        cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SPEC, this.properties.getSslCipherSpec());
+
       customize(cf);
       return cf;
     }

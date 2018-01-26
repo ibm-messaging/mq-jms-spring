@@ -50,8 +50,14 @@ public class MQConfigurationProperties {
 
 	/** MQ password */
 	private String password = "passw0rd";
+
+	private String sslCipherSuite;
+
+	private String sslCipherSpec;
+
+	private boolean useIBMCipherMappings = true;
 	
-  public String getQueueManager() {
+	public String getQueueManager() {
 		return queueManager;
 	}
 
@@ -90,5 +96,29 @@ public class MQConfigurationProperties {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public String getSslCipherSuite() {
+		return sslCipherSuite;
+	}
+
+	public void setSslCipherSuite(String sslCipherSuite) {
+		this.sslCipherSuite = sslCipherSuite;
+	}
+
+	public String getSslCipherSpec() {
+		return sslCipherSpec;
+	}
+
+	public void setSslCipherSpec(String sslCipherSpec) {
+		this.sslCipherSpec = sslCipherSpec;
+	}
+
+	public boolean isUseIBMCipherMappings() {
+		return useIBMCipherMappings;
+	}
+
+	public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
+  		System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
+		this.useIBMCipherMappings = useIBMCipherMappings;
+	}
 }
