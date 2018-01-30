@@ -6,14 +6,13 @@ The library contains:
 * `mq-jms-spring-boot-starter` for [Spring Boot](https://projects.spring.io/spring-boot/) applications
 
 ## HEALTH WARNINGS
-This initial release has had limited testing.  
-
-The compiled code has not yet been replicated to Maven Central. Once that has happened, it will be available
-under the 'com.ibm.mq' GroupId. You will have to use your build systems to compile this package as a local dependency for now.   
+This initial release has had limited testing.
 
 ## Installation and Usage
-If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the 
-generated jar into your local directory tree. It can then be referenced from the application build. 
+If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the
+generated jar into your local directory tree. It can then be referenced from the application build.
+
+Otherwise it can be automatically downloaded from Maven Central.
 
 ### Spring Boot Applications
 
@@ -26,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '0.0.1'
+    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '0.0.2'
 }
 ```
 
@@ -35,19 +34,19 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
 </dependency>
 ~~~
 
 ## Design Approach
-The approach taken here is to follow the model for JMS applications shown in the 
-[Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms) 
+The approach taken here is to follow the model for JMS applications shown in the
+[Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms)
 
 The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in that example) to "DEV.QUEUE.1",
 which is created automatically in the Docker-packaged MQ server.
 
 Essentially what gets configured from this package is a ConnectionFactory which Spring's JmsTemplate implementation
-exploits to provide a simpler interface. 
+exploits to provide a simpler interface.
 
 ## Getting Started
 
@@ -55,18 +54,18 @@ To get started quickly, you can use the default configuration settings in this p
 IBM MQ for Developers container which runs the server processes.
 
 ### Default Configuration
-The default options have been selected to match the 
-[MQ Docker container](https://github.com/ibm-messaging/mq-docker) development configuration.  
+The default options have been selected to match the
+[MQ Docker container](https://github.com/ibm-messaging/mq-docker) development configuration.
 
 This means that you can run a queue manager using that Docker environment and connect to it. This script
 will run the container on a Linux system.
 
 ~~~
-docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \ 
+docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \
            --publish 1414:1414 \
-           --publish 9443:9443 \ 
+           --publish 9443:9443 \
            --detach \
-           ibmcom/mq 
+           ibmcom/mq
 ~~~
 
 The default attributes are
@@ -80,22 +79,22 @@ mq.password=passw0rd
 ~~~
 
 ### Extended Configuration Options
-If you already have a running MQ queue manager that you want to use, then you can easily modify the 
-default configuration to match by providing override values.  
+If you already have a running MQ queue manager that you want to use, then you can easily modify the
+default configuration to match by providing override values.
 
-The queue manager name is given as 
+The queue manager name is given as
 * `mq.queueManager`
 
 For client connections to a queue manager, you must also set
-* `mq.channel` 
+* `mq.channel`
 * `mq.connName`
-If both the channel and connName are not supplied, then a local queue manager is assumed. 
+If both the channel and connName are not supplied, then a local queue manager is assumed.
 
 You will probably also need to set
 * `mq.user`
 * `mq.password`
-to override the default values. These attributes can be set to an empty value, to use the local OS userid 
-automatically with no authentication (if the queue manager has been set up to allow that). 
+to override the default values. These attributes can be set to an empty value, to use the local OS userid
+automatically with no authentication (if the queue manager has been set up to allow that).
 
 For example in an `application.properties` file:
 
@@ -114,8 +113,8 @@ The following options all default to null, but may be used to assist with config
 
 | Option                  | Description                                                                     |
 | ----------------------- | -----------                                                                     |
-| mq.sslCipherSuite    | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE | 
-| mq.sslCipherSpec     | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
+| mq.sslCipherSuite       | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE |
+| mq.sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
 | mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
 ## Related documentation
@@ -143,7 +142,8 @@ Licensed under the apache license, version 2.0 (the "license"); you may not use 
 
     http://www.apache.org/licenses/LICENSE-2.0.html
 
-Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis, without warranties or conditions of any kind, either express or implied. See the license for the specific language governing permissions and limitations under the license.
+Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis, without warranties or conditions of any kind, either express or implied. See the license for the specific language govern
+ng permissions and limitations under the license.
 
 ### Issues
 

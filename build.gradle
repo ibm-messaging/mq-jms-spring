@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 IBM Corp. All rights reserved.
+ * Copyright 2018 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,15 +12,55 @@
  * and limitations under the License.
  */
 
+
+/*
+ * This file shows how to build various artifacts for linking IBM MQ with Spring.
+ *
+ * The VERSION file in this directory contains the version number associated with the build.
+ * For example, "0.1.2-SNAPSHOT-LOCAL".
+ *
+ * Output from the build can be uploaded to a Maven repository.
+ *
+ * The uploadArchives task controls publishing of the output. It uses the VERSION number to
+ * determine what to do.
+ *
+ *    If the version contains 'LOCAL' then the output will be copied to a local Maven repository
+ *      under the user's home directory (~/.m2/repository).
+ *    else we attempt to push the jar files to the Nexus Central Repository.
+ *
+ *    If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
+ *    else we push to the RELEASE repository
+ *
+ * If we are pushing to the Nexus Release area, then once the build has been successfully transferred
+ * you must log into Nexus to do the final promotion (CLOSE/RELEASE) of the artifact. Although it is
+ * possible to automate that process, I am not doing it in this build file so we do a manual check
+ * that the build has been successful and to check validity before freezing a version number.
+ *
+ * Using Nexus Central Repository requires authentication and authorisation. The userid and password
+ * associated with the com.ibm.mq GroupId are held in a local file (gradle.properties) that is not part
+ * of this public repository. That properties file also holds information about the signing key that Nexus
+ * requires.
+ *
+ *   ---- Example gradle.properties file --------
+ *   # These access the GPG key and certificate
+ *   signing.keyId=AAA111BB
+ *   signing.password=MyPassw0rd
+ *   signing.secretKeyRingFile=/home/user/.gnupg/secring.gpg
+ *   # This is the authentication to Nexus
+ *   ossrhUsername=myNexusId
+ *   ossrhPassword=MyOtherPassw0rd
+ *   --------------------------------------------
+ *
+ */
 subprojects {
   apply plugin: 'java'
   apply plugin: 'maven'
   apply plugin: 'maven-publish'
   apply plugin: 'signing'
 
-  group = 'com.ibm.mq'
+  group = 'com.ibm.mq'   // Use this to build the
   version = new File(rootDir, 'VERSION').text.trim()
-  
+
   // If the version says "snapshot" anywhere assume it is not a release
   ext.isReleaseVersion = !version.toUpperCase(Locale.ENGLISH).contains("SNAPSHOT")
   ext.isLocalVersion =    version.toUpperCase(Locale.ENGLISH).contains("LOCAL")
@@ -36,16 +76,16 @@ subprojects {
   ext.springVersion = '4.3.12.RELEASE'
   ext.springBootVersion = '1.5.9.RELEASE'
   dependencies {
-    // MQ Java client
+    // MQ Java client accessed from Maven Central Repository
     compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: '9.0.4.0'
-    
+
     // Spring
     compile group: 'org.springframework', name: 'spring-core', version: springVersion
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-jms', version: springVersion
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
-    
+
     // Testing
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
@@ -99,8 +139,9 @@ subprojects {
     archives sourcesJar, javadocJar
   }
 
-  // Load signing and repository parameters from system properties
-  ['signing.keyId', 'signing.password', 'signing.secretKeyRingFile', 'ossrhUsername', 'ossrhPassword']
+  // Load signing parameters from external properties
+  // This will probably be a "gradle.properties" file in this directory
+  ['signing.keyId', 'signing.password', 'signing.secretKeyRingFile']
         .each { propName ->
     //set a property with the given name if the system property is set
     //if the system property is not set then set the property to null if it isn't a signing one
@@ -114,6 +155,7 @@ subprojects {
     required {
       isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives")
     }
+
     // When signing, sign the archives
     sign configurations.archives
   }
@@ -121,21 +163,20 @@ subprojects {
   uploadArchives {
     repositories {
       mavenDeployer {
-
         // When publishing sign the pom
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-        
         if (isLocalVersion) {
           def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
           repository(url: localMavenRepo)
         } else {
+          // The gradle.properties file contains the username and password for Nexus deployment
           repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
             authentication(userName: ossrhUsername, password: ossrhPassword)
           }
 
           snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
             authentication(userName: ossrhUsername, password: ossrhPassword)
-          } 
+          }
         }
         // Augment the pom with additional information
         pom.project {
@@ -171,5 +212,5 @@ subprojects {
       }
     }
   }
- 
+
 }
