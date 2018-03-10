@@ -17,10 +17,13 @@ package com.ibm.mq.spring.boot;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /** There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
-* for both direct and client connections. If you use TLS for client connectivity, properties related to that
-* (keystore, certificates, ciphers etc) must be set independently.
+* for both direct and client connections. If you use TLS for client connectivity, most properties related to that
+* (keystore, certificates etc) must be set independently. 
+* 
+* This class allows for setting the CipherSuite/CipherSpec property, and an indication of whether or not 
+* to use the IBM JRE maps for Cipher names - that's not something that is standardised.
 *
-* The default values have been set to match the defaults of the 
+* The default values have been set to match the settings of the 
 * <a href="https://github.com/ibm-messaging/mq-docker">MQ Docker</a> 
 * container. 
 * 
@@ -33,28 +36,37 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 * </ul>
 * 
 */
-@ConfigurationProperties(prefix = "mq")
+@ConfigurationProperties(prefix = "ibm.mq")
 public class MQConfigurationProperties {
   
-	/** MQ Queue Manager */
+	/** MQ Queue Manager name */
 	private String queueManager = "QM1";
 
 	/** Channel - for example "SYSTEM.DEF.SVRCONN" **/
 	private String channel = "DEV.ADMIN.SVRCONN";
 
-	/** Connection Name (eg 'system.example.com(1414)' ) **/
+	/** Connection Name - hostname or address and port. Format like 'system.example.com(1414)'  **/
 	private String connName = "localhost(1414)";
 
-	/** MQ user */
+	/** MQ user name */
 	private String user = "admin";
 
 	/** MQ password */
 	private String password = "passw0rd";
 
+	/** For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
+	 * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>    
+	 */
 	private String sslCipherSuite;
 
+	/** For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
+   * For example, "ECDHE_RSA_AES_256_GCM_SHA384"
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>  
+   */
 	private String sslCipherSpec;
 
+  /** Set to true for the IBM JRE CipherSuite name maps; set to false to use the Oracle JRE CipherSuite mapping */
 	private boolean useIBMCipherMappings = true;
 	
 	public String getQueueManager() {

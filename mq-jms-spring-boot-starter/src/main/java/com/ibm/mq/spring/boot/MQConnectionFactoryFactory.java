@@ -32,9 +32,10 @@ class MQConnectionFactoryFactory {
 
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
 
+  @SuppressWarnings("unchecked")
   MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     this.properties = properties;
-    this.factoryCustomizers = (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
+    this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
   }
 
   // There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used

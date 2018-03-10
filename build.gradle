@@ -16,59 +16,31 @@
 /*
  * This file shows how to build various artifacts for linking IBM MQ with Spring.
  *
- * The VERSION file in this directory contains the version number associated with the build.
- * For example, "0.1.2-SNAPSHOT-LOCAL".
- *
- * Output from the build can be uploaded to a Maven repository.
- *
- * The uploadArchives task controls publishing of the output. It uses the VERSION number to
- * determine what to do.
- *
- *    If the version contains 'LOCAL' then the output will be copied to a local Maven repository
- *      under the user's home directory (~/.m2/repository).
- *    else we attempt to push the jar files to the Nexus Central Repository.
- *
- *    If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
- *    else we push to the RELEASE repository
- *
- * If we are pushing to the Nexus Release area, then once the build has been successfully transferred
- * you must log into Nexus to do the final promotion (CLOSE/RELEASE) of the artifact. Although it is
- * possible to automate that process, I am not doing it in this build file so we do a manual check
- * that the build has been successful and to check validity before freezing a version number.
- *
- * Using Nexus Central Repository requires authentication and authorisation. The userid and password
- * associated with the com.ibm.mq GroupId are held in a local file (gradle.properties) that is not part
- * of this public repository. That properties file also holds information about the signing key that Nexus
- * requires.
- *
- *   ---- Example gradle.properties file --------
- *   # These access the GPG key and certificate
- *   signing.keyId=AAA111BB
- *   signing.password=MyPassw0rd
- *   signing.secretKeyRingFile=/home/user/.gnupg/secring.gpg
- *   # This is the authentication to Nexus
- *   ossrhUsername=myNexusId
- *   ossrhPassword=MyOtherPassw0rd
- *   --------------------------------------------
- *
  */
+ 
 subprojects {
   apply plugin: 'java'
   apply plugin: 'maven'
   apply plugin: 'maven-publish'
   apply plugin: 'signing'
+  
+
 
   group = 'com.ibm.mq'   // Use this to build the
   version = new File(rootDir, 'VERSION').text.trim()
 
-  // If the version says "snapshot" anywhere assume it is not a release
+  // If the version says "snapshot" anywhere assume it is not a release. If property or environment var is set,
+  // then push to a Maven repository (usually to Central) otherwise, keep in a local directory.
+  ext.pushProperty = 'PushToMaven'
   ext.isReleaseVersion = !version.toUpperCase(Locale.ENGLISH).contains("SNAPSHOT")
-  ext.isLocalVersion =    version.toUpperCase(Locale.ENGLISH).contains("LOCAL")
+  ext.isLocalDeploy =    ((System.getProperty(pushProperty) == null)  && (System.getenv(pushProperty) == null)) ||
+       version.toUpperCase(Locale.ENGLISH).contains("LOCAL")
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
 
   repositories {
+    mavenLocal()
     mavenCentral()
   }
 
@@ -151,21 +123,26 @@ subprojects {
   }
 
   signing {
-    // Only apply signing when it is a release and is being published
+    // Only apply signing when it is a release and is being published to a real repository
     required {
-      isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives")
+      isReleaseVersion && !isLocalDeploy && gradle.taskGraph.hasTask("uploadArchives")
     }
 
     // When signing, sign the archives
-    sign configurations.archives
+    if (!isLocalDeploy) {
+      sign configurations.archives
+    }
   }
 
   uploadArchives {
     repositories {
       mavenDeployer {
         // When publishing sign the pom
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-        if (isLocalVersion) {
+        if (!isLocalDeploy) {
+          beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        }
+        
+        if (isLocalDeploy) {
           def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
           repository(url: localMavenRepo)
         } else {
