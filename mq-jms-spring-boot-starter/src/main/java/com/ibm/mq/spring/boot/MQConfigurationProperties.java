@@ -53,6 +53,8 @@ public class MQConfigurationProperties {
 
 	/** MQ password */
 	private String password = "passw0rd";
+        
+        private boolean userAuthentificationMQCSP = true;
 
 	/** For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
 	 * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
@@ -132,5 +134,14 @@ public class MQConfigurationProperties {
 	public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
   		System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
 		this.useIBMCipherMappings = useIBMCipherMappings;
+	}
+        
+        public boolean isUserAuthentificationMQCSP() {
+		return userAuthentificationMQCSP;
+	}
+
+	public void setUserAuthentificationMQCSP(boolean userAuthentificationMQCSP) {
+  		System.setProperty("com.ibm.mq.cfg.userAuthentificationMQCSP", Boolean.toString(userAuthentificationMQCSP));
+		this.userAuthentificationMQCSP = userAuthentificationMQCSP;
 	}
 }
