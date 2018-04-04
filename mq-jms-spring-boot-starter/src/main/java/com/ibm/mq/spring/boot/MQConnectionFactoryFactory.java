@@ -41,8 +41,9 @@ class MQConnectionFactoryFactory {
   // There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
   // for both direct and client connections.
   // 
-  // If you use TLS for client connectivity, properties related to that
+  // If you use TLS for client connectivity, most properties related to that
   // (keystore, certificates, ciphers etc) must be set independently. That could be done in a customizer() method.
+  // Keystores are often set in global properties defined by -D options on the command line. 
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
    
@@ -75,7 +76,7 @@ class MQConnectionFactoryFactory {
       if (!isNullOrEmpty(u)) {
         cf.setStringProperty(WMQConstants.USERID, u);
         cf.setStringProperty(WMQConstants.PASSWORD, this.properties.getPassword());
-        cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, this.properties.isUserAuthentificationMQCSP());
+        cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, this.properties.isUserAuthenticationMQCSP());
       }
 
       if (!isNullOrEmpty(this.properties.getSslCipherSuite()))

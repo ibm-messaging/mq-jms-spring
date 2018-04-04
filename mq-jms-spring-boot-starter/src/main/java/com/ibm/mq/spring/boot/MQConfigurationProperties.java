@@ -54,7 +54,12 @@ public class MQConfigurationProperties {
 	/** MQ password */
 	private String password = "passw0rd";
         
-        private boolean userAuthentificationMQCSP = true;
+	/** Override the authentication mode. This
+	 *  should not normally be needed with current maintenance levels of MQ V8 or V9, but some earlier levels
+	 *  sometimes got get it wrong and then this flag can be set to "false".
+	 *  @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
+	 */
+  private boolean userAuthenticationMQCSP = true;
 
 	/** For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
 	 * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
@@ -132,16 +137,15 @@ public class MQConfigurationProperties {
 	}
 
 	public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
-  		System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
+  	System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
 		this.useIBMCipherMappings = useIBMCipherMappings;
 	}
         
-        public boolean isUserAuthentificationMQCSP() {
-		return userAuthentificationMQCSP;
+  public boolean isUserAuthenticationMQCSP() {
+		return userAuthenticationMQCSP;
 	}
 
-	public void setUserAuthentificationMQCSP(boolean userAuthentificationMQCSP) {
-  		System.setProperty("com.ibm.mq.cfg.userAuthentificationMQCSP", Boolean.toString(userAuthentificationMQCSP));
-		this.userAuthentificationMQCSP = userAuthentificationMQCSP;
+	public void setUserAuthenticationMQCSP(boolean userAuthenticationMQCSP) {
+		this.userAuthenticationMQCSP = userAuthenticationMQCSP;
 	}
 }

@@ -48,6 +48,7 @@ local.properties
 # My additions to this template
 .gitignore
 t
+t2
 t.out
 
 # This has private signature/password information
