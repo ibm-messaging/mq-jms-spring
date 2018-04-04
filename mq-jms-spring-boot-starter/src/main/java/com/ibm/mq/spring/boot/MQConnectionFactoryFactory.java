@@ -75,7 +75,7 @@ class MQConnectionFactoryFactory {
       if (!isNullOrEmpty(u)) {
         cf.setStringProperty(WMQConstants.USERID, u);
         cf.setStringProperty(WMQConstants.PASSWORD, this.properties.getPassword());
-        cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
+        cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, this.properties.isUserAuthentificationMQCSP());
       }
 
       if (!isNullOrEmpty(this.properties.getSslCipherSuite()))

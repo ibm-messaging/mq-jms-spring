@@ -9,3 +9,5 @@
 - Change configuration prefix to "ibm.mq" to reduce ambiguities if you have other messaging attributes in the same application
 - Modify build.gradle to make pushing to Maven a more explicit operation
 
+# 0.0.4 (2018-04-02)
+- Allow USER_AUTHENTICATION_MQCSP to be configured from properties

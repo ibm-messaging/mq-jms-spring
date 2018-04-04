@@ -13,14 +13,15 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest(classes={MQAutoConfiguration.class})
 @EnableAutoConfiguration
 @TestPropertySource(properties = {
-        "mq.queueManager=QMSET",
-        "mq.channel=CHANNELSET",
-        "mq.connName=CONNSET",
-        "mq.user=USER",
-        "mq.password=PASS",
-        "mq.useIBMCipherMappings=true",
-        "mq.sslCipherSuite=CIPHER_SUITE",
-        "mq.sslCipherSpec=CIPHER_SPEC"
+        "ibm.mq.queueManager=QMSET",
+        "ibm.mq.channel=CHANNELSET",
+        "ibm.mq.connName=CONNSET",
+        "ibm.mq.user=USER",
+        "ibm.mq.password=PASS",
+        "ibm.mq.useIBMCipherMappings=true",
+        "ibm.mq.userAuthentificationMQCSP=true",
+        "ibm.mq.sslCipherSuite=CIPHER_SUITE",
+        "ibm.mq.sslCipherSpec=CIPHER_SPEC"
 })
 public class MQPropertiesTest {
 
@@ -35,6 +36,7 @@ public class MQPropertiesTest {
         assertThat(properties.getUser()).isEqualTo("USER");
         assertThat(properties.getPassword()).isEqualTo("PASS");
         assertThat(properties.isUseIBMCipherMappings()).isEqualTo(true);
+        assertThat(properties.isUserAuthentificationMQCSP()).isEqualTo(true);
         assertThat(System.getProperty("com.ibm.mq.cfg.useIBMCipherMappings")).isEqualTo("true");
         assertThat(properties.getSslCipherSuite()).isEqualTo("CIPHER_SUITE");
         assertThat(properties.getSslCipherSpec()).isEqualTo("CIPHER_SPEC");
