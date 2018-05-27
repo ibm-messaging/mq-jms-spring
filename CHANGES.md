@@ -11,3 +11,7 @@
 
 # 0.0.4 (2018-04-02)
 - Allow USER_AUTHENTICATION_MQCSP to be configured from properties
+
+# 2.0.0 (2018-05-27)
+- Upgrade the spring boot dependecy to spring boot 2.0.2
+- Upgrade plugin version to 2.0.0 (according to spring boot version 2.x)
