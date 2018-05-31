@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
         "ibm.mq.user=USER",
         "ibm.mq.password=PASS",
         "ibm.mq.useIBMCipherMappings=true",
-        "ibm.mq.userAuthentificationMQCSP=true",
+        "ibm.mq.userAuthenticationMQCSP=true",
         "ibm.mq.sslCipherSuite=CIPHER_SUITE",
         "ibm.mq.sslCipherSpec=CIPHER_SPEC"
 })

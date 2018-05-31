@@ -50,6 +50,7 @@ local.properties
 t
 t2
 t.out
+m/
 
 # This has private signature/password information
 gradle.properties

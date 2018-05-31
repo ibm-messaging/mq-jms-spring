@@ -3,10 +3,7 @@
 This repository contains code to help to provide Spring developers with easy configuration of the IBM MQ JMS package.
 
 The library contains:
-* `mq-jms-spring-boot-starter` for [Spring Boot](https://projects.spring.io/spring-boot/) applications
-
-## HEALTH WARNINGS
-This initial release has had limited testing.
+* `mq-jms-spring-boot-starter` for [Spring Boot 2](https://projects.spring.io/spring-boot/) applications
 
 ## Installation and Usage
 If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the
@@ -39,6 +36,10 @@ Maven:
   <version>2.0.0</version>
 </dependency>
 ```
+
+**Note** This repository and the corresponding Maven Central artifact has now been upgraded for 
+Spring Boot 2 applications. For Spring Boot 1, you should continue to use the previously-released 
+artifact at version 0.0.4. 
 
 ## Design Approach
 The approach taken here is to follow the model for JMS applications shown in the
