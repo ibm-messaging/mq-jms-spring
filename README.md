@@ -90,6 +90,9 @@ For client connections to a queue manager, you must also set
 * `ibm.mq.connName`
 If both the channel and connName are not supplied, then a local queue manager is assumed.
 
+Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.dev.doc/q112000_.html) if required.
+* `ibm.mq.clientId`
+
 You will probably also need to set
 * `ibm.mq.user`
 * `ibm.mq.password`
