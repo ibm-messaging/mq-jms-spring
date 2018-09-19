@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.*;
         "ibm.mq.connName=CONNSET",
         "ibm.mq.user=USER",
         "ibm.mq.password=PASS",
+        "ibm.mq.clientId=mqm",
         "ibm.mq.useIBMCipherMappings=true",
         "ibm.mq.userAuthenticationMQCSP=true",
         "ibm.mq.sslCipherSuite=CIPHER_SUITE",
@@ -35,6 +36,7 @@ public class MQPropertiesTest {
         assertThat(properties.getConnName()).isEqualTo("CONNSET");
         assertThat(properties.getUser()).isEqualTo("USER");
         assertThat(properties.getPassword()).isEqualTo("PASS");
+        assertThat(properties.getClientId()).isEqualTo("mqm");
         assertThat(properties.isUseIBMCipherMappings()).isEqualTo(true);
         assertThat(properties.isUserAuthenticationMQCSP()).isEqualTo(true);
         assertThat(System.getProperty("com.ibm.mq.cfg.useIBMCipherMappings")).isEqualTo("true");
