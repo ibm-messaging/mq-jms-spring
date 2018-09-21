@@ -49,7 +49,7 @@ subprojects {
   ext.springBootVersion = '2.0.2.RELEASE'
   dependencies {
     // MQ Java client accessed from Maven Central Repository
-    compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: '9.0.4.0'
+    compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: '9.1.0.0'
 
     // Spring
     compile group: 'org.springframework', name: 'spring-core', version: springVersion
