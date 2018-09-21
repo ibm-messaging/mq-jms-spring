@@ -15,3 +15,6 @@
 # 2.0.0 (2018-05-27)
 - Upgrade the spring boot dependecy to spring boot 2.0.2
 - Upgrade plugin version to 2.0.0 (according to spring boot version 2.x)
+
+# 2.0.1 (2018-09-14)
+- Added ability to set a client id on the connection

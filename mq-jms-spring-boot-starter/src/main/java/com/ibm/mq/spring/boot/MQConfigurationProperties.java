@@ -48,6 +48,9 @@ public class MQConfigurationProperties {
 	/** Connection Name - hostname or address and port. Format like 'system.example.com(1414)'  **/
 	private String connName = "localhost(1414)";
 
+	/** MQ Client ID */
+	private String clientId;
+
 	/** MQ user name */
 	private String user = "admin";
 
@@ -98,6 +101,14 @@ public class MQConfigurationProperties {
 
 	public void setConnName(String connName) {
 		this.connName = connName;
+	}
+
+	public void setClientId(String clientId){
+		this.clientId = clientId;
+	}
+
+	public String getClientId(){
+		return clientId;
 	}
 
 	public String getUser() {

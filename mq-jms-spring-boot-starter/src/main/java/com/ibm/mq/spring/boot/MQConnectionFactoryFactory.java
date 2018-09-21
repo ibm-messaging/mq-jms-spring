@@ -68,6 +68,11 @@ class MQConnectionFactoryFactory {
         cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
       }
 
+      String clientId = this.properties.getClientId();
+      if(!isNullOrEmpty(clientId)){
+        cf.setStringProperty(WMQConstants.CLIENT_ID, clientId);
+      }
+
       // Setup the authentication. If there is a userid defined, always use the CSP model for
       // password checking. That is more general than the cf.connect(user,pass) method which has
       // some restrictions in the MQ client.
