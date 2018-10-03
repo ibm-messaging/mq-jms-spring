@@ -18,3 +18,6 @@
 
 # 2.0.1 (2018-09-14)
 - Added ability to set a client id on the connection
+
+# 2.0.5 (2018-10-03)
+- Update dependencies to spring boot 2.0.5
