@@ -21,3 +21,6 @@
 
 # 2.0.5 (2018-10-03)
 - Update dependencies to spring boot 2.0.5
+- Add CCDTUrl and SSLPeer to configurable properties
+- Make MQConnectionFactoryFactory a public class (see issue #7)
+

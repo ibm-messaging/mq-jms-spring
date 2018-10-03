@@ -22,7 +22,9 @@ import static org.assertj.core.api.Assertions.*;
         "ibm.mq.useIBMCipherMappings=true",
         "ibm.mq.userAuthenticationMQCSP=true",
         "ibm.mq.sslCipherSuite=CIPHER_SUITE",
-        "ibm.mq.sslCipherSpec=CIPHER_SPEC"
+        "ibm.mq.sslCipherSpec=CIPHER_SPEC",
+        "ibm.mq.sslPeerName=CN=Mark,OU=IBM,C=GB",
+        "ibm.mq.ccdtUrl=file:///home/admdata/ccdt1.tab"
 })
 public class MQPropertiesTest {
 
@@ -31,6 +33,7 @@ public class MQPropertiesTest {
 
     @Test
     public void test() {
+      
         assertThat(properties.getQueueManager()).isEqualTo("QMSET");
         assertThat(properties.getChannel()).isEqualTo("CHANNELSET");
         assertThat(properties.getConnName()).isEqualTo("CONNSET");
@@ -42,5 +45,7 @@ public class MQPropertiesTest {
         assertThat(System.getProperty("com.ibm.mq.cfg.useIBMCipherMappings")).isEqualTo("true");
         assertThat(properties.getSslCipherSuite()).isEqualTo("CIPHER_SUITE");
         assertThat(properties.getSslCipherSpec()).isEqualTo("CIPHER_SPEC");
+        assertThat(properties.getSslPeerName()).isEqualTo("CN=Mark,OU=IBM,C=GB");
+        assertThat(properties.getCcdtUrl()).isEqualTo("file:///home/admdata/ccdt1.tab");
     }
 }

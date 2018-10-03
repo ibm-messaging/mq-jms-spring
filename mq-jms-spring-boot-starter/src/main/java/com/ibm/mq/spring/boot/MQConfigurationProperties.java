@@ -75,9 +75,23 @@ public class MQConfigurationProperties {
    * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>  
    */
 	private String sslCipherSpec;
+	
+	/** Type a distinguished name skeleton that must match that provided by the queue manager.
+	 *   @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q112720_.htm">the KnowledgeCenter</a>  
+	 */
+	private String sslPeerName;
 
   /** Set to true for the IBM JRE CipherSuite name maps; set to false to use the Oracle JRE CipherSuite mapping */
 	private boolean useIBMCipherMappings = true;
+	
+	/** Enter the uniform resource locator (URL) that identifies the name and location of the file that contains 
+	 * the client channel definition table and specifies how the file can be accessed. 
+	 * You must set a value for either the Channel property or for the Client Channel Definition Table URL property but not both.
+	 * For example, "file:///home/admdata/ccdt1.tab"
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q032510_.html">the KnowledgeCenter</a>  
+	 */
+	private String ccdtUrl;
+	
 	
 	public String getQueueManager() {
 		return queueManager;
@@ -159,4 +173,22 @@ public class MQConfigurationProperties {
 	public void setUserAuthenticationMQCSP(boolean userAuthenticationMQCSP) {
 		this.userAuthenticationMQCSP = userAuthenticationMQCSP;
 	}
+
+  public String getSslPeerName() {
+    return sslPeerName;
+  }
+
+  public void setSslPeerName(String sslPeerName) {
+    this.sslPeerName = sslPeerName;
+  }
+
+  public String getCcdtUrl() {
+    return ccdtUrl;
+  }
+
+  public void setCcdtUrl(String ccdtUrl) {
+    this.ccdtUrl = ccdtUrl;
+  }
+	
+	
 }

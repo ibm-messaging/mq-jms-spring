@@ -26,14 +26,14 @@ import com.ibm.msg.client.wmq.WMQConstants;
 /**
  * Factory to create a {@link MQConnectionFactory} instance from properties defined in {@link MQConfigurationProperties}.
  */
-class MQConnectionFactoryFactory {
+public class MQConnectionFactoryFactory {
 
   private final MQConfigurationProperties properties;
 
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
 
   @SuppressWarnings("unchecked")
-  MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
+  public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     this.properties = properties;
     this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
   }
@@ -59,23 +59,31 @@ class MQConnectionFactoryFactory {
       // code has been installed locally, then this connection will try to use native JNI bindings to match.
       String channel = this.properties.getChannel();
       String connName = this.properties.getConnName();
-      if (isNullOrEmpty(channel) || isNullOrEmpty(connName)) {
-        cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_BINDINGS);
+      String ccdtUrl  = this.properties.getCcdtUrl();
+      
+      if (!isNullOrEmpty(ccdtUrl)) {
+        cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+        cf.setStringProperty(WMQConstants.WMQ_CCDTURL, ccdtUrl);
       }
       else {
-        cf.setStringProperty(WMQConstants.WMQ_CONNECTION_NAME_LIST, connName);
-        cf.setStringProperty(WMQConstants.WMQ_CHANNEL, channel);
-        cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+        if (isNullOrEmpty(channel) || isNullOrEmpty(connName)) {
+          cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_BINDINGS);
+        }
+        else {
+          cf.setStringProperty(WMQConstants.WMQ_CONNECTION_NAME_LIST, connName);
+          cf.setStringProperty(WMQConstants.WMQ_CHANNEL, channel);
+          cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+        }
       }
-
       String clientId = this.properties.getClientId();
       if(!isNullOrEmpty(clientId)){
         cf.setStringProperty(WMQConstants.CLIENT_ID, clientId);
       }
 
-      // Setup the authentication. If there is a userid defined, always use the CSP model for
+      // Setup the authentication. If there is a userid defined, prefer to use the CSP model for
       // password checking. That is more general than the cf.connect(user,pass) method which has
-      // some restrictions in the MQ client.
+      // some restrictions in the MQ client. But it is possible to override the choice via a 
+      // property, for some compatibility requirements. 
       String u = this.properties.getUser();
 
       if (!isNullOrEmpty(u)) {
@@ -89,6 +97,10 @@ class MQConnectionFactoryFactory {
 
       if (!isNullOrEmpty(this.properties.getSslCipherSpec()))
         cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SPEC, this.properties.getSslCipherSpec());
+      
+      if (!isNullOrEmpty(this.properties.getSslPeerName())) {
+        cf.setStringProperty(WMQConstants.WMQ_SSL_PEER_NAME, this.properties.getSslPeerName());
+      }
 
       customize(cf);
       return cf;
