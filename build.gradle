@@ -45,8 +45,8 @@ subprojects {
   }
 
   // Common dependencies
-  ext.springVersion = '5.0.6.RELEASE'
-  ext.springBootVersion = '2.0.2.RELEASE'
+  ext.springVersion = '5.1.0.RELEASE'
+  ext.springBootVersion = '2.0.5.RELEASE'
   dependencies {
     // MQ Java client accessed from Maven Central Repository
     compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: '9.1.0.0'
