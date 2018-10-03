@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '0.0.2'
+    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.0.5'
 }
 ```
 
@@ -33,13 +33,13 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.5</version>
 </dependency>
 ```
 
-**Note** This repository and the corresponding Maven Central artifact has now been upgraded for 
-Spring Boot 2 applications. For Spring Boot 1, you should continue to use the previously-released 
-artifact at version 0.0.4. 
+**Note** This repository and the corresponding Maven Central artifact has now been upgraded for
+Spring Boot 2 applications. For Spring Boot 1, you should continue to use the previously-released
+artifact at version 0.0.4.
 
 ## Design Approach
 The approach taken here is to follow the model for JMS applications shown in the
@@ -85,10 +85,14 @@ default configuration to match by providing override values.
 The queue manager name is given as
 * `ibm.mq.queueManager`
 
-For client connections to a queue manager, you must also set
+For client connections to a queue manager, you must also set either
 * `ibm.mq.channel`
 * `ibm.mq.connName`
-If both the channel and connName are not supplied, then a local queue manager is assumed.
+or
+* `ibm.mq.ccdtUrl`
+If both the channel and connName are not supplied, and the CCDTURL is not supplied,
+then a local queue manager is assumed. The CCDTURL property is taken in preference to
+the channel and connName.
 
 Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.dev.doc/q112000_.html) if required.
 * `ibm.mq.clientId`
@@ -116,6 +120,7 @@ The following options all default to null, but may be used to assist with config
 | --------------------------- | -----------                                                                     |
 | ibm.mq.sslCipherSuite       | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE |
 | ibm.mq.sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
+| ibm.mq.sslPeerName          | Peer Name,  sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME      |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
 ## Related documentation
@@ -132,7 +137,7 @@ Output from the build can be uploaded to a Maven repository.
 
 The uploadArchives task controls publishing of the output. It uses the VERSION number to
 determine what to do, along with an environment variable.
-This means that we can build a non-SNAPSHOT version while still not pushing it out and 
+This means that we can build a non-SNAPSHOT version while still not pushing it out and
 the github version of the file can match exactly what was built.
 
 * If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
@@ -146,12 +151,12 @@ If pushing to the Nexus Release area, then once the build has been successfully 
 you must log into Nexus to do the final promotion (CLOSE/RELEASE) of the artifact. Although it is
 possible to automate that process, I am not doing it in this build file so we do a manual check
 that the build has been successful and to check validity before freezing a version number.
- 
+
 Using Nexus Central Repository requires authentication and authorisation. The userid and password
 associated with the account are held in a local file (gradle.properties) that is not part
 of this public repository. That properties file also holds information about the signing key that Nexus
 requires.
- 
+
     ---- Example gradle.properties file --------
     # These access the GPG key and certificate
     signing.keyId=AAA111BB
