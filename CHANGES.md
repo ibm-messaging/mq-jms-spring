@@ -24,6 +24,6 @@
 - Add CCDTUrl and SSLPeer to configurable properties
 - Make MQConnectionFactoryFactory a public class (see issue #7)
 
-# 2.0.6 (2018-10-19)
-- Override the DefaultMessageListenerContainer receiveTimeout default value
+# 2.0.7 (2018-10-19)
+- Replace a broken 2.0.6
 
