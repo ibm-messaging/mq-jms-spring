@@ -123,6 +123,13 @@ The following options all default to null, but may be used to assist with config
 | ibm.mq.sslPeerName          | Peer Name,  sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME      |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
+### JMS Message listener polling  
+The default Spring configuration for a JMS Listener sets the receive timeout (a polling
+loop timer) too low for a cost-effective solution with IBM MQ. 
+See [this article]("https://developer.ibm.com/messaging/2018/02/09/mq-spring-tip") for more information. This
+package overrides the Spring-provided default value of 1 second, and sets it to 60 seconds. Applications still have 
+control of this if they wish by setting the `spring.jms.template.receiveTimeout` property or programmatically.  
+
 ## Related documentation
 * [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 * [Spring Boot documentation](https://projects.spring.io/spring-boot/)

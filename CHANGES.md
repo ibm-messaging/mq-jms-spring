@@ -13,7 +13,7 @@
 - Allow USER_AUTHENTICATION_MQCSP to be configured from properties
 
 # 2.0.0 (2018-05-27)
-- Upgrade the spring boot dependecy to spring boot 2.0.2
+- Upgrade the spring boot dependency to spring boot 2.0.2
 - Upgrade plugin version to 2.0.0 (according to spring boot version 2.x)
 
 # 2.0.1 (2018-09-14)
@@ -23,4 +23,7 @@
 - Update dependencies to spring boot 2.0.5
 - Add CCDTUrl and SSLPeer to configurable properties
 - Make MQConnectionFactoryFactory a public class (see issue #7)
+
+# 2.0.6 (2018-10-19)
+- Override the DefaultMessageListenerContainer receiveTimeout default value
 
