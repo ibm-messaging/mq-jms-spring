@@ -58,6 +58,9 @@ subprojects {
     compile group: 'org.springframework', name: 'spring-jms', version: springVersion
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
 
+    //pool
+    compile group: 'org.messaginghub', name: 'pooled-jms', version: '1.0.3'
+
     // Testing
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
