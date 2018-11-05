@@ -27,3 +27,5 @@
 # 2.0.7 (2018-10-19)
 - Replace a broken 2.0.6
 
+# 2.0.8
+- Add pooled connection factory option

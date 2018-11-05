@@ -123,6 +123,21 @@ The following options all default to null, but may be used to assist with config
 | ibm.mq.sslPeerName          | Peer Name,  sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME      |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
+#### Pooled connection factory options
+You may configure a pooled connection factory by using those properties
+
+| Option                                  | Description                                                                                                                              |
+| --------------------------------------- | -----------                                                                                                                              |
+| ibm.mq.pool.enabled                     | Enabled Pooled connection factory usage                                                                                                  |
+| ibm.mq.pool.blockIfFull                 | Blocks a connection request when the pool is full. Default is false                                                                      |
+| ibm.mq.pool.blockIfFullTimeout          | Blocking period before throwing an exception if the pool is still full                                                                   |
+| ibm.mq.pool.idleTimeout                 | Connection idle timeout. Default to 30 seconds                                                                                           |
+| ibm.mq.pool.maxConnections              | Maximum number of pooled connections. Default is 1                                                                                       |
+| ibm.mq.pool.maxSessionsPerConnection    | Maximum number of pooled sessions. Default is 500                                                                                        |
+| ibm.mq.pool.timeBetweenExpirationCheck  | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
+| ibm.mq.pool.useAnonymousProducers       | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
+
+
 ## Related documentation
 * [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 * [Spring Boot documentation](https://projects.spring.io/spring-boot/)
