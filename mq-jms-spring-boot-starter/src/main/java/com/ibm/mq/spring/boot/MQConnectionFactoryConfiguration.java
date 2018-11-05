@@ -14,7 +14,10 @@
 
 package com.ibm.mq.spring.boot;
 
-import com.ibm.mq.jms.MQConnectionFactory;
+import java.util.List;
+
+import javax.jms.ConnectionFactory;
+
 import org.apache.commons.pool2.PooledObject;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -24,8 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.jms.ConnectionFactory;
-import java.util.List;
+import com.ibm.mq.jms.MQConnectionFactory;
 
 /**
  * Configuration for IBM MQ {@link ConnectionFactory}.
@@ -85,7 +87,6 @@ class MQConnectionFactoryConfiguration {
 			}
 
 			pooledConnectionFactory.setUseAnonymousProducers(poolProperties.isUseAnonymousProducers());
-
 			return pooledConnectionFactory;
 		}
 

@@ -124,7 +124,7 @@ The following options all default to null, but may be used to assist with config
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
 #### Pooled connection factory options
-You may required a pooled connection factory by using those properties
+You may configure a pooled connection factory by using those properties
 
 | Option                                  | Description                                                                                                                              |
 | --------------------------------------- | -----------                                                                                                                              |
