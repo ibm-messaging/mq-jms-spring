@@ -29,3 +29,6 @@
 
 # 2.0.8
 - Add pooled connection factory option
+
+# 2.0.9
+- Update dependencies to spring boot 2.1.0
