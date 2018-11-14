@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.0.9-SANPSHOT'
+    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.0.9'
 }
 ```
 
@@ -33,7 +33,7 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.0.9-SANPSHOT</version>
+  <version>2.0.9</version>
 </dependency>
 ```
 
