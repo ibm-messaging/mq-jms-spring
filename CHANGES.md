@@ -32,3 +32,6 @@
 
 # 2.0.9
 - Update dependencies to spring boot 2.1.0
+
+# 2.1.0
+- Simplify connection pool creation using spring boot 2.1.0 resources 
