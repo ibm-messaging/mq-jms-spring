@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
+import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ import com.ibm.mq.jms.MQConnectionFactory;
 @AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class })
 @ConditionalOnClass({ ConnectionFactory.class, MQConnectionFactory.class })
 @ConditionalOnMissingBean(ConnectionFactory.class)
-@EnableConfigurationProperties(MQConfigurationProperties.class)
+@EnableConfigurationProperties({MQConfigurationProperties.class, JmsProperties.class})
 @Import({ MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
 public class MQAutoConfiguration {
 
