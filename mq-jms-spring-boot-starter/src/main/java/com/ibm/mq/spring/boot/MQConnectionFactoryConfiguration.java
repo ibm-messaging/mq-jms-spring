@@ -14,7 +14,10 @@
 
 package com.ibm.mq.spring.boot;
 
-import com.ibm.mq.jms.MQConnectionFactory;
+import java.util.List;
+
+import javax.jms.ConnectionFactory;
+
 import org.apache.commons.pool2.PooledObject;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -25,8 +28,7 @@ import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryFactor
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.jms.ConnectionFactory;
-import java.util.List;
+import com.ibm.mq.jms.MQConnectionFactory;
 
 /**
  * Configuration for IBM MQ {@link ConnectionFactory}.
@@ -35,30 +37,31 @@ import java.util.List;
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQConnectionFactoryConfiguration {
 
-	@Configuration
-	@ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "false", matchIfMissing = true)
-	static class RegularMQConnectionFactoryConfiguration {
+  @Configuration
+  @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "false", matchIfMissing = true)
+  static class RegularMQConnectionFactoryConfiguration {
 
-		@Bean
-		public MQConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+    @Bean
+    public MQConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties,
+        ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
-			return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable())
-							.createConnectionFactory(MQConnectionFactory.class);
-		}
-	}
+      return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
+    }
+  }
 
-	@Configuration
-	@ConditionalOnClass({JmsPoolConnectionFactory.class, PooledObject.class})
-	static class PooledMQConnectionFactoryConfiguration {
+  @Configuration
+  @ConditionalOnClass({ JmsPoolConnectionFactory.class, PooledObject.class })
+  static class PooledMQConnectionFactoryConfiguration {
 
-		@Bean(destroyMethod = "stop")
-		@ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "true", matchIfMissing = false)
-		public JmsPoolConnectionFactory pooledJmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+    @Bean(destroyMethod = "stop")
+    @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "true", matchIfMissing = false)
+    public JmsPoolConnectionFactory pooledJmsConnectionFactory(MQConfigurationProperties properties,
+        ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
-			MQConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable())
-					.createConnectionFactory(MQConnectionFactory.class);
+      MQConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable())
+          .createConnectionFactory(MQConnectionFactory.class);
 
-			return new JmsPoolConnectionFactoryFactory(properties.getPool()).createPooledConnectionFactory(connectionFactory);
-		}
-	}
+      return new JmsPoolConnectionFactoryFactory(properties.getPool()).createPooledConnectionFactory(connectionFactory);
+    }
+  }
 }
