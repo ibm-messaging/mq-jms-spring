@@ -137,6 +137,16 @@ You may configure a pooled connection factory by using those properties
 | ibm.mq.pool.timeBetweenExpirationCheck  | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
 | ibm.mq.pool.useAnonymousProducers       | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
 
+#### Caching connection factory options
+Alternatively you may use the default Spring Caching connection factory with the default Spring JMS properties
+
+| Option                                | Description                                     |
+| --------------------------------------| ------------------------------------------------|
+| spring.jms.cache.enabled              | Whether to cache sessions                       |
+| spring.jms.cache.consumers            | Whether to cache message consumers              |
+| spring.jms.cache.producers            | Whether to cache message producers              |
+| spring.jms.cache.session-cache-size   | Size of the session cache (per JMS Session type)|
+
 
 ## Related documentation
 * [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
