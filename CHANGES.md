@@ -35,3 +35,4 @@
 
 # 2.1.0
 - Simplify connection pool creation using spring boot 2.1.0 resources 
+- Update dependencies to MQ 9.1.1
