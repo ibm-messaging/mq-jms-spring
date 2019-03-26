@@ -34,5 +34,10 @@
 - Update dependencies to spring boot 2.1.0
 
 # 2.1.0
-- Simplify connection pool creation using spring boot 2.1.0 resources 
+- Simplify connection pool creation using spring boot 2.1.0 resources
 - Update dependencies to MQ 9.1.1
+
+# 2.1.1
+- Update dependencies to MQ 9.1.2
+- Update dependencies to spring boot 2.1.3
+- Add applicationName configuration property (#58)

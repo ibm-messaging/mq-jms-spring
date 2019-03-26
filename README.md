@@ -3,9 +3,11 @@
 This repository contains code to help to provide Spring developers with easy configuration of the IBM MQ JMS package.
 
 The library contains:
-* `mq-jms-spring-boot-starter` for [Spring Boot 2](https://projects.spring.io/spring-boot/) applications
+
+-   `mq-jms-spring-boot-starter` for [Spring Boot 2](https://projects.spring.io/spring-boot/) applications
 
 ## Installation and Usage
+
 If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the
 generated jar into your local directory tree. It can then be referenced from the application build.
 
@@ -13,27 +15,24 @@ Otherwise it can be automatically downloaded from Maven Central.
 
 ### Spring Boot Applications
 
-
 Gradle:
 
-```
-repositories {
-   mavenLocal()
-   mavenCentral()
-}
+    repositories {
+       mavenLocal()
+       mavenCentral()
+    }
 
-dependencies {
-    compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.0.9'
-}
-```
+    dependencies {
+        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.1.1'
+    }
 
 Maven:
 
-``` xml
+```xml
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.0.9</version>
+  <version>2.1.1</version>
 </dependency>
 ```
 
@@ -42,6 +41,7 @@ Spring Boot 2 applications. For Spring Boot 1, you should continue to use the pr
 artifact at version 0.0.4.
 
 ## Design Approach
+
 The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms)
 
@@ -56,19 +56,18 @@ To get started quickly, you can use the default configuration settings in this p
 IBM MQ for Developers container which runs the server processes.
 
 ### Default Configuration
+
 The default options have been selected to match the
-[MQ Docker container](https://github.com/ibm-messaging/mq-docker) development configuration.
+[MQ Docker container](https://github.com/ibm-messaging/mq-container) development configuration.
 
 This means that you can run a queue manager using that Docker environment and connect to it. This script
 will run the container on a Linux system.
 
-~~~
-docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \
-           --publish 1414:1414 \
-           --publish 9443:9443 \
-           --detach \
-           ibmcom/mq
-~~~
+    docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \
+               --publish 1414:1414 \
+               --publish 9443:9443 \
+               --detach \
+               ibmcom/mq
 
 The default attributes are
 
@@ -79,27 +78,36 @@ The default attributes are
     ibm.mq.password=passw0rd
 
 ### Extended Configuration Options
+
 If you already have a running MQ queue manager that you want to use, then you can easily modify the
 default configuration to match by providing override values.
 
 The queue manager name is given as
-* `ibm.mq.queueManager`
+
+-   `ibm.mq.queueManager`
 
 For client connections to a queue manager, you must also set either
-* `ibm.mq.channel`
-* `ibm.mq.connName`
-or
-* `ibm.mq.ccdtUrl`
+
+-   `ibm.mq.channel`
+-   `ibm.mq.connName`
+    or
+-   `ibm.mq.ccdtUrl`
+
 If both the channel and connName are not supplied, and the CCDTURL is not supplied,
 then a local queue manager is assumed. The CCDTURL property is taken in preference to
 the channel and connName.
 
-Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.dev.doc/q112000_.html) if required.
-* `ibm.mq.clientId`
+Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.dev.doc/q112000_.html)
+and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.
+
+-   `ibm.mq.clientId`
+-   `ibm.mq.applicationName`
 
 You will probably also need to set
-* `ibm.mq.user`
-* `ibm.mq.password`
+
+-   `ibm.mq.user`
+-   `ibm.mq.password`
+
 to override the default values. These attributes can be set to an empty value, to use the local OS userid
 automatically with no authentication (if the queue manager has been set up to allow that).
 
@@ -114,47 +122,52 @@ For example in an `application.properties` file:
 Spring Boot will then create a ConnectionFactory that can then be used to interact with your queue manager.
 
 #### TLS related options
+
 The following options all default to null, but may be used to assist with configuring TLS
 
 | Option                      | Description                                                                     |
-| --------------------------- | -----------                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------- |
 | ibm.mq.sslCipherSuite       | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE |
 | ibm.mq.sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
-| ibm.mq.sslPeerName          | Peer Name,  sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME      |
+| ibm.mq.sslPeerName          | Peer Name,    sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME    |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 
 #### Pooled connection factory options
+
 You may configure a pooled connection factory by using those properties
 
-| Option                                  | Description                                                                                                                              |
-| --------------------------------------- | -----------                                                                                                                              |
-| ibm.mq.pool.enabled                     | Enabled Pooled connection factory usage                                                                                                  |
-| ibm.mq.pool.blockIfFull                 | Blocks a connection request when the pool is full. Default is false                                                                      |
-| ibm.mq.pool.blockIfFullTimeout          | Blocking period before throwing an exception if the pool is still full                                                                   |
-| ibm.mq.pool.idleTimeout                 | Connection idle timeout. Default to 30 seconds                                                                                           |
-| ibm.mq.pool.maxConnections              | Maximum number of pooled connections. Default is 1                                                                                       |
-| ibm.mq.pool.maxSessionsPerConnection    | Maximum number of pooled sessions. Default is 500                                                                                        |
-| ibm.mq.pool.timeBetweenExpirationCheck  | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
-| ibm.mq.pool.useAnonymousProducers       | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
+| Option                                 | Description                                                                                                                              |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| ibm.mq.pool.enabled                    | Enabled Pooled connection factory usage                                                                                                  |
+| ibm.mq.pool.blockIfFull                | Blocks a connection request when the pool is full. Default is false                                                                      |
+| ibm.mq.pool.blockIfFullTimeout         | Blocking period before throwing an exception if the pool is still full                                                                   |
+| ibm.mq.pool.idleTimeout                | Connection idle timeout. Default to 30 seconds                                                                                           |
+| ibm.mq.pool.maxConnections             | Maximum number of pooled connections. Default is 1                                                                                       |
+| ibm.mq.pool.maxSessionsPerConnection   | Maximum number of pooled sessions. Default is 500                                                                                        |
+| ibm.mq.pool.timeBetweenExpirationCheck | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
+| ibm.mq.pool.useAnonymousProducers      | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
 
 #### Caching connection factory options
+
 Alternatively you may use the default Spring Caching connection factory with the default Spring JMS properties
 
-| Option                                | Description                                     |
-| --------------------------------------| ------------------------------------------------|
-| spring.jms.cache.enabled              | Whether to cache sessions                       |
-| spring.jms.cache.consumers            | Whether to cache message consumers              |
-| spring.jms.cache.producers            | Whether to cache message producers              |
-| spring.jms.cache.session-cache-size   | Size of the session cache (per JMS Session type)|
-
+| Option                              | Description                                      |
+| ----------------------------------- | ------------------------------------------------ |
+| spring.jms.cache.enabled            | Whether to cache sessions                        |
+| spring.jms.cache.consumers          | Whether to cache message consumers               |
+| spring.jms.cache.producers          | Whether to cache message producers               |
+| spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
 
 ## Related documentation
-* [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
-* [Spring Boot documentation](https://projects.spring.io/spring-boot/)
-* [Spring Framework documentation](https://projects.spring.io/spring-framework/)
+
+-   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
+-   [Spring Boot documentation](https://projects.spring.io/spring-boot/)
+-   [Spring Framework documentation](https://projects.spring.io/spring-framework/)
 
 # Development
+
 ### Building for a Maven repository
+
 The VERSION file in this directory contains the version number associated with the build.
 For example, "0.1.2-SNAPSHOT".
 
@@ -165,12 +178,12 @@ determine what to do, along with an environment variable.
 This means that we can build a non-SNAPSHOT version while still not pushing it out and
 the github version of the file can match exactly what was built.
 
-* If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
-else we push to the RELEASE repository
-* If the version contains 'LOCAL'  or the environment variable "PushToMaven" is not set
-** then the output will be copied to a local Maven repository
-under the user's home directory (~/.m2/repository).
-** else we attempt to push the jar files to the Nexus Central Repository.
+-   If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
+    else we push to the RELEASE repository
+-   If the version contains 'LOCAL'  or the environment variable "PushToMaven" is not set
+    ** then the output will be copied to a local Maven repository
+    under the user's home directory (~/.m2/repository).
+    ** otherwise we attempt to push the jar files to the Nexus Central Repository.
 
 If pushing to the Nexus Release area, then once the build has been successfully transferred
 you must log into Nexus to do the final promotion (CLOSE/RELEASE) of the artifact. Although it is
@@ -193,6 +206,7 @@ requires.
     --------------------------------------------
 
 ### Pull requests
+
 Contributions to this package can be accepted under the terms of the
 IBM Contributor License Agreement, found in the file CLA.md of this repository.
 
@@ -216,8 +230,9 @@ ng permissions and limitations under the license.
 ### Issues
 
 Before opening a new issue please consider the following:
-* Please try to reproduce the issue using the latest version.
-* Please check the [existing issues](https://github.com/ibm-messaging/mq-spring/issues)
-to see if the problem has already been reported. Note that the default search
-includes only open issues, but it may already have been closed.
-* When opening a new issue [here in github](../../issues) please complete the template fully.
+
+-   Please try to reproduce the issue using the latest version.
+-   Please check the [existing issues](https://github.com/ibm-messaging/mq-spring/issues)
+    to see if the problem has already been reported. Note that the default search
+    includes only open issues, but it may already have been closed.
+-   When opening a new issue [here in github](../../issues) please complete the template fully.
