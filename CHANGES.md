@@ -40,4 +40,4 @@
 # 2.1.1
 - Update dependencies to MQ 9.1.2
 - Update dependencies to spring boot 2.1.3
-- Add applicationName configuration property (#58)
+- Add applicationName configuration property (#20)
