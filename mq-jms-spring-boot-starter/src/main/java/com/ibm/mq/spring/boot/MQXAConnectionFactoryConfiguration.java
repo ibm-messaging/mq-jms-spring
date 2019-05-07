@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
+import com.ibm.mq.jms.MQConnectionFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.ibm.mq.jms.MQXAConnectionFactory;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Configuration for IBM MQ XA {@link ConnectionFactory}.
@@ -34,11 +36,18 @@ import com.ibm.mq.jms.MQXAConnectionFactory;
 @Configuration
 @ConditionalOnBean(XAConnectionFactoryWrapper.class)
 @ConditionalOnMissingBean(ConnectionFactory.class)
-
 class MQXAConnectionFactoryConfiguration {
-  @Bean
-  public MQXAConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties,
-      ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
-    return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
+
+  @Primary
+  @Bean(name = { "jmsConnectionFactory", "xaJmsConnectionFactory" })
+  public ConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, XAConnectionFactoryWrapper wrapper) throws Exception {
+    MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
+    return wrapper.wrapConnectionFactory(connectionFactory);
   }
+
+  @Bean
+  public ConnectionFactory nonXaJmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+    return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
+  }
+
 }

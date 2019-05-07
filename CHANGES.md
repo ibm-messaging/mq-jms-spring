@@ -41,3 +41,7 @@
 - Update dependencies to MQ 9.1.2
 - Update dependencies to spring boot 2.1.3
 - Add applicationName configuration property (#20)
+
+# 2.1.2
+- Add bean instantiation conditions keeping the correct order - XAConnectionFactoryWrapper and after this IBM connection factory
+- Add XA wrapper functionality for external JTA providers and assign the nonXA connection factory

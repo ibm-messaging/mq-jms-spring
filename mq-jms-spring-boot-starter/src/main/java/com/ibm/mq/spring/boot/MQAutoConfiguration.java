@@ -20,9 +20,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
 import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,8 +33,9 @@ import com.ibm.mq.jms.MQConnectionFactory;
 
 
 @Configuration
+@ConditionalOnProperty(prefix="spring.jta", value="enabled", matchIfMissing=true)
 @AutoConfigureBefore(JmsAutoConfiguration.class)
-@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class })
+@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class})
 @ConditionalOnClass({ ConnectionFactory.class, MQConnectionFactory.class })
 @ConditionalOnMissingBean(ConnectionFactory.class)
 @EnableConfigurationProperties({MQConfigurationProperties.class, JmsProperties.class})
