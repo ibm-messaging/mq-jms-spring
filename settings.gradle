@@ -13,6 +13,5 @@
  */
 include ':mq-jms-spring-boot-starter'
 
-enableFeaturePreview('STABLE_PUBLISHING')
 
 rootProject.name = 'mq-jms-spring'

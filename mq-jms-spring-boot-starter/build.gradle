@@ -25,10 +25,10 @@ buildscript {
     }
 }
 
-dependencies {
+dependencies {  
   compile group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
   compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
-  compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: springBootVersion
+  annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
 }
 
 compileJava.dependsOn(processResources)
