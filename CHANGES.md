@@ -46,3 +46,6 @@
 - Add bean instantiation conditions keeping the correct order - XAConnectionFactoryWrapper and after this IBM connection factory
 - Add XA wrapper functionality for external JTA providers and assign the nonXA connection factory
 - Update dependencies to spring boot 2.1.4
+
+# 2.1.3
+- Update dependencies to Spring Boot 2.1.9
