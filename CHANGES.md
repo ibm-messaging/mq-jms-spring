@@ -49,3 +49,4 @@
 
 # 2.1.3
 - Update dependencies to Spring Boot 2.1.9
+- Update dependencies to MQ 9.1.3
