@@ -8,10 +8,8 @@ The library contains:
 
 ## Installation and Usage
 
-If the VERSION file contains "LOCAL" in the version definition, then the gradle build process puts the
-generated jar into your local directory tree. It can then be referenced from the application build.
-
-Otherwise it can be automatically downloaded from Maven Central.
+The compiled version of this package can be automatically downloaded from Maven Central. For local modifications
+and building it yourself, see [BUILDING.md](./BUILDING.md)
 
 ### Spring Boot Applications
 
@@ -23,7 +21,7 @@ Gradle:
     }
 
     dependencies {
-        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.1.1'
+        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.1.3'
     }
 
 Maven:
@@ -32,13 +30,13 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.3</version>
 </dependency>
 ```
 
-**Note** This repository and the corresponding Maven Central artifact has now been upgraded for
-Spring Boot 2 applications. For Spring Boot 1, you should continue to use the previously-released
-artifact at version 0.0.4.
+**Note** This repository and the corresponding Maven Central artifact require
+Spring Boot 2. For Spring Boot 1 compatibility, you can use the previously-released
+level of the artifact at version 0.0.4.
 
 ## Design Approach
 
@@ -47,8 +45,8 @@ The approach taken here is to follow the model for JMS applications shown in the
 
 The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in that example) to "DEV.QUEUE.1", which is created automatically in the Docker-packaged MQ server.
 
-Essentially what gets configured from this package is a ConnectionFactory which Spring's JmsTemplate implementation
-exploits to provide a simpler interface.
+Essentially what gets configured from this package are a ConnectionFactory which Spring's JmsTemplate implementation
+exploits to provide a simpler interface, and a MessageListener.
 
 ## Getting Started
 
@@ -77,7 +75,24 @@ The default attributes are
     ibm.mq.user=admin
     ibm.mq.password=passw0rd
 
-### Extended Configuration Options
+### Connection security
+
+The default userid and password have been chosen for a commonly-used queue manager
+configuration.
+
+To disable user/password checking entirely, you must set the `ibm.mq.user` attribute to an empty value
+so that the default is not used.
+
+```
+   ibm.mq.user=
+```
+
+Of course, that level of access must be permitted by your queue manager. The usual CHLAUTH and CONNAUTH
+rules will apply to assign an identity to the connection.
+
+Configuration of secure connections with TLS are discussed below.
+
+### Configuration Options
 
 If you already have a running MQ queue manager that you want to use, then you can easily modify the
 default configuration to match by providing override values.
@@ -108,8 +123,7 @@ You will probably also need to set
 -   `ibm.mq.user`
 -   `ibm.mq.password`
 
-to override the default values. These attributes can be set to an empty value, to use the local OS userid
-automatically with no authentication (if the queue manager has been set up to allow that).
+to override the default values.
 
 For example in an `application.properties` file:
 
@@ -120,6 +134,18 @@ For example in an `application.properties` file:
     ibm.mq.password=passw0rd
 
 Spring Boot will then create a ConnectionFactory that can then be used to interact with your queue manager.
+
+| Option                      | Description                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| ibm.mq.queueManager         | Name of queue manager                                                           |
+| ibm.mq.channel              | Channel Name for SVRCONN                                                        |
+| ibm.mq.connName             | Connection Name, which can be comma-separated list                              |
+| ibm.mq.ccdtUrl              | Location of the MQ CCDT file (URL can reference http/ftp location)              |
+| ibm.mq.user                 | User Name. Must be set to an empty value to turn off authentication attempts    |
+| ibm.mq.password             | Password                                                                        |
+| ibm.mq.clientId             | ClientId uniquely identifies the app connection for durable subscriptions       |
+| ibm.mq.applicationName      | Application Name used for Uniform Cluster balancing                             |
+
 
 #### TLS related options
 
@@ -158,52 +184,23 @@ Alternatively you may use the default Spring Caching connection factory with the
 | spring.jms.cache.producers          | Whether to cache message producers               |
 | spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
 
+### JMS Polling Listener Timer configuration
+
+The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can now be configured
+with the `spring.jms.listener.receiveTimeout` property. If the property is not explicitly set, then this MQ Spring Boot
+component resets the initial timeout value to 30 seconds which has been shown to be more cost-effective. Application code
+can still set its own preferred value.
+
+| Option                              | Description                                                                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| spring.jms.listener.receiveTimeout  | How frequently to poll for received messages. Default is 1s. Given as a Duration string: "1m", "60s", "60000" are equivalent  |
+
 ## Related documentation
 
--   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
+-   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.helphome.v91.doc/WelcomePagev9r1.htm)
 -   [Spring Boot documentation](https://projects.spring.io/spring-boot/)
 -   [Spring Framework documentation](https://projects.spring.io/spring-framework/)
 
-# Development
-
-### Building for a Maven repository
-
-The VERSION file in this directory contains the version number associated with the build.
-For example, "0.1.2-SNAPSHOT".
-
-Output from the build can be uploaded to a Maven repository.
-
-The uploadArchives task controls publishing of the output. It uses the VERSION number to
-determine what to do, along with an environment variable.
-This means that we can build a non-SNAPSHOT version while still not pushing it out and
-the github version of the file can match exactly what was built.
-
--   If the version contains 'SNAPSHOT' that we will use that temporary repo in the Central Repository.
-    else we push to the RELEASE repository
--   If the version contains 'LOCAL'  or the environment variable "PushToMaven" is not set
-    ** then the output will be copied to a local Maven repository
-    under the user's home directory (~/.m2/repository).
-    ** otherwise we attempt to push the jar files to the Nexus Central Repository.
-
-If pushing to the Nexus Release area, then once the build has been successfully transferred
-you must log into Nexus to do the final promotion (CLOSE/RELEASE) of the artifact. Although it is
-possible to automate that process, I am not doing it in this build file so we do a manual check
-that the build has been successful and to check validity before freezing a version number.
-
-Using Nexus Central Repository requires authentication and authorisation. The userid and password
-associated with the account are held in a local file (gradle.properties) that is not part
-of this public repository. That properties file also holds information about the signing key that Nexus
-requires.
-
-    ---- Example gradle.properties file --------
-    # These access the GPG key and certificate
-    signing.keyId=AAA111BB
-    signing.password=MyPassw0rd
-    signing.secretKeyRingFile=/home/user/.gnupg/secring.gpg
-    # This is the authentication to Nexus
-    ossrhUsername=myNexusId
-    ossrhPassword=MyOtherPassw0rd
-    --------------------------------------------
 
 ### Pull requests
 
@@ -218,7 +215,7 @@ The preferred approach for using this package in other projects will be to use t
 
 ### License
 
-Copyright © 2018 IBM Corp. All rights reserved.
+Copyright © 2018, 2019 IBM Corp. All rights reserved.
 
 Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.  you may obtain a copy of the license at
 
