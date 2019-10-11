@@ -21,7 +21,7 @@ Gradle:
     }
 
     dependencies {
-        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.1.3'
+        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.1.4'
     }
 
 Maven:
@@ -30,7 +30,7 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.1.3</version>
+  <version>2.1.4</version>
 </dependency>
 ```
 
@@ -41,9 +41,12 @@ level of the artifact at version 0.0.4.
 ## Design Approach
 
 The approach taken here is to follow the model for JMS applications shown in the
-[Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#jms)
+[Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
+is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.1.10.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
 
-The same application code from that example ought to work with MQ, with the simple replacement of the messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in that example) to "DEV.QUEUE.1", which is created automatically in the Docker-packaged MQ server.
+The same application code from that example ought to work with MQ, with the simple replacement of the
+messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in
+that example) to "DEV.QUEUE.1", which is created automatically in the Docker-packaged MQ server.
 
 Essentially what gets configured from this package are a ConnectionFactory which Spring's JmsTemplate implementation
 exploits to provide a simpler interface, and a MessageListener.
@@ -217,12 +220,14 @@ The preferred approach for using this package in other projects will be to use t
 
 Copyright © 2018, 2019 IBM Corp. All rights reserved.
 
-Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.  you may obtain a copy of the license at
+Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.
+You may obtain a copy of the license at
 
     http://www.apache.org/licenses/LICENSE-2.0.html
 
-Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis, without warranties or conditions of any kind, either express or implied. See the license for the specific language govern
-ng permissions and limitations under the license.
+Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied. See the license for the specific language governing
+permissions and limitations under the license.
 
 ### Issues
 
