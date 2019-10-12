@@ -1,4 +1,4 @@
-# 2.1.4 (2019-10-17)
+# 2.2.0 (2019-10-17)
 - Update dependencies to spring boot 2.2.0
 - Override for polling listener default timeout
 
