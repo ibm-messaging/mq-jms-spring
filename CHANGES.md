@@ -2,7 +2,8 @@
 - Update dependencies to spring boot 2.2.0
 - Override for polling listener default timeout
 
-# 2.1.3 (2019-10-10)
+# 2.1.4 (2019-10-10)
+- Replace the short-lived 2.1.3 that was corrupted by OSSRH problems
 - Update dependencies to Spring Boot 2.1.9
 - Update dependencies to MQ 9.1.3
 - Update dependencies to PooledJMS 1.0.6
