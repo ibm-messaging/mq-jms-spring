@@ -52,7 +52,8 @@ public class MQConfigurationProperties {
 	private String channel = "DEV.ADMIN.SVRCONN";
 
 	/**
-	 * Connection Name - hostname or address and port. Format like 'system.example.com(1414)'
+	 * Connection Name - hostname or address and port. Can be comma-separated list.
+	 * Format like 'system.example.com(1414),system2.example.com(1414)'
 	 **/
 	private String connName = "localhost(1414)";
 
