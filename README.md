@@ -42,7 +42,7 @@ level of the artifact at version 0.0.4.
 
 The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
-is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.1.10.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
+is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.2.0.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
 
 The same application code from that example ought to work with MQ, with the simple replacement of the
 messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in
