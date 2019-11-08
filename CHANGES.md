@@ -1,7 +1,7 @@
 # Changelog
 Newest updates are at the top of this file
 
-## 2.2.1
+## 2.2.1 (2019-11-08)
 - Update dependencies to Spring Boot 2.2.1
 - Update dependencies to Spring Framework 5.2.1
 
