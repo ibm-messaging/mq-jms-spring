@@ -1,6 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.2.2 (2019-12-05)
+- Update dependencies to MQ V9.1.4
+- Update dependencies to Spring Boot 2.2.2
+- Update dependencies to Spring Framework 5.2.2
+- Update dependencies to PooledJMS 1.1.0
+
 ## 2.2.1 (2019-11-08)
 - Update dependencies to Spring Boot 2.2.1
 - Update dependencies to Spring Framework 5.2.1

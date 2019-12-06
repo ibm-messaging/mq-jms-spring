@@ -21,7 +21,7 @@ Gradle:
     }
 
     dependencies {
-        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.2.0'
+        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.2.2'
     }
 
 Maven:
@@ -30,7 +30,7 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.2.0</version>
+  <version>2.2.2</version>
 </dependency>
 ```
 
@@ -228,6 +228,11 @@ You may obtain a copy of the license at
 Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis,
 without warranties or conditions of any kind, either express or implied. See the license for the specific language governing
 permissions and limitations under the license.
+
+### Health Warning
+This package is provided as-is with no guarantees of support or updates. 
+There are also no guarantees of compatibility with any future versions of the package; 
+the API is subject to change based on any feedback. Versioned releases are made to assist with using stable APIs.
 
 ### Issues
 
