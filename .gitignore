@@ -18,9 +18,7 @@ out
 *.rar
 
 # Various things about the gradle wrapper and local configuration
-gradlew*
 .gradle
-gradle/
 .settings
 **/build/
 

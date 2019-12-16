@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.2.2 (still) (2019-12-20)
+- Add a sample program (no new version needed)
+
 ## 2.2.2 (2019-12-05)
 - Update dependencies to MQ V9.1.4
 - Update dependencies to Spring Boot 2.2.2

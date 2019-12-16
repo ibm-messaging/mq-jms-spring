@@ -44,9 +44,8 @@ The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
 is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.2.1.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
 
-The same application code from that example ought to work with MQ, with the simple replacement of the
-messaging provider in its dependency to point at this package, and changing the queue name ("mailbox" in
-that example) to "DEV.QUEUE.1", which is created automatically in the Docker-packaged MQ server.
+A simple example program using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh program
+compiles and executes it. The application.properties file in that tree may need modification for your environment.
 
 Essentially what gets configured from this package are a ConnectionFactory which Spring's JmsTemplate implementation
 exploits to provide a simpler interface, and a MessageListener.
@@ -230,8 +229,8 @@ without warranties or conditions of any kind, either express or implied. See the
 permissions and limitations under the license.
 
 ### Health Warning
-This package is provided as-is with no guarantees of support or updates. 
-There are also no guarantees of compatibility with any future versions of the package; 
+This package is provided as-is with no guarantees of support or updates.
+There are also no guarantees of compatibility with any future versions of the package;
 the API is subject to change based on any feedback. Versioned releases are made to assist with using stable APIs.
 
 ### Issues
