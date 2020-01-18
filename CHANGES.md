@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.2.3
+- Update dependencies to Spring Boot 2.2.3
+- Update dependencies to Spring Framework 5.2.3
+
 ## 2.2.2 (still) (2019-12-20)
 - Add a sample program (no new version needed)
 
