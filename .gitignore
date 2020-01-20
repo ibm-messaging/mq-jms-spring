@@ -50,6 +50,7 @@ t2
 t.out
 m/
 .m/
+tests.untracked/
 
 # This has private signature/password information
 gradle.properties
