@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.2.4
+- Update dependencies to Spring Boot 2.2.4
+
 ## 2.2.3
 - Update dependencies to Spring Boot 2.2.3
 - Update dependencies to Spring Framework 5.2.3
