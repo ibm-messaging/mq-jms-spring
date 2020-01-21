@@ -42,7 +42,7 @@ level of the artifact at version 0.0.4.
 
 The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
-is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.2.1.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
+is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/5.2.3.RELEASE/spring-framework-reference/integration.html#jms-jmstemplate)
 
 A simple example program using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh program
 compiles and executes it. The application.properties file in that tree may need modification for your environment.
