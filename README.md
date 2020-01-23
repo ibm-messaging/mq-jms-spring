@@ -21,7 +21,7 @@ Gradle:
     }
 
     dependencies {
-        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.2.3'
+        compile group: 'com.ibm.mq', name: 'mq-jms-spring-boot-starter', version: '2.2.4'
     }
 
 Maven:
@@ -30,7 +30,7 @@ Maven:
 <dependency>
   <groupId>com.ibm.mq</groupId>
   <artifactId>mq-jms-spring-boot-starter</artifactId>
-  <version>2.2.3</version>
+  <version>2.2.4</version>
 </dependency>
 ```
 
