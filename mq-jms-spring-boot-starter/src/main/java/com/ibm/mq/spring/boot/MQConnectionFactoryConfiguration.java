@@ -35,11 +35,11 @@ import com.ibm.mq.jms.MQConnectionFactory;
 /**
  * Configuration for IBM MQ {@link ConnectionFactory}.
  */
-@Configuration
+@Configuration(proxyBeanMethods=false)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQConnectionFactoryConfiguration {
 
-  @Configuration
+  @Configuration(proxyBeanMethods=false)
   @ConditionalOnClass({ CachingConnectionFactory.class })
   @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "false", matchIfMissing = true)
   static class RegularMQConnectionFactoryConfiguration {
@@ -76,7 +76,7 @@ class MQConnectionFactoryConfiguration {
     return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
   }
 
-  @Configuration
+  @Configuration(proxyBeanMethods=false)
   @ConditionalOnClass({ JmsPoolConnectionFactory.class, PooledObject.class })
   static class PooledMQConnectionFactoryConfiguration {
 

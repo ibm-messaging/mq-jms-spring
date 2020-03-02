@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 import com.ibm.mq.jms.MQConnectionFactory;
 
 
-@Configuration
+@Configuration(proxyBeanMethods=false)
 @ConditionalOnProperty(prefix="spring.jta", value="enabled", matchIfMissing=true)
 @AutoConfigureBefore(JmsAutoConfiguration.class)
 @AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class})

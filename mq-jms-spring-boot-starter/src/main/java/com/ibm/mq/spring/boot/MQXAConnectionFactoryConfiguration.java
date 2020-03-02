@@ -33,7 +33,7 @@ import com.ibm.mq.jms.MQXAConnectionFactory;
  * Configuration for IBM MQ XA {@link ConnectionFactory}.
  * The MQXAConnectionFactory is a subclass of MQConnectionFactory.
  */
-@Configuration
+@Configuration(proxyBeanMethods=false)
 @ConditionalOnBean(XAConnectionFactoryWrapper.class)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQXAConnectionFactoryConfiguration {
