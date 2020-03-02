@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2019 IBM Corp. All rights reserved.
+ * Copyright © 2018,2020 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -13,6 +13,9 @@
  */
 
 package com.ibm.mq.spring.boot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,200 +44,279 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties(prefix = "ibm.mq")
 public class MQConfigurationProperties {
 
-	/**
-	 * MQ Queue Manager name
-	 */
-	private String queueManager = "QM1";
+  /**
+   * MQ Queue Manager name
+   */
+  private String queueManager = "QM1";
 
-	/**
-	 * Channel - for example "SYSTEM.DEF.SVRCONN"
-	 **/
-	private String channel = "DEV.ADMIN.SVRCONN";
+  /**
+   * Channel - for example "SYSTEM.DEF.SVRCONN"
+   **/
+  private String channel = "DEV.ADMIN.SVRCONN";
 
-	/**
-	 * Connection Name - hostname or address and port. Can be comma-separated list.
-	 * Format like 'system.example.com(1414),system2.example.com(1414)'
-	 **/
-	private String connName = "localhost(1414)";
+  /**
+   * Connection Name - hostname or address and port. Can be comma-separated list.
+   * Format like 'system.example.com(1414),system2.example.com(1414)'
+   **/
+  private String connName = "localhost(1414)";
 
-	/**
-	 * MQ Client ID
-	 */
-	private String clientId;
-	
-	/**
+  /**
+   * MQ Client ID
+   */
+  private String clientId;
+
+  /**
    * MQ Application Name
    */
   private String applicationName;
 
-	/**
-	 * MQ user name
-	 */
-	private String user = "admin";
+  /**
+   * MQ user name
+   */
+  private String user = "admin";
 
-	/**
-	 * MQ password
-	 */
-	private String password = "passw0rd";
+  /**
+   * MQ password
+   */
+  private String password = "passw0rd";
 
-	/**
-	 * Override the authentication mode. This
-	 * should not normally be needed with current maintenance levels of MQ V8 or V9, but some earlier levels
-	 * sometimes got get it wrong and then this flag can be set to "false".
-	 *
-	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
-	 */
-	private boolean userAuthenticationMQCSP = true;
+  /**
+   * Override the authentication mode. This
+   * should not normally be needed with current maintenance levels of MQ V8 or V9, but some earlier levels
+   * sometimes got get it wrong and then this flag can be set to "false".
+   *
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
+   */
+  private boolean userAuthenticationMQCSP = true;
 
-	/**
-	 * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
-	 * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-	 *
-	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
-	 */
-	private String sslCipherSuite;
+  /**
+   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
+   * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+   *
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
+   */
+  private String sslCipherSuite;
 
-	/**
-	 * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
-	 * For example, "ECDHE_RSA_AES_256_GCM_SHA384"
-	 *
-	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
-	 */
-	private String sslCipherSpec;
+  /**
+   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
+   * For example, "ECDHE_RSA_AES_256_GCM_SHA384"
+   *
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
+   */
+  private String sslCipherSpec;
 
-	/**
-	 * Type a distinguished name skeleton that must match that provided by the queue manager.
-	 *
-	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q112720_.htm">the KnowledgeCenter</a>
-	 */
-	private String sslPeerName;
+  /**
+   * Type a distinguished name skeleton that must match that provided by the queue manager.
+   *
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q112720_.htm">the KnowledgeCenter</a>
+   */
+  private String sslPeerName;
 
-	/**
-	 * Set to true for the IBM JRE CipherSuite name maps; set to false to use the Oracle JRE CipherSuite mapping
-	 */
-	private boolean useIBMCipherMappings = true;
+  /**
+   * Set to true for the IBM JRE CipherSuite name maps; set to false to use the Oracle JRE CipherSuite mapping
+   */
+  private boolean useIBMCipherMappings = true;
 
-	/**
-	 * Enter the uniform resource locator (URL) that identifies the name and location of the file that contains
-	 * the client channel definition table and specifies how the file can be accessed.
-	 * You must set a value for either the Channel property or for the Client Channel Definition Table URL property but not both.
-	 * For example, "file:///home/admdata/ccdt1.tab"
-	 *
-	 * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q032510_.html">the KnowledgeCenter</a>
-	 */
-	private String ccdtUrl;
+  /**
+   * Enter the uniform resource locator (URL) that identifies the name and location of the file that contains
+   * the client channel definition table and specifies how the file can be accessed.
+   * You must set a value for either the Channel property or for the Client Channel Definition Table URL property but not both.
+   * For example, "file:///home/admdata/ccdt1.tab"
+   *
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q032510_.html">the KnowledgeCenter</a>
+   */
+  private String ccdtUrl;
 
-	@NestedConfigurationProperty
-	private JmsPoolConnectionFactoryProperties pool = new JmsPoolConnectionFactoryProperties();
+  /**
+   * The prefix to be used to form the name of an MQ dynamic queue.
+   */
+  private String tempQPrefix = null;
 
+  /**
+   * The prefix to be used to form the name of an MQ dynamic topic.
+   */
+  private String tempTopicPrefix = null;
 
-	public String getQueueManager() {
-		return queueManager;
-	}
+  /**
+   * The name of a model queue for creating temporary destinations.
+   */
+  private String tempModel = null;
 
-	public void setQueueManager(String queueManager) {
-		this.queueManager = queueManager;
-	}
+  /**
+   * Indicates whether FIPS-certified algorithms must be used
+   */
+  private boolean sslFIPSRequired = false;
 
-	public String getChannel() {
-		return channel;
-	}
+  /**
+   * The reset count of the SSL key.
+   */
+  private int sslKeyResetCount = -1;
 
-	public void setChannel(String channel) {
-		this.channel = channel;
-	}
+  /**
+   * Additional CF properties that are not explicitly known can be provided 
+   * with the format "ibm.mq.properties.WMQ_SOME_PROPERTY=SOME_VALUE". Strings,
+   * integers and true/false values are recognised.
+   */
+  private Map<String, String> additionalProperties = new HashMap();
 
-	public String getConnName() {
-		return connName;
-	}
+  @NestedConfigurationProperty
+  private JmsPoolConnectionFactoryProperties pool = new JmsPoolConnectionFactoryProperties();
 
-	public void setConnName(String connName) {
-		this.connName = connName;
-	}
+  public String getQueueManager() {
+    return queueManager;
+  }
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
-	}
+  public void setQueueManager(String queueManager) {
+    this.queueManager = queueManager;
+  }
 
-	public String getClientId() {
-		return clientId;
-	}
-	
-	 public void setApplicationName(String applicationName) {
-	    this.applicationName = applicationName;
-	  }
+  public String getChannel() {
+    return channel;
+  }
 
-	  public String getApplicationName() {
-	    return applicationName;
-	  }
+  public void setChannel(String channel) {
+    this.channel = channel;
+  }
 
-	public String getUser() {
-		return user;
-	}
+  public String getConnName() {
+    return connName;
+  }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+  public void setConnName(String connName) {
+    this.connName = connName;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public String getClientId() {
+    return clientId;
+  }
 
-	public String getSslCipherSuite() {
-		return sslCipherSuite;
-	}
+  public void setApplicationName(String applicationName) {
+    this.applicationName = applicationName;
+  }
 
-	public void setSslCipherSuite(String sslCipherSuite) {
-		this.sslCipherSuite = sslCipherSuite;
-	}
+  public String getApplicationName() {
+    return applicationName;
+  }
 
-	public String getSslCipherSpec() {
-		return sslCipherSpec;
-	}
+  public String getUser() {
+    return user;
+  }
 
-	public void setSslCipherSpec(String sslCipherSpec) {
-		this.sslCipherSpec = sslCipherSpec;
-	}
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-	public boolean isUseIBMCipherMappings() {
-		return useIBMCipherMappings;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
-		System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
-		this.useIBMCipherMappings = useIBMCipherMappings;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	public boolean isUserAuthenticationMQCSP() {
-		return userAuthenticationMQCSP;
-	}
+  public String getSslCipherSuite() {
+    return sslCipherSuite;
+  }
 
-	public void setUserAuthenticationMQCSP(boolean userAuthenticationMQCSP) {
-		this.userAuthenticationMQCSP = userAuthenticationMQCSP;
-	}
+  public void setSslCipherSuite(String sslCipherSuite) {
+    this.sslCipherSuite = sslCipherSuite;
+  }
 
-	public String getSslPeerName() {
-		return sslPeerName;
-	}
+  public String getSslCipherSpec() {
+    return sslCipherSpec;
+  }
 
-	public void setSslPeerName(String sslPeerName) {
-		this.sslPeerName = sslPeerName;
-	}
+  public void setSslCipherSpec(String sslCipherSpec) {
+    this.sslCipherSpec = sslCipherSpec;
+  }
 
-	public String getCcdtUrl() {
-		return ccdtUrl;
-	}
+  public boolean isUseIBMCipherMappings() {
+    return useIBMCipherMappings;
+  }
 
-	public void setCcdtUrl(String ccdtUrl) {
-		this.ccdtUrl = ccdtUrl;
-	}
+  public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
+    System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
+    this.useIBMCipherMappings = useIBMCipherMappings;
+  }
 
-	public JmsPoolConnectionFactoryProperties getPool() {
-		return pool;
-	}
+  public boolean isUserAuthenticationMQCSP() {
+    return userAuthenticationMQCSP;
+  }
 
+  public void setUserAuthenticationMQCSP(boolean userAuthenticationMQCSP) {
+    this.userAuthenticationMQCSP = userAuthenticationMQCSP;
+  }
+
+  public String getSslPeerName() {
+    return sslPeerName;
+  }
+
+  public void setSslPeerName(String sslPeerName) {
+    this.sslPeerName = sslPeerName;
+  }
+
+  public String getCcdtUrl() {
+    return ccdtUrl;
+  }
+
+  public void setCcdtUrl(String ccdtUrl) {
+    this.ccdtUrl = ccdtUrl;
+  }
+
+  public JmsPoolConnectionFactoryProperties getPool() {
+    return pool;
+  }
+
+  public String getTempQPrefix() {
+    return tempQPrefix;
+  }
+
+  public void setTempQPrefix(String tempQPrefix) {
+    this.tempQPrefix = tempQPrefix;
+  }
+
+  public String getTempTopicPrefix() {
+    return tempTopicPrefix;
+  }
+
+  public void setTempTopicPrefix(String tempTopicPrefix) {
+    this.tempTopicPrefix = tempTopicPrefix;
+  }
+
+  public String getTempModel() {
+    return tempModel;
+  }
+
+  public void setTempModel(String tempModel) {
+    this.tempModel = tempModel;
+  }
+
+  public boolean isSslFIPSRequired() {
+    return sslFIPSRequired;
+  }
+
+  public void setSslFIPSRequired(boolean sslFIPSRequired) {
+    this.sslFIPSRequired = sslFIPSRequired;
+  }
+
+  public int getSslKeyResetCount() {
+    return sslKeyResetCount;
+  }
+
+  public void setSslKeyResetCount(int sslKeyResetCount) {
+    this.sslKeyResetCount = sslKeyResetCount;
+  }
+  
+  
+  public Map<String, String> getAdditionalProperties() {
+    return additionalProperties;
+  }
+
+  public void setAdditionalProperties(Map<String, String> properties) {
+    this.additionalProperties = properties;
+  }
 }

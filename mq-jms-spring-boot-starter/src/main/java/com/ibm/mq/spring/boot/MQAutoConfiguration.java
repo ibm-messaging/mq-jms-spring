@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2019 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2020 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
 import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration;
@@ -33,7 +32,6 @@ import com.ibm.mq.jms.MQConnectionFactory;
 
 
 @Configuration(proxyBeanMethods=false)
-@ConditionalOnProperty(prefix="spring.jta", value="enabled", matchIfMissing=true)
 @AutoConfigureBefore(JmsAutoConfiguration.class)
 @AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class})
 @ConditionalOnClass({ ConnectionFactory.class, MQConnectionFactory.class })
@@ -41,5 +39,4 @@ import com.ibm.mq.jms.MQConnectionFactory;
 @EnableConfigurationProperties({MQConfigurationProperties.class, JmsProperties.class})
 @Import({ MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
 public class MQAutoConfiguration {
-
 }

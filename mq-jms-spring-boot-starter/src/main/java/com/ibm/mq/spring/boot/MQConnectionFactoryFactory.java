@@ -17,6 +17,7 @@ package com.ibm.mq.spring.boot;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.JMSException;
 
@@ -27,7 +28,7 @@ import com.ibm.msg.client.wmq.WMQConstants;
  * Factory to create a {@link MQConnectionFactory} instance from properties defined in {@link MQConfigurationProperties}.
  */
 public class MQConnectionFactoryFactory {
-
+ 
   private final MQConfigurationProperties properties;
 
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
@@ -42,11 +43,11 @@ public class MQConnectionFactoryFactory {
   // for both direct and client connections.
   // 
   // If you use TLS for client connectivity, most properties related to that
-  // (keystore, certificates, ciphers etc) must be set independently. That could be done in a customizer() method.
+  // (keystore, certificates etc) must be set independently. That could be done in a customizer() method.
   // Keystores are often set in global properties defined by -D options on the command line. 
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
-   
+
     try {
       T cf = createConnectionFactoryInstance(factoryClass);
 
@@ -107,6 +108,63 @@ public class MQConnectionFactoryFactory {
       if (!isNullOrEmpty(this.properties.getSslPeerName())) {
         cf.setStringProperty(WMQConstants.WMQ_SSL_PEER_NAME, this.properties.getSslPeerName());
       }
+      cf.setBooleanProperty(WMQConstants.WMQ_SSL_FIPS_REQUIRED,this.properties.isSslFIPSRequired());
+      Integer vi = this.properties.getSslKeyResetCount();
+      if (vi != -1) {
+        cf.setIntProperty(WMQConstants.WMQ_SSL_KEY_RESETCOUNT, vi);
+      }
+
+      if (!isNullOrEmpty(this.properties.getTempQPrefix())) {
+        cf.setStringProperty(WMQConstants.WMQ_TEMP_Q_PREFIX, this.properties.getTempQPrefix());
+      }
+      if (!isNullOrEmpty(this.properties.getTempTopicPrefix())) {
+        cf.setStringProperty(WMQConstants.WMQ_TEMP_TOPIC_PREFIX, this.properties.getTempTopicPrefix());
+      }
+      if (!isNullOrEmpty(this.properties.getTempModel())) {
+        cf.setStringProperty(WMQConstants.WMQ_TEMPORARY_MODEL, this.properties.getTempModel());
+      }
+      
+      /*
+       * Additional properties that are not in the standard recognised set can be put onto the
+       * CF via a map in the external properties definitions. Use the format
+       * "ibm.mq.additionalProperties.WMQ_CONSTANT_NAME=value". There is no error checking on the
+       * property name or value. If the value looks like a number, we treat it as such.
+       * Similarly if the value is TRUE/FALSE then that is processed as a boolean.
+       * So you cannot try to set a string property that appears to be an integer. 
+       * Symbols representing the value of integer attributes cannot be used - the real
+       * number must be used. This may reduce the need for a customizer method in application
+       * code.
+       */
+      Map<String, String> additionalProperties = this.properties.getAdditionalProperties();
+      for (String k : additionalProperties.keySet()) {
+        String v = additionalProperties.get(k);
+        Boolean vb = null;
+        vi = null;
+
+        try {
+          vi = Integer.valueOf(v);
+          cf.setIntProperty(k, vi);
+          //System.out.printf("Additional Props: key=%s Int value=%d\n", k, vi);
+        }
+        catch (NumberFormatException e) {
+        }
+
+        if (vi == null) {
+          // Can't use Boolean.valueOf(v) directly because we need to know it
+          // really does match TRUE/FALSE strings and that method doesn't fail if you
+          // give it something else (it just returns 'false').
+          if (v.toUpperCase().equals("TRUE") || v.toUpperCase().equals("FALSE")) {
+            vb = Boolean.valueOf(v);
+            cf.setBooleanProperty(k, vb);
+            //System.out.printf("Additional Props: key=%s Bool value=%b\n", k, vb);
+          }
+        }
+
+        if (vi == null && vb == null) {
+          cf.setStringProperty(k, v);
+          //System.out.printf("Additional Props: key=%s String value=%s\n", k, v);
+        }
+      }
 
       customize(cf);
       return cf;
@@ -133,6 +191,5 @@ public class MQConnectionFactoryFactory {
       return true;
     else
       return false;
-  }
-  
+  }  
 }
