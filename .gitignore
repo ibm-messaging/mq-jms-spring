@@ -51,6 +51,8 @@ t.out
 m/
 .m/
 tests.untracked/
+tools/
+mqjms.log*
 
 # This has private signature/password information
 gradle.properties

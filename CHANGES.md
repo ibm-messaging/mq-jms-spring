@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.3.0 (2020-05-24)
+- Update dependencies to Spring Boot 2.3.0
+
 ## 2.2.7 (2020-05-08)
 - Update dependencies to Spring Boot 2.2.7
 
