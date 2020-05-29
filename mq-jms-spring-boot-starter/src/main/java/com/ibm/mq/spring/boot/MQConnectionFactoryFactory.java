@@ -127,7 +127,9 @@ public class MQConnectionFactoryFactory {
       /*
        * Additional properties that are not in the standard recognised set can be put onto the
        * CF via a map in the external properties definitions. Use the format
-       * "ibm.mq.additionalProperties.WMQ_CONSTANT_NAME=value". There is no error checking on the
+       * "ibm.mq.additionalProperties.CONSTANT_NAME=value" where the CONSTANT_NAME
+       * is the actual string for the property name. It will often begin
+       * "XMSC". For example "XMSC_WMQ_SECURITY_EXIT". There is no error checking on the
        * property name or value. If the value looks like a number, we treat it as such.
        * Similarly if the value is TRUE/FALSE then that is processed as a boolean.
        * So you cannot try to set a string property that appears to be an integer. 

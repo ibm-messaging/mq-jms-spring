@@ -185,7 +185,7 @@ You may configure a pooled connection factory by using those properties
 | ibm.mq.pool.maxSessionsPerConnection   | Maximum number of pooled sessions. Default is 500                                                                                        |
 | ibm.mq.pool.timeBetweenExpirationCheck | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
 | ibm.mq.pool.useAnonymousProducers      | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
-       
+
 #### Caching connection factory options
 
 Alternatively you may use the default Spring Caching connection factory with the default Spring JMS properties
@@ -212,16 +212,18 @@ can still set its own preferred value.
 
 Additional properties that are not in the recognised sets listed here can be put onto the
 Connection Factory via a map in the external properties definitions. Use the format
-`ibm.mq.additionalProperties.WMQ_CONSTANT_NAME=value`. 
+`ibm.mq.additionalProperties.CONSTANT_NAME=value`.  The CONSTANT_NAME is the
+real string for the property, so it will often begin with "XMSC". For example, the constant MQConstants.WMQ_SECURITY_EXIT has the value "XMSC_WMQ_SECURITY_EXIT"
+and should be written as `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=/var/mqm/exits/myexit`
 
-There is no error checking on the property name or value. This may help with enabling 
+There is no error checking on the property name or value. This may help with enabling
 rarely-used properties and reduce the need for a customizer method in application
 code. See [the KnowledgeCenter](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFactory.ConnectionFactoryProperty.html)
 for a list of all the currently-recognised properties that may be set on a CF - though note that many are now deprecated.
 
 If the value looks like a number, it is treated as such.
 Similarly if the value is TRUE/FALSE then that is processed as a boolean.
-So you cannot try to set a string property that appears to be an integer. 
+So you cannot try to set a string property that appears to be an integer.
 Symbols representing the value of integer attributes cannot be used - the real
 number must be given.
 

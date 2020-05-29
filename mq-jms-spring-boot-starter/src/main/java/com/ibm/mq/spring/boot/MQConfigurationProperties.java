@@ -154,8 +154,13 @@ public class MQConfigurationProperties {
 
   /**
    * Additional CF properties that are not explicitly known can be provided 
-   * with the format "ibm.mq.properties.WMQ_SOME_PROPERTY=SOME_VALUE". Strings,
-   * integers and true/false values are recognised.
+   * with the format "ibm.mq.additionalProperties.SOME_PROPERTY=SOME_VALUE". Strings,
+   * integers and true/false values are recognised. The property is the actual
+   * string for the MQ property, and will usually begin with "XMSC". So for example,
+   * setting the name of a security exit would usually be done in code with 
+   * setStringProperty(MQConstants.WMQ_SECURITY_EXIT) value of that constant is
+   * "XMSC_WMQ_SECURITY_EXIT" so the external property to set will be
+   * "ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=/var/mqm/exits/myexit"
    */
   private Map<String, String> additionalProperties = new HashMap();
 
