@@ -212,9 +212,16 @@ can still set its own preferred value.
 
 Additional properties that are not in the recognised sets listed here can be put onto the
 Connection Factory via a map in the external properties definitions. Use the format
-`ibm.mq.additionalProperties.CONSTANT_NAME=value`.  The CONSTANT_NAME is the
-real string for the property, so it will often begin with "XMSC". For example, the constant MQConstants.WMQ_SECURITY_EXIT has the value "XMSC_WMQ_SECURITY_EXIT"
-and should be written as `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=/var/mqm/exits/myexit`
+`ibm.mq.additionalProperties.CONSTANT_NAME=value`. The CONSTANT_NAME can be either the
+real string for the property, and will often begin with "XMSC", or it can be the variable as known
+in the WMQConstants class.  
+
+For example, the constant WMQConstants.WMQ_SECURITY_EXIT has the value "XMSC_WMQ_SECURITY_EXIT"
+and can be written either as 
+  `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit`
+or as 
+  `ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit`
+  
 
 There is no error checking on the property name or value. This may help with enabling
 rarely-used properties and reduce the need for a customizer method in application

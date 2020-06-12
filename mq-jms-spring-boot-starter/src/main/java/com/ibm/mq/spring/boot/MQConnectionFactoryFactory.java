@@ -14,12 +14,16 @@
 
 package com.ibm.mq.spring.boot;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
@@ -29,14 +33,16 @@ import com.ibm.msg.client.wmq.WMQConstants;
  */
 public class MQConnectionFactoryFactory {
  
-  private final MQConfigurationProperties properties;
+  private final MQConfigurationProperties properties;        
 
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
+  private Logger logger = LoggerFactory.getLogger(MQConnectionFactoryFactory.class);
 
   @SuppressWarnings("unchecked")
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     this.properties = properties;
     this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
+   
   }
 
   // There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
@@ -128,8 +134,10 @@ public class MQConnectionFactoryFactory {
        * Additional properties that are not in the standard recognised set can be put onto the
        * CF via a map in the external properties definitions. Use the format
        * "ibm.mq.additionalProperties.CONSTANT_NAME=value" where the CONSTANT_NAME
-       * is the actual string for the property name. It will often begin
-       * "XMSC". For example "XMSC_WMQ_SECURITY_EXIT". There is no error checking on the
+       * is either the actual string for the property name or the WMQConstants variable name
+       * The real property value will often begin "XMSC". For example "XMSC_WMQ_SECURITY_EXIT". 
+       * 
+       * There is no error checking on the
        * property name or value. If the value looks like a number, we treat it as such.
        * Similarly if the value is TRUE/FALSE then that is processed as a boolean.
        * So you cannot try to set a string property that appears to be an integer. 
@@ -142,11 +150,29 @@ public class MQConnectionFactoryFactory {
         String v = additionalProperties.get(k);
         Boolean vb = null;
         vi = null;
+        String key = k;
+        
+        // If the property looks like a variable name, try to look it up
+        // in the WMQConstants class.
+        if (key.startsWith("WMQ_")) {
+          try {
+            Field f = WMQConstants.class.getField(key);          
+            if (f != null) {
+              Object o = f.get(new Object());
+              if (o != null && o instanceof String) {
+                key = (String)o;
+              }
+            }
+          
+          } catch (Throwable e) {
+            logger.error("Error trying to find value of property " + k,e);
+          }
+        } 
 
         try {
           vi = Integer.valueOf(v);
-          cf.setIntProperty(k, vi);
-          //System.out.printf("Additional Props: key=%s Int value=%d\n", k, vi);
+          cf.setIntProperty(key, vi);
+          //System.out.printf("Additional Props: key=%s Int value=%d\n", key, vi);
         }
         catch (NumberFormatException e) {
         }
@@ -157,14 +183,14 @@ public class MQConnectionFactoryFactory {
           // give it something else (it just returns 'false').
           if (v.toUpperCase().equals("TRUE") || v.toUpperCase().equals("FALSE")) {
             vb = Boolean.valueOf(v);
-            cf.setBooleanProperty(k, vb);
-            //System.out.printf("Additional Props: key=%s Bool value=%b\n", k, vb);
+            cf.setBooleanProperty(key, vb);
+            //System.out.printf("Additional Props: key=%s Bool value=%b\n", key, vb);
           }
         }
 
         if (vi == null && vb == null) {
-          cf.setStringProperty(k, v);
-          //System.out.printf("Additional Props: key=%s String value=%s\n", k, v);
+          cf.setStringProperty(key, v);
+          //System.out.printf("Additional Props: key=%s String value=%s\n", key, v);
         }
       }
 

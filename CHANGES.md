@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.3.1 (2020-06-12)
+- Update dependencies to Spring Boot 2.3.1
+- More flexibility in using the additionalProperties CF configuration
+
 ## 2.3.0 (2020-05-24)
 - Update dependencies to Spring Boot 2.3.0
 
