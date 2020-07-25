@@ -167,7 +167,7 @@ public class MQConfigurationProperties {
    *   "ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit"
    *
    */
-  private Map<String, String> additionalProperties = new HashMap();
+  private Map<String, String> additionalProperties = new HashMap<String,String>();
 
   @NestedConfigurationProperty
   private JmsPoolConnectionFactoryProperties pool = new JmsPoolConnectionFactoryProperties();
