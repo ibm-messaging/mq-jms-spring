@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.3.3 (2020-08-13)
+- Update dependencies to Spring Boot 2.3.3
+- Split CF configuration into separate method
+
 ## 2.3.2 (2020-07-23)
 - Update dependencies to Spring Boot 2.3.2
 - Update dependencies to MQ V9.2
