@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+
+## 2.3.4 (2020-09-18)
+- Update dependencies to Spring Boot 2.3.4
+
 ## 2.3.3 (2020-08-13)
 - Update dependencies to Spring Boot 2.3.3
 - Split CF configuration into separate method

@@ -26,10 +26,10 @@ subprojects {
 
   // Direct Dependencies - give versions here
   ext.mqVersion = '9.2.0.0'
-  ext.springVersion = '5.2.8.RELEASE'
-  ext.springBootVersion = '2.3.3.RELEASE'
+  ext.springVersion = '5.2.9.RELEASE'
+  ext.springBootVersion = '2.3.4.RELEASE'
 
-  ext.pooledJmsVersion = '1.1.2'
+  ext.pooledJmsVersion = '1.2.0'
   ext.jUnitVersion = '4.13'
 
   // The groupid for the compiled jars when uploaded
