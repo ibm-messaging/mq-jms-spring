@@ -114,8 +114,8 @@ If both the channel and connName are not supplied, and the CCDTURL is not suppli
 then a local queue manager is assumed. The CCDTURL property is taken in preference to
 the channel and connName.
 
-Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.dev.doc/q112000_.html)
-and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.
+Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q112000_.html)
+and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.
 
 -   `ibm.mq.clientId`
 -   `ibm.mq.applicationName`
@@ -225,7 +225,7 @@ or as
 
 There is no error checking on the property name or value. This may help with enabling
 rarely-used properties and reduce the need for a customizer method in application
-code. See [the KnowledgeCenter](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFactory.ConnectionFactoryProperty.html)
+code. See [the KnowledgeCenter](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFactory.ConnectionFactoryProperty.html)
 for a list of all the currently-recognised properties that may be set on a CF - though note that many are now deprecated.
 
 If the value looks like a number, it is treated as such.
@@ -236,7 +236,7 @@ number must be given.
 
 ## Related documentation
 
--   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.helphome.v91.doc/WelcomePagev9r1.htm)
+-   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.helphome.v91.doc/WelcomePagev9r1.htm)
 -   [Spring Boot documentation](https://projects.spring.io/spring-boot/)
 -   [Spring Framework documentation](https://projects.spring.io/spring-framework/)
 

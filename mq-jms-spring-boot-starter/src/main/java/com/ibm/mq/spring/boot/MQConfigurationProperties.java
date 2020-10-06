@@ -85,7 +85,7 @@ public class MQConfigurationProperties {
    * should not normally be needed with current maintenance levels of MQ V8 or V9, but some earlier levels
    * sometimes got get it wrong and then this flag can be set to "false".
    *
-   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
    */
   private boolean userAuthenticationMQCSP = true;
 
@@ -93,7 +93,7 @@ public class MQConfigurationProperties {
    * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
    * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
    *
-   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
    */
   private String sslCipherSuite;
 
@@ -101,14 +101,14 @@ public class MQConfigurationProperties {
    * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
    * For example, "ECDHE_RSA_AES_256_GCM_SHA384"
    *
-   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.dev.doc/q113210_.htm">the KnowledgeCenter</a>
    */
   private String sslCipherSpec;
 
   /**
    * Type a distinguished name skeleton that must match that provided by the queue manager.
    *
-   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q112720_.htm">the KnowledgeCenter</a>
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.dev.doc/q112720_.htm">the KnowledgeCenter</a>
    */
   private String sslPeerName;
 
@@ -123,7 +123,7 @@ public class MQConfigurationProperties {
    * You must set a value for either the Channel property or for the Client Channel Definition Table URL property but not both.
    * For example, "file:///home/admdata/ccdt1.tab"
    *
-   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.dev.doc/q032510_.html">the KnowledgeCenter</a>
+   * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.dev.doc/q032510_.html">the KnowledgeCenter</a>
    */
   private String ccdtUrl;
 
