@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.3.5 (2020-10-30)
+- Update KnowledgeCenter URLs to refer to 'latest' version
+- Update dependencies to Spring Boot 2.3.5
 
 ## 2.3.4 (2020-09-18)
 - Update dependencies to Spring Boot 2.3.4

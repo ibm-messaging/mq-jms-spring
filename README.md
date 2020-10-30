@@ -171,9 +171,22 @@ We also have
 | ibm.mq.sslFIPSRequired      | Force FIPS-compliant algorithms to be used (default false)                      |
 | ibm.mq.sslKeyResetCount     | How many bytes to send before resetting the TLS keys                            |
 
+
+#### Caching connection factory options
+
+You may want to use the default Spring Caching connection factory with the default Spring JMS properties. This is now the
+preferred method in Spring for holding JMS objects open, rather than the Pooling options described below.
+
+| Option                              | Description                                      |
+| ----------------------------------- | ------------------------------------------------ |
+| spring.jms.cache.enabled            | Whether to cache sessions                        |
+| spring.jms.cache.consumers          | Whether to cache message consumers               |
+| spring.jms.cache.producers          | Whether to cache message producers               |
+| spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
+
 #### Pooled connection factory options
 
-You may configure a pooled connection factory by using those properties
+Alternatively you may configure a pooled connection factory by using those properties:
 
 | Option                                 | Description                                                                                                                              |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -186,16 +199,8 @@ You may configure a pooled connection factory by using those properties
 | ibm.mq.pool.timeBetweenExpirationCheck | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
 | ibm.mq.pool.useAnonymousProducers      | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
 
-#### Caching connection factory options
-
-Alternatively you may use the default Spring Caching connection factory with the default Spring JMS properties
-
-| Option                              | Description                                      |
-| ----------------------------------- | ------------------------------------------------ |
-| spring.jms.cache.enabled            | Whether to cache sessions                        |
-| spring.jms.cache.consumers          | Whether to cache message consumers               |
-| spring.jms.cache.producers          | Whether to cache message producers               |
-| spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
+These pooling options make use of the [PooledJMS](https://github.com/messaginghub/pooled-jms) implementation. More documentation on
+the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/master/pooled-jms-docs/Configuration.md).
 
 ### JMS Polling Listener Timer configuration
 
@@ -214,14 +219,14 @@ Additional properties that are not in the recognised sets listed here can be put
 Connection Factory via a map in the external properties definitions. Use the format
 `ibm.mq.additionalProperties.CONSTANT_NAME=value`. The CONSTANT_NAME can be either the
 real string for the property, and will often begin with "XMSC", or it can be the variable as known
-in the WMQConstants class.  
+in the WMQConstants class.
 
 For example, the constant WMQConstants.WMQ_SECURITY_EXIT has the value "XMSC_WMQ_SECURITY_EXIT"
-and can be written either as 
+and can be written either as
   `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit`
-or as 
+or as
   `ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit`
-  
+
 
 There is no error checking on the property name or value. This may help with enabling
 rarely-used properties and reduce the need for a customizer method in application
@@ -236,7 +241,7 @@ number must be given.
 
 ## Related documentation
 
--   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.helphome.v91.doc/WelcomePagev9r1.htm)
+-   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest)
 -   [Spring Boot documentation](https://projects.spring.io/spring-boot/)
 -   [Spring Framework documentation](https://projects.spring.io/spring-framework/)
 
