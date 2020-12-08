@@ -1,0 +1,28 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'org.springframework.boot'
+
+// The local, flatDir configuration lets us use a modified version from
+// this repository without needing it released via maven
+repositories {
+  flatDir() {
+    dirs '../../mq-jms-spring-boot-starter'
+  }
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencies {
+  compile("com.ibm.mq:mq-jms-spring-boot-starter:2.4.0")
+}

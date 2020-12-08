@@ -8,12 +8,12 @@
 
 ###### Cleanup from previous runs
 # Kill any old instances of the application
-ps -ef|grep gradle | grep sample1.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
+ps -ef|grep gradle | grep sample2.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
 # and try to clear the queue (assuming it's a local queue manager)
 echo "CLEAR QLOCAL(DEV.QUEUE.1)" | runmqsc -e QM1 >/dev/null 2>&1
 ######
 
 # Now run the program. Build using the gradle wrapper in parent directory
-cd ..
+cd ../..
 
-./gradlew -p samples bootRun
+./gradlew -p samples/s2 bootRun

@@ -17,12 +17,12 @@ apply plugin: 'org.springframework.boot'
 // this repository without needing it released via maven
 repositories {
   flatDir() {
-    dirs '../mq-jms-spring-boot-starter'
+    dirs '../../mq-jms-spring-boot-starter'
   }
   mavenLocal()
   mavenCentral()
 }
 
 dependencies {
-  compile("com.ibm.mq:mq-jms-spring-boot-starter:2.3.5")
+  compile("com.ibm.mq:mq-jms-spring-boot-starter:2.4.0")
 }

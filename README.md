@@ -44,8 +44,8 @@ The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
 is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#jms-jmstemplate)
 
-A simple example program using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh program
-compiles and executes it. The application.properties file in that tree may need modification for your environment.
+Some simple example programs using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh program in
+each subdirectory compiles and executes it. The application.properties files in that tree may need modification for your environment.
 
 Essentially what gets configured from this package are a ConnectionFactory which Spring's JmsTemplate implementation
 exploits to provide a simpler interface, and a MessageListener.
@@ -103,16 +103,17 @@ The queue manager name is given as
 
 -   `ibm.mq.queueManager`
 
-For client connections to a queue manager, you must also set either
+For client connections to a queue manager, you must also have either
 
 -   `ibm.mq.channel`
 -   `ibm.mq.connName`
     or
 -   `ibm.mq.ccdtUrl`
 
-If both the channel and connName are not supplied, and the CCDTURL is not supplied,
+If both the channel and connName are empty, and the CCDTURL is not supplied,
 then a local queue manager is assumed. The CCDTURL property is taken in preference to
-the channel and connName.
+the channel and connName. The channel and connName have non-blank defaults, so must be
+explicitly set to empty strings if you do not wish them to be used. 
 
 Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q112000_.html)
 and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.

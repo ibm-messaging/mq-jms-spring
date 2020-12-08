@@ -1,6 +1,11 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.4.0 (2020-12-04)
+- Update dependencies to Spring Boot 2.4.0
+- Update dependencies to MQ 9.2.1
+- Move original sample to a subdirectory and add another sample showing transactions
+
 ## 2.3.5 (2020-10-30)
 - Update KnowledgeCenter URLs to refer to 'latest' version
 - Update dependencies to Spring Boot 2.3.5
