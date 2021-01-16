@@ -13,6 +13,12 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 
+// The designated version is in an external file. Read its contents here.
+// Since the RUNME.sh file puts us in the repo root, the file appears in 
+// current directory.
+ext.starterVersion = new File('.', 'VERSION').text.trim()
+
+
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {
@@ -24,5 +30,5 @@ repositories {
 }
 
 dependencies {
-  compile("com.ibm.mq:mq-jms-spring-boot-starter:2.4.1")
+  compile(group: "com.ibm.mq", name:"mq-jms-spring-boot-starter",version: starterVersion)
 }

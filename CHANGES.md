@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.4.2 (2021-01-16)
+- Update dependencies to Spring Boot 2.4.2
+
 ## N/A   (2020-12-16)
 - Add a request/reply sample
 
