@@ -50,9 +50,10 @@ import org.springframework.jms.annotation.JmsListener;
 @ConditionalOnClass({ JmsProperties.Listener.class, JmsListener.class })
 @ConditionalOnMissingBean(JmsListener.class)
 public class MQConfigurationListenerDefault implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+  
   @Autowired
   private final Long defaultReceiveTimeout = 30 * 1000L; // 30 seconds
-
+  
   // There are a number of formats for the property name supported by Spring.
   // This set includes the recommended variants.
   private static String lcPrefix = "spring.jms.listener.";

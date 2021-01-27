@@ -20,6 +20,8 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.commons.pool2.PooledObject;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,7 +40,8 @@ import com.ibm.mq.jms.MQConnectionFactory;
 @Configuration(proxyBeanMethods=false)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQConnectionFactoryConfiguration {
-
+  private static Logger logger = LoggerFactory.getLogger(MQConnectionFactoryConfiguration.class);
+  
   @Configuration(proxyBeanMethods=false)
   @ConditionalOnClass({ CachingConnectionFactory.class })
   @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "false", matchIfMissing = true)
@@ -48,7 +51,7 @@ class MQConnectionFactoryConfiguration {
     @ConditionalOnProperty(prefix = "spring.jms.cache", name = "enabled", havingValue = "false")
     public MQConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
-
+      logger.trace("Creating single MQConnectionFactory");
       return createConnectionFactory(properties, factoryCustomizers);
     }
 
@@ -65,6 +68,7 @@ class MQConnectionFactoryConfiguration {
       connectionFactory.setCacheConsumers(cacheProperties.isConsumers());
       connectionFactory.setCacheProducers(cacheProperties.isProducers());
       connectionFactory.setSessionCacheSize(cacheProperties.getSessionCacheSize());
+      logger.trace("Creating caching MQConnectionFactory");
 
       return connectionFactory;
     }
@@ -86,6 +90,7 @@ class MQConnectionFactoryConfiguration {
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
       MQConnectionFactory connectionFactory = createConnectionFactory(properties, factoryCustomizers);
+      logger.trace("Creating pooled MQConnectionFactory");
 
       return create(connectionFactory, properties.getPool());
     }

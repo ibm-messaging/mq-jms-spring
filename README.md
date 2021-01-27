@@ -113,7 +113,7 @@ For client connections to a queue manager, you must also have either
 If both the channel and connName are empty, and the CCDTURL is not supplied,
 then a local queue manager is assumed. The CCDTURL property is taken in preference to
 the channel and connName. The channel and connName have non-blank defaults, so must be
-explicitly set to empty strings if you do not wish them to be used. 
+explicitly set to empty strings if you do not wish them to be used.
 
 Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q112000_.html)
 and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.
@@ -239,6 +239,12 @@ Similarly if the value is TRUE/FALSE then that is processed as a boolean.
 So you cannot try to set a string property that appears to be an integer.
 Symbols representing the value of integer attributes cannot be used - the real
 number must be given.
+
+## Logging
+The package makes use of the logging capabilities within Spring. You can enable
+tracing of this specific component in your application's properties file by setting
+`logging.level.com.ibm.mq.spring.boot=TRACE`. Otherwise it uses the standard
+inheritance of logging configuration from `logging.level.root`downwards.
 
 ## Related documentation
 

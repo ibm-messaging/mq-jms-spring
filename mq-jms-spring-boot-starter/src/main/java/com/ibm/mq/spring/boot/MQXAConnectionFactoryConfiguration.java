@@ -18,6 +18,8 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,16 +39,20 @@ import com.ibm.mq.jms.MQXAConnectionFactory;
 @ConditionalOnBean(XAConnectionFactoryWrapper.class)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQXAConnectionFactoryConfiguration {
+  private static Logger logger = LoggerFactory.getLogger(MQXAConnectionFactory.class);
+
 
   @Primary
   @Bean(name = { "jmsConnectionFactory", "xaJmsConnectionFactory" })
   public ConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, XAConnectionFactoryWrapper wrapper) throws Exception {
+    logger.trace("Creating MQXAConnectionFactory");
     MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
     return wrapper.wrapConnectionFactory(connectionFactory);
   }
 
   @Bean
   public ConnectionFactory nonXaJmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+    logger.trace("Creating non-XA MQConnectionFactory");
     return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
   }
 

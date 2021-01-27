@@ -42,12 +42,14 @@ public class MQConnectionFactoryFactory {
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     this.properties = properties;
     this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());  
+    logger.trace("constructor");
   }
 
  
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
 
+    logger.trace("createConnectionFactory for class " + factoryClass.getSimpleName());
     try {
       T cf = createConnectionFactoryInstance(factoryClass);
       
@@ -58,6 +60,7 @@ public class MQConnectionFactoryFactory {
     }
     catch (JMSException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
         | SecurityException ex) {
+      logger.trace("createConnectionFactory : exception " + ex.getMessage());
       throw new IllegalStateException("Unable to create MQConnectionFactory" + ((err != null) ? (": " + err) : ""), ex);
     }
   }
@@ -72,6 +75,8 @@ public class MQConnectionFactoryFactory {
   public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {
     // Should usually provide a queue manager name but it can be empty, to connect to the 
     // default queue manager.
+    logger.trace("configureConnectionFactory");
+    
     String qmName = props.getQueueManager();
     cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
 
@@ -213,11 +218,14 @@ public class MQConnectionFactoryFactory {
 
   private <T extends MQConnectionFactory> T createConnectionFactoryInstance(Class<T> factoryClass)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    logger.trace("createConnectionFactoryInstance for class " + factoryClass.getSimpleName());
     return factoryClass.getConstructor().newInstance();
   }
 
   private void customize(MQConnectionFactory connectionFactory) {
+    int i=0;
     for (MQConnectionFactoryCustomizer factoryCustomizer : this.factoryCustomizers) {
+      logger.trace("calling factoryCustomizer index: " + i++);
       factoryCustomizer.customize(connectionFactory);
     }
   }
