@@ -13,10 +13,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 
-// The designated version is in an external file. Read its contents here.
-// Since the RUNME.sh file puts us in the repo root, the file appears in 
-// current directory.
-ext.starterVersion = new File('.', 'VERSION').text.trim()
+// The designated version should match the current version in the root of the repo
+ext.starterVersion = '2.4.3'
 
 
 // The local, flatDir configuration lets us use a modified version from

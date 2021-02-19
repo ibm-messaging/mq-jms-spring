@@ -26,11 +26,11 @@ subprojects {
 
   // Direct Dependencies - give versions here
   ext.mqVersion = '9.2.1.0'
-  ext.springVersion = '5.3.3'
-  ext.springBootVersion = '2.4.2'
+  ext.springVersion = '5.3.4'
+  ext.springBootVersion = '2.4.3'
 
   ext.pooledJmsVersion = '1.2.1'
-  ext.jUnitVersion = '4.13.1'
+  ext.jUnitVersion = '4.13.2'
 
   // The groupid for the compiled jars when uploaded
   group = 'com.ibm.mq'

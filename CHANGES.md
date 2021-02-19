@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.4.3 (2021-02-19)
+- Update dependencies to Spring Boot 2.4.3
+- Add trace points for logger
+
 ## 2.4.2 (2021-01-16)
 - Update dependencies to Spring Boot 2.4.2
 
