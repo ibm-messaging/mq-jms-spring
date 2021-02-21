@@ -278,7 +278,8 @@ without warranties or conditions of any kind, either express or implied. See the
 permissions and limitations under the license.
 
 ### Health Warning
-This package is provided as-is with no guarantees of support or updates.
+This package is provided as-is with no guarantees of support or updates. You cannot use
+IBM formal support channels (Cases/PMRs) for assistance with material in this repository.
 There are also no guarantees of compatibility with any future versions of the package;
 the API is subject to change based on any feedback. Versioned releases are made to assist with using stable APIs.
 
@@ -287,7 +288,7 @@ the API is subject to change based on any feedback. Versioned releases are made 
 Before opening a new issue please consider the following:
 
 -   Please try to reproduce the issue using the latest version.
--   Please check the [existing issues](https://github.com/ibm-messaging/mq-spring/issues)
+-   Please check the [existing issues](https://github.com/ibm-messaging/mq-jms-spring/issues)
     to see if the problem has already been reported. Note that the default search
     includes only open issues, but it may already have been closed.
--   When opening a new issue [here in github](../../issues) please complete the template fully.
+-   When opening a new issue [here in github](https://github.com/ibm-messaging/mq-jms-spring/issues) please complete the template fully.

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2020 IBM Corp. All rights reserved.
+ * Copyright © 2018,2021 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -77,6 +77,9 @@ public class MQConnectionFactoryFactory {
     // default queue manager.
     logger.trace("configureConnectionFactory");
     
+    
+    props.traceProperties();
+    
     String qmName = props.getQueueManager();
     cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
 
@@ -149,11 +152,12 @@ public class MQConnectionFactoryFactory {
     }
     
     /*
-     * Additional properties that are not in the standard recognised set can be put onto the
+     * Additional properties that are not in the pre-defined recognised set can be put onto the
      * CF via a map in the external properties definitions. Use the format
      * "ibm.mq.additionalProperties.CONSTANT_NAME=value" where the CONSTANT_NAME
      * is either the actual string for the property name or the WMQConstants variable name
-     * The real property value will often begin "XMSC". For example "XMSC_WMQ_SECURITY_EXIT". 
+     * The real property value will often begin "XMSC". For example "XMSC_WMQ_SECURITY_EXIT".
+     * They are NOT the same as the short strings used by the JMSAdmin program. 
      * 
      * There is no error checking on the
      * property name or value. If the value looks like a number, we treat it as such.
@@ -161,7 +165,7 @@ public class MQConnectionFactoryFactory {
      * So you cannot try to set a string property that appears to be an integer. 
      * Symbols representing the value of integer attributes cannot be used - the real
      * number must be used. This may reduce the need for a customizer method in application
-     * code.
+     * code. Integers can be given either in decimal or with "0x" to indicate hex.
      */
     Map<String, String> additionalProperties = props.getAdditionalProperties();
     for (String k : additionalProperties.keySet()) {
@@ -179,18 +183,22 @@ public class MQConnectionFactoryFactory {
             Object o = f.get(new Object());
             if (o != null && o instanceof String) {
               key = (String)o;
+              logger.trace("Successfully mapped {} to property name {}",k,key);
             }
-          }
-        
+          }        
         } catch (Throwable e) {
           logger.error("Error trying to find value of property " + k,e);
         }
       } 
 
       try {
-        vi = Integer.valueOf(v);
+        if (v.toUpperCase().startsWith("0X")) { 
+          vi = Integer.decode(v); // Could use decode for all values but this reduces the number of strings that might mistakenly match
+        } else {
+          vi = Integer.valueOf(v);
+        }
         cf.setIntProperty(key, vi);
-        //System.out.printf("Additional Props: key=%s Int value=%d\n", key, vi);
+        logger.trace("Using setIntProperty with key {} and value {} [{}]", key, vi, String.format("0x%08X",vi));
       }
       catch (NumberFormatException e) {
       }
@@ -202,18 +210,15 @@ public class MQConnectionFactoryFactory {
         if (v.toUpperCase().equals("TRUE") || v.toUpperCase().equals("FALSE")) {
           vb = Boolean.valueOf(v);
           cf.setBooleanProperty(key, vb);
-          //System.out.printf("Additional Props: key=%s Bool value=%b\n", key, vb);
+          logger.trace("Using setBooleanProperty with key {} and value {}", key, vb);
         }
       }
 
       if (vi == null && vb == null) {
         cf.setStringProperty(key, v);
-        //System.out.printf("Additional Props: key=%s String value=%s\n", key, v);
+        logger.trace("Using setStringProperty with key {} and value {}", key, v);
       }
     }
-    
-
-
   }
 
   private <T extends MQConnectionFactory> T createConnectionFactoryInstance(Class<T> factoryClass)
@@ -225,7 +230,7 @@ public class MQConnectionFactoryFactory {
   private void customize(MQConnectionFactory connectionFactory) {
     int i=0;
     for (MQConnectionFactoryCustomizer factoryCustomizer : this.factoryCustomizers) {
-      logger.trace("calling factoryCustomizer index: " + i++);
+      logger.trace("Calling MQConnectionFactoryCustomizer from class {} ",factoryCustomizer.getClass().getName());
       factoryCustomizer.customize(connectionFactory);
     }
   }

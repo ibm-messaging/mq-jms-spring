@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2021 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -61,14 +61,14 @@ class MQConnectionFactoryConfiguration {
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, JmsProperties jmsProperties) {
 
       JmsProperties.Cache cacheProperties = jmsProperties.getCache();
-
+      
+      logger.trace("Creating caching MQConnectionFactory");
       MQConnectionFactory wrappedConnectionFactory = createConnectionFactory(properties, factoryCustomizers);
 
       CachingConnectionFactory connectionFactory = new CachingConnectionFactory(wrappedConnectionFactory);
       connectionFactory.setCacheConsumers(cacheProperties.isConsumers());
       connectionFactory.setCacheProducers(cacheProperties.isProducers());
       connectionFactory.setSessionCacheSize(cacheProperties.getSessionCacheSize());
-      logger.trace("Creating caching MQConnectionFactory");
 
       return connectionFactory;
     }
@@ -89,8 +89,8 @@ class MQConnectionFactoryConfiguration {
     public JmsPoolConnectionFactory pooledJmsConnectionFactory(MQConfigurationProperties properties,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
-      MQConnectionFactory connectionFactory = createConnectionFactory(properties, factoryCustomizers);
       logger.trace("Creating pooled MQConnectionFactory");
+      MQConnectionFactory connectionFactory = createConnectionFactory(properties, factoryCustomizers);
 
       return create(connectionFactory, properties.getPool());
     }

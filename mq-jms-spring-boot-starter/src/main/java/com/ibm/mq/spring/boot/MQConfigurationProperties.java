@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2020 IBM Corp. All rights reserved.
+ * Copyright © 2018,2021 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -17,6 +17,8 @@ package com.ibm.mq.spring.boot;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -43,6 +45,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(prefix = "ibm.mq")
 public class MQConfigurationProperties {
+
+  private static Logger logger = LoggerFactory.getLogger(MQConfigurationProperties.class);
 
   /**
    * MQ Queue Manager name
@@ -160,7 +164,7 @@ public class MQConfigurationProperties {
    * The property is either the actual string for the MQ property, and will usually begin with "XMSC"
    * Or it can be the name of the variable in the WMQConstants class. So for example,
    * setting the name of a security exit would usually be done in code with 
-   * setStringProperty(WMQConstants.WMQ_SECURITY_EXIT) value of that constant is
+   * setStringProperty(WMQConstants.WMQ_SECURITY_EXIT). The value of that constant is
    * "XMSC_WMQ_SECURITY_EXIT" so the external property to set can be either
    *   "ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit"
    * or
@@ -328,5 +332,46 @@ public class MQConfigurationProperties {
 
   public void setAdditionalProperties(Map<String, String> properties) {
     this.additionalProperties = properties;
+  }
+  
+  
+  public void traceProperties() {
+    if (!logger.isTraceEnabled())
+      return;
+    
+    logger.trace("queueManager    : {}", getQueueManager());
+    logger.trace("applicationName : {}", getApplicationName());
+    logger.trace("ccdtUrl         : {}", getCcdtUrl());
+    logger.trace("channel         : {}", getChannel());
+    logger.trace("clientId        : {}", getClientId());
+    logger.trace("connName        : {}", getConnName());
+    logger.trace("sslCipherSpec   : {}", getSslCipherSpec());
+    logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
+    logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());
+    logger.trace("sslPeerName     : {}", getSslPeerName());
+    logger.trace("tempModel       : {}", getTempModel());
+    logger.trace("tempQPrefix     : {}", getTempQPrefix());
+    logger.trace("tempTopicPrefix : {}", getTempTopicPrefix());
+    logger.trace("user            : \'{}\'", getUser());
+    /* Obviously we don't want to trace a password. But it is OK to indicate whether one has been configured */
+    logger.trace("password        : {}", (getPassword() != null && getPassword().length() > 0) ? "Has been provided" : "Not provided");
+    logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
+    logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
+    logger.trace("userAuthenticationMQCSP: {}", isUserAuthenticationMQCSP());
+
+    if (additionalProperties.size() > 0) {
+      for (String s: additionalProperties.keySet()) {
+        logger.trace("Additional Property - {} : {}",s,additionalProperties.get(s));
+      }
+    }
+    if (pool.isEnabled()) {
+      logger.trace("Pool blockIfFullTimeout         : {}",pool.getBlockIfFullTimeout().toString());
+      logger.trace("Pool idleTimeout                : {}",pool.getIdleTimeout().toString());
+      logger.trace("Pool maxConnections             : {}",pool.getMaxConnections());
+      logger.trace("Pool maxSessionsPerConn         : {}",pool.getMaxSessionsPerConnection());
+      logger.trace("Pool timeBetweenExpirationCheck : {}",pool.getTimeBetweenExpirationCheck().toString());
+    } else {
+      logger.trace("Pooling is disabled");
+    }
   }
 }

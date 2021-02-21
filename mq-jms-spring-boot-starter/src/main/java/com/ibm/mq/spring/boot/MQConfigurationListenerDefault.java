@@ -15,6 +15,8 @@ package com.ibm.mq.spring.boot;
 
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,6 +53,8 @@ import org.springframework.jms.annotation.JmsListener;
 @ConditionalOnMissingBean(JmsListener.class)
 public class MQConfigurationListenerDefault implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
   
+  private static Logger logger = LoggerFactory.getLogger(MQConfigurationListenerDefault.class);
+  
   @Autowired
   private final Long defaultReceiveTimeout = 30 * 1000L; // 30 seconds
   
@@ -73,6 +77,9 @@ public class MQConfigurationListenerDefault implements ApplicationListener<Appli
   @Bean
   @Lazy(false)
   public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+    // Note: trace entries from this method are only emitted if the root logger is enabled as the
+    // MQ-specific logging gets turned on too late. 
+    logger.trace("onApplicationEvent : {}", event.toString());
     try {
       String foundProperty = null;
       Object p = null;
@@ -90,9 +97,12 @@ public class MQConfigurationListenerDefault implements ApplicationListener<Appli
         // If the user has not given any specific value for this attribute, force the new default.
         if (foundProperty == null) {
           Properties props = new Properties();
+          logger.trace("Setting receiveTimeout property {} to {}",timeoutProperties[0],defaultReceiveTimeout);
           props.put(timeoutProperties[0], defaultReceiveTimeout);
           env.getPropertySources().addFirst(new PropertiesPropertySource(this.getClass().getName(), props));
-        } 
+        } else {
+          logger.trace("Not setting receiveTimeout as property {} was found",foundProperty);
+        }
       }
     }
     catch (Throwable e) {
