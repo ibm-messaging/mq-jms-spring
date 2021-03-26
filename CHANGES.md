@@ -1,6 +1,11 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.4.4 (2021-03-26)
+- Update dependencies to Spring Boot 2.4.4
+- Update dependencies to MQ 9.2.2
+- Additional trace points
+
 ## 2.4.3 (2021-02-19)
 - Update dependencies to Spring Boot 2.4.3
 - Add trace points for logger

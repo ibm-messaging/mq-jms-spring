@@ -25,9 +25,9 @@ subprojects {
   apply plugin: 'signing'
 
   // Direct Dependencies - give versions here
-  ext.mqVersion = '9.2.1.0'
-  ext.springVersion = '5.3.4'
-  ext.springBootVersion = '2.4.3'
+  ext.mqVersion = '9.2.2.0'
+  ext.springVersion = '5.3.5'
+  ext.springBootVersion = '2.4.4'
 
   ext.pooledJmsVersion = '1.2.1'
   ext.jUnitVersion = '4.13.2'

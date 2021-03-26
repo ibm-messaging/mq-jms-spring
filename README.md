@@ -234,7 +234,7 @@ rarely-used properties and reduce the need for a customizer method in applicatio
 code. See [the KnowledgeCenter](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFactory.ConnectionFactoryProperty.html)
 for a list of all the currently-recognised properties that may be set on a CF - though note that many are now deprecated.
 
-If the value looks like a number, it is treated as such.
+If the value looks like a number, it is treated as such. You can use hex constants beginning "0X" or decimals for a number.
 Similarly if the value is TRUE/FALSE then that is processed as a boolean.
 So you cannot try to set a string property that appears to be an integer.
 Symbols representing the value of integer attributes cannot be used - the real
@@ -266,7 +266,7 @@ The preferred approach for using this package in other projects will be to use t
 
 ### License
 
-Copyright © 2018, 2020 IBM Corp. All rights reserved.
+Copyright © 2018, 2021 IBM Corp. All rights reserved.
 
 Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.
 You may obtain a copy of the license at

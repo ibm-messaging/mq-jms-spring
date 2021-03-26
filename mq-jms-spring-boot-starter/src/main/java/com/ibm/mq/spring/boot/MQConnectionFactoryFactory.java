@@ -228,7 +228,6 @@ public class MQConnectionFactoryFactory {
   }
 
   private void customize(MQConnectionFactory connectionFactory) {
-    int i=0;
     for (MQConnectionFactoryCustomizer factoryCustomizer : this.factoryCustomizers) {
       logger.trace("Calling MQConnectionFactoryCustomizer from class {} ",factoryCustomizer.getClass().getName());
       factoryCustomizer.customize(connectionFactory);
