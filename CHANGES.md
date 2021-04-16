@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.4.5 (2021-04-16)
+- Update dependencies to Spring Boot 2.4.5
+
 ## 2.4.4 (2021-03-26)
 - Update dependencies to Spring Boot 2.4.4
 - Update dependencies to MQ 9.2.2
