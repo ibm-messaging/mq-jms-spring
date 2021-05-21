@@ -14,7 +14,7 @@ apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '2.4.5'
+ext.starterVersion = '2.5.0'
 
 
 // The local, flatDir configuration lets us use a modified version from
