@@ -156,14 +156,15 @@ public class MQConfigurationProperties {
    */
   private int sslKeyResetCount = -1;
 
+
   /**
-   * Additional CF properties that are not explicitly known can be provided 
+   * Additional CF properties that are not explicitly known can be provided
    * with the format "ibm.mq.additionalProperties.SOME_PROPERTY=SOME_VALUE". Strings,
-   * integers and true/false values are recognised. 
-   * 
+   * integers and true/false values are recognised.
+   *
    * The property is either the actual string for the MQ property, and will usually begin with "XMSC"
    * Or it can be the name of the variable in the WMQConstants class. So for example,
-   * setting the name of a security exit would usually be done in code with 
+   * setting the name of a security exit would usually be done in code with
    * setStringProperty(WMQConstants.WMQ_SECURITY_EXIT). The value of that constant is
    * "XMSC_WMQ_SECURITY_EXIT" so the external property to set can be either
    *   "ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit"
@@ -175,6 +176,9 @@ public class MQConfigurationProperties {
 
   @NestedConfigurationProperty
   private JmsPoolConnectionFactoryProperties pool = new JmsPoolConnectionFactoryProperties();
+
+  @NestedConfigurationProperty
+  private MQConfigurationPropertiesJndi jndi = new MQConfigurationPropertiesJndi();
 
   public String getQueueManager() {
     return queueManager;
@@ -285,6 +289,10 @@ public class MQConfigurationProperties {
     return pool;
   }
 
+  public MQConfigurationPropertiesJndi getJndi() {
+    return jndi;
+  }
+
   public String getTempQPrefix() {
     return tempQPrefix;
   }
@@ -324,8 +332,8 @@ public class MQConfigurationProperties {
   public void setSslKeyResetCount(int sslKeyResetCount) {
     this.sslKeyResetCount = sslKeyResetCount;
   }
-  
-  
+
+
   public Map<String, String> getAdditionalProperties() {
     return additionalProperties;
   }
@@ -333,12 +341,11 @@ public class MQConfigurationProperties {
   public void setAdditionalProperties(Map<String, String> properties) {
     this.additionalProperties = properties;
   }
-  
-  
+
   public void traceProperties() {
     if (!logger.isTraceEnabled())
       return;
-    
+
     logger.trace("queueManager    : {}", getQueueManager());
     logger.trace("applicationName : {}", getApplicationName());
     logger.trace("ccdtUrl         : {}", getCcdtUrl());
@@ -358,6 +365,9 @@ public class MQConfigurationProperties {
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUserAuthenticationMQCSP());
+
+    logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
+    logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
 
     if (additionalProperties.size() > 0) {
       for (String s: additionalProperties.keySet()) {

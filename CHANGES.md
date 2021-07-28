@@ -1,6 +1,11 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.5.3 (2021-06-26)
+- Update dependencies to MQ 9.2.3
+- Update dependencies to Spring Boot 2.5.3
+- Add some JNDI properties for CF configuration (see README) (#72)
+
 ## 2.5.0 (2021-05-21)
 - Update dependencies to Spring Boot 2.5.0
 

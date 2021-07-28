@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 IBM Corp. All rights reserved.
+ * Copyright © 2018,2021 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -25,12 +25,20 @@ buildscript {
     }
 }
 
-dependencies {  
+dependencies {
   compile group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
   compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
   annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
 }
 
 compileJava.dependsOn(processResources)
+
+// This can be useful during development
+/*
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}
+*/
 
 

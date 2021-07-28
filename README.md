@@ -240,7 +240,44 @@ So you cannot try to set a string property that appears to be an integer.
 Symbols representing the value of integer attributes cannot be used - the real
 number must be given.
 
-## Logging
+## JNDI
+Spring already has configuration parameters for the use of a JNDI repository with a JMS program.
+See the [Spring documentation](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/jms.html) for more
+details.
+
+However this package also enables some simple use of JNDI for Connection definitions (but not Destinations, as they are still always
+handled by the core Spring classes).
+
+You can set the `ibm.mq.jndi.providerUrl` and `ibm.mq.jndi.providerContextFactory` attributes to define
+how the lookup is to be carried out. For example,
+
+```
+  ibm.mq.jndi.providerUrl=file:///home/username/mqjms/jndi
+  ibm.mq.jndi.providerContextFactory=com.sun.jndi.fscontext.RefFSContextFactory
+```
+
+If you choose to use this mechanism, all of the other queue manager properties that might be defined in your resource definitions are ignored and not
+traced in order to avoid confusion. They will instead be picked up from the ConnectionFactory definition in JNDI.
+The `queueManager` property is then more accurately used as the ConnectionFactory name used as the lookup. If you are using
+an LDAP JNDI provider, then the CF name will be modified if necessary to always begin with `cn=`.
+
+The `ibm.mq.jndi.additionalProperties` prefix can be used for any other JNDI-related properties that need to be applied to the
+*Context* object. The symbolic name of the field from that Java class can be used. For example,
+
+```
+ibm.mq.jndi.additionalProperties.SECURITY_CREDENTIALS=passw0rd
+```
+results in
+
+```
+  env.put(Context.SECURITY_CREDENTIALS,"passw0rd")
+```
+
+The `MQConnectionFactoryFactory.getJndiContext` method is public so you can use it with your own
+constructed properties object and get access to a JNDI Context object - it might make it easier to work
+with Destinations if you can reuse the same way of getting directory access.
+
+## Logging & Tracing
 The package makes use of the logging capabilities within Spring. You can enable
 tracing of this specific component in your application's properties file by setting
 `logging.level.com.ibm.mq.spring.boot=TRACE`. Otherwise it uses the standard
