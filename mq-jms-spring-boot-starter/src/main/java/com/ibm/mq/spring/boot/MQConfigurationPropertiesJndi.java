@@ -34,7 +34,7 @@ public class MQConfigurationPropertiesJndi {
   /**
    * The name of the class that implements the JNDI lookup. For example,
    *   com.sun.jndi.fscontext.RefFSContextFactory
-   * The implementation of that class must be available in your build application.
+   * The implementation of that class must be available in your built application.
    */
   private String providerContextFactory = null;
 
