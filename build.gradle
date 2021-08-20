@@ -27,7 +27,7 @@ subprojects {
   // Direct Dependencies - give versions here
   ext.mqVersion = '9.2.3.0'
   ext.springVersion = '5.3.9'
-  ext.springBootVersion = '2.5.3'
+  ext.springBootVersion = '2.5.4'
 
   ext.pooledJmsVersion = '1.2.2'
   ext.jUnitVersion = '4.13.2'
