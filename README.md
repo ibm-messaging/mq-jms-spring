@@ -152,6 +152,7 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.tempQPrefix          | The prefix to be used to form the name of an MQ dynamic queue                   |
 | ibm.mq.tempTopicPrefix      | The prefix to be used to form the name of an MQ dynamic topic                   |
 | ibm.mq.tempModel            | The name of a model queue for creating temporary destinations.                  |
+| ibm.mq.defaultReconnect     | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
 
 
 #### TLS related options
@@ -164,6 +165,7 @@ The following options all default to null, but may be used to assist with config
 | ibm.mq.sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
 | ibm.mq.sslPeerName          | Peer Name,    sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME    |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
+| ibm.mq.outboundSNI          | Sets property com.ibm.mq.cfg.SSL.OutboundSNI (use HOSTNAME for Openshift qmgrs) |
 
 We also have
 
@@ -222,8 +224,8 @@ Connection Factory via a map in the external properties definitions. Use the for
 real string for the property, and will often begin with "XMSC", or it can be the variable as known
 in the WMQConstants class.
 
-For example, the constant WMQConstants.WMQ_SECURITY_EXIT has the value "XMSC_WMQ_SECURITY_EXIT"
-and can be written either as
+For example, the constant `WMQConstants.WMQ_SECURITY_EXIT` has the value `"XMSC_WMQ_SECURITY_EXIT"`
+and can be written in the properties file either as
   `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit`
 or as
   `ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit`

@@ -23,6 +23,8 @@ import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProper
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import com.ibm.msg.client.wmq.common.CommonConstants;
+
 /**
  * There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
  * for both direct and client connections. If you use TLS for client connectivity, most properties related to that
@@ -47,6 +49,11 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class MQConfigurationProperties {
 
   private static Logger logger = LoggerFactory.getLogger(MQConfigurationProperties.class);
+
+  // Some system properties that may be set through this package. They are not regular CF properties, but still
+  // affect how connections are made.
+  private static final String PROPERTY_USE_IBM_CIPHER_MAPPINGS = "com.ibm.mq.cfg.useIBMCipherMappings";
+  private static final String PROPERTY_OUTBOUND_SNI = "com.ibm.mq.cfg.SSL.outboundSNI";
 
   /**
    * MQ Queue Manager name
@@ -120,6 +127,19 @@ public class MQConfigurationProperties {
    * Set to true for the IBM JRE CipherSuite name maps; set to false to use the Oracle JRE CipherSuite mapping
    */
   private boolean useIBMCipherMappings = true;
+
+  /**
+   * Set to HOSTNAME for connection to OpenShift queue managers where SNI is important. CHANNEL
+   * can be used for environments where you want to have different certificates associated with different
+   * channels. The property does not get set unless explicitly configured as an external property so we would
+   * otherwise use whatever the default behaviour is in the JMS client.
+   */
+  private String outboundSNI = ""; // HOSTNAME or CHANNEL are the valid alternatives
+
+  /**
+   * Whether to automatically reconnect to the qmgr when in client mode. Values can be YES/NO/QMGR/DISABLED.
+   */
+  private String defaultReconnect = "";
 
   /**
    * Enter the uniform resource locator (URL) that identifies the name and location of the file that contains
@@ -257,8 +277,17 @@ public class MQConfigurationProperties {
   }
 
   public void setUseIBMCipherMappings(boolean useIBMCipherMappings) {
-    System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", Boolean.toString(useIBMCipherMappings));
+    System.setProperty(PROPERTY_USE_IBM_CIPHER_MAPPINGS, Boolean.toString(useIBMCipherMappings));
     this.useIBMCipherMappings = useIBMCipherMappings;
+  }
+
+  public String getOutboundSNI() {
+    return outboundSNI;
+  }
+
+  public void setOutboundSNI(String outboundSNI) {
+    System.setProperty(PROPERTY_OUTBOUND_SNI, outboundSNI);
+    this.outboundSNI = outboundSNI;
   }
 
   public boolean isUserAuthenticationMQCSP() {
@@ -333,6 +362,33 @@ public class MQConfigurationProperties {
     this.sslKeyResetCount = sslKeyResetCount;
   }
 
+  public int getDefaultReconnectValue() {
+    int rc = 0;
+    switch (defaultReconnect.toUpperCase()) {
+    case "QMGR":
+      rc = CommonConstants.WMQ_CLIENT_RECONNECT_Q_MGR;
+      break;
+    case "DISABLED":
+    case "NO":
+      rc = CommonConstants.WMQ_CLIENT_RECONNECT_DISABLED;
+      break;
+    case "YES":
+    case "ANY":
+      rc = CommonConstants.WMQ_CLIENT_RECONNECT;
+      break;
+    default:
+      rc = CommonConstants.WMQ_CLIENT_RECONNECT_AS_DEF;
+      break;
+    }
+    return rc;
+  }
+
+  public String getDefaultReconnect() {
+    return defaultReconnect;
+  }
+  public void setDefaultReconnect(String defaultReconnect) {
+    this.defaultReconnect = defaultReconnect;
+  }
 
   public Map<String, String> getAdditionalProperties() {
     return additionalProperties;
@@ -352,6 +408,7 @@ public class MQConfigurationProperties {
     logger.trace("channel         : {}", getChannel());
     logger.trace("clientId        : {}", getClientId());
     logger.trace("connName        : {}", getConnName());
+    logger.trace("defaultReconnect: \'{}\' [{}]", getDefaultReconnect(),String.format("0x%08X",getDefaultReconnectValue()));
     logger.trace("sslCipherSpec   : {}", getSslCipherSpec());
     logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
     logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());
@@ -361,10 +418,11 @@ public class MQConfigurationProperties {
     logger.trace("tempTopicPrefix : {}", getTempTopicPrefix());
     logger.trace("user            : \'{}\'", getUser());
     /* Obviously we don't want to trace a password. But it is OK to indicate whether one has been configured */
-    logger.trace("password        : {}", (getPassword() != null && getPassword().length() > 0) ? "Has been provided" : "Not provided");
+    logger.trace("password set    : {}", (getPassword() != null && getPassword().length() > 0) ? "YES" : "NO");
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUserAuthenticationMQCSP());
+    logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());
 
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());

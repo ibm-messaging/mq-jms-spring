@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.5.5 (2021-09-24)
+- Add outboundSNI and defaultReconnect properties
+- Update dependencies to Spring Boot 2.5.5
+
 ## 2.5.4 (2021-08-20)
 - Update dependencies to Spring Boot 2.5.4
 

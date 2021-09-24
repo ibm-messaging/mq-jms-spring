@@ -134,9 +134,14 @@ public class MQConnectionFactoryFactory {
         cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
       }
     }
+
     String clientId = props.getClientId();
     if (!isNullOrEmpty(clientId)) {
       cf.setStringProperty(WMQConstants.CLIENT_ID, clientId);
+    }
+
+    if (!isNullOrEmpty(props.getDefaultReconnect())) {
+      cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_OPTIONS, props.getDefaultReconnectValue());
     }
 
     String applicationName = props.getApplicationName();
