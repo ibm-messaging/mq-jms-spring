@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProper
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import com.ibm.msg.client.wmq.common.CommonConstants;
+import com.ibm.msg.client.wmq.WMQConstants;
 
 /**
  * There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
@@ -53,7 +53,7 @@ public class MQConfigurationProperties {
   // Some system properties that may be set through this package. They are not regular CF properties, but still
   // affect how connections are made.
   private static final String PROPERTY_USE_IBM_CIPHER_MAPPINGS = "com.ibm.mq.cfg.useIBMCipherMappings";
-  private static final String PROPERTY_OUTBOUND_SNI = "com.ibm.mq.cfg.SSL.outboundSNI";
+  private static final String PROPERTY_OUTBOUND_SNI            = "com.ibm.mq.cfg.SSL.outboundSNI";
 
   /**
    * MQ Queue Manager name
@@ -94,11 +94,15 @@ public class MQConfigurationProperties {
   /**
    * Override the authentication mode. This
    * should not normally be needed with current maintenance levels of MQ V8 or V9, but some earlier levels
-   * sometimes got get it wrong and then this flag can be set to "false".
+   * sometimes got get it wrong and then this flag can be set to "false". There is also some confusion about
+   * whether the field is called "userAuth.." or "useAuth..." So we allow both spellings and use the explicit setting
+   * to set a different attribute. 
    *
    * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.sec.doc/q118680_.htm">the KnowledgeCenter</a>
    */
-  private boolean userAuthenticationMQCSP = true;
+  private boolean userAuthenticationMQCSP;
+  private boolean useAuthenticationMQCSP;
+  private boolean authCSP = true;
 
   /**
    * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
@@ -290,14 +294,22 @@ public class MQConfigurationProperties {
     this.outboundSNI = outboundSNI;
   }
 
-  public boolean isUserAuthenticationMQCSP() {
-    return userAuthenticationMQCSP;
+  // Both forms of this seem to have been used at different times. So we allow
+  // either to be set. The local field named after the config option is actually
+  // irrelevant; we always set a different common field.
+  public boolean isUseAuthenticationMQCSP() {
+    return authCSP;
   }
 
   public void setUserAuthenticationMQCSP(boolean userAuthenticationMQCSP) {
-    this.userAuthenticationMQCSP = userAuthenticationMQCSP;
+    authCSP = userAuthenticationMQCSP;
   }
-
+  
+  public void setUseAuthenticationMQCSP(boolean useAuthenticationMQCSP) {
+    authCSP = useAuthenticationMQCSP;
+  }
+  
+  
   public String getSslPeerName() {
     return sslPeerName;
   }
@@ -366,18 +378,18 @@ public class MQConfigurationProperties {
     int rc = 0;
     switch (defaultReconnect.toUpperCase()) {
     case "QMGR":
-      rc = CommonConstants.WMQ_CLIENT_RECONNECT_Q_MGR;
+      rc = WMQConstants.WMQ_CLIENT_RECONNECT_Q_MGR;
       break;
     case "DISABLED":
     case "NO":
-      rc = CommonConstants.WMQ_CLIENT_RECONNECT_DISABLED;
+      rc = WMQConstants.WMQ_CLIENT_RECONNECT_DISABLED;
       break;
     case "YES":
     case "ANY":
-      rc = CommonConstants.WMQ_CLIENT_RECONNECT;
+      rc = WMQConstants.WMQ_CLIENT_RECONNECT;
       break;
     default:
-      rc = CommonConstants.WMQ_CLIENT_RECONNECT_AS_DEF;
+      rc = WMQConstants.WMQ_CLIENT_RECONNECT_AS_DEF;
       break;
     }
     return rc;
@@ -421,7 +433,7 @@ public class MQConfigurationProperties {
     logger.trace("password set    : {}", (getPassword() != null && getPassword().length() > 0) ? "YES" : "NO");
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
-    logger.trace("userAuthenticationMQCSP: {}", isUserAuthenticationMQCSP());
+    logger.trace("userAuthenticationMQCSP: {}", isUseAuthenticationMQCSP());
     logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());
 
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
@@ -431,7 +443,10 @@ public class MQConfigurationProperties {
       for (String s: additionalProperties.keySet()) {
         logger.trace("Additional Property - {} : {}",s,additionalProperties.get(s));
       }
+    } else {
+      logger.trace("No additional properties defined");
     }
+
     if (pool.isEnabled()) {
       logger.trace("Pool blockIfFullTimeout         : {}",pool.getBlockIfFullTimeout().toString());
       logger.trace("Pool idleTimeout                : {}",pool.getIdleTimeout().toString());

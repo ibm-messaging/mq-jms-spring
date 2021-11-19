@@ -107,6 +107,8 @@ public class MQConnectionFactoryFactory {
   public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {
     // Should usually provide a queue manager name but it can be empty, to connect to the
     // default queue manager.
+    boolean bindingsMode = false;
+
     logger.trace("configureConnectionFactory");
 
     props.traceProperties();
@@ -127,6 +129,7 @@ public class MQConnectionFactoryFactory {
     else {
       if (isNullOrEmpty(channel) || isNullOrEmpty(connName)) {
         cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_BINDINGS);
+        bindingsMode = true;
       }
       else {
         cf.setStringProperty(WMQConstants.WMQ_CONNECTION_NAME_LIST, connName);
@@ -140,10 +143,11 @@ public class MQConnectionFactoryFactory {
       cf.setStringProperty(WMQConstants.CLIENT_ID, clientId);
     }
 
-    if (!isNullOrEmpty(props.getDefaultReconnect())) {
-      cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_OPTIONS, props.getDefaultReconnectValue());
+    if (!bindingsMode) {
+      if (!isNullOrEmpty(props.getDefaultReconnect())) {
+        cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_OPTIONS, props.getDefaultReconnectValue());
+      }
     }
-
     String applicationName = props.getApplicationName();
     if (!isNullOrEmpty(applicationName)) {
       cf.setAppName(applicationName);
@@ -159,7 +163,7 @@ public class MQConnectionFactoryFactory {
       String p = props.getPassword();
       if (!isNullOrEmpty(p))
         cf.setStringProperty(WMQConstants.PASSWORD, p);
-      cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, props.isUserAuthenticationMQCSP());
+      cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, props.isUseAuthenticationMQCSP());
     }
 
     if (!isNullOrEmpty(props.getSslCipherSuite()))
@@ -195,8 +199,8 @@ public class MQConnectionFactoryFactory {
      * The real property value will often begin "XMSC". For example "XMSC_WMQ_SECURITY_EXIT".
      * They are NOT the same as the short strings used by the JMSAdmin program.
      *
-     * There is no error checking on the
-     * property name or value. If the value looks like a number, we treat it as such.
+     * There is no error checking on the property name other than ensuring that a name beginning WMQ_
+     * is recognised, or the value. If the value looks like a number, we treat it as such.
      * Similarly if the value is TRUE/FALSE then that is processed as a boolean.
      * So you cannot try to set a string property that appears to be an integer.
      * Symbols representing the value of integer attributes cannot be used - the real
