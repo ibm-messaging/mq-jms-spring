@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.6.2 (2021-12-22)
+- Update dependencies to Spring Boot 2.6.2 (includes log4j prereq update)
+
 ## 2.5.7 (2021-11-18)
 - Update dependencies to MQ 9.2.4
 - Update dependencies to Spring Boot 2.5.7

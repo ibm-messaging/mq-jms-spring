@@ -43,7 +43,7 @@ public class MQPropertiesTest {
         assertThat(properties.getClientId()).isEqualTo("mqm");
         assertThat(properties.getApplicationName()).isEqualTo("MQSpringTest");
         assertThat(properties.isUseIBMCipherMappings()).isEqualTo(true);
-        assertThat(properties.isUserAuthenticationMQCSP()).isEqualTo(true);
+        assertThat(properties.isUseAuthenticationMQCSP()).isEqualTo(true);
         assertThat(System.getProperty("com.ibm.mq.cfg.useIBMCipherMappings")).isEqualTo("true");
         assertThat(properties.getSslCipherSuite()).isEqualTo("CIPHER_SUITE");
         assertThat(properties.getSslCipherSpec()).isEqualTo("CIPHER_SPEC");
