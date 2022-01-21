@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.6.3 (2022-01-21)
+- Update dependencies to Spring Boot 2.6.3 
+
 ## 2.6.2 (2021-12-22)
 - Update dependencies to Spring Boot 2.6.2 (includes log4j prereq update)
 

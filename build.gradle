@@ -1,5 +1,5 @@
 /*
- * Copyright 2018,2021 IBM Corp. All rights reserved.
+ * Copyright 2018,2022 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -26,8 +26,8 @@ subprojects {
 
   // Direct Dependencies - give versions here
   ext.mqVersion = '9.2.4.0'
-  ext.springVersion = '5.3.14'
-  ext.springBootVersion = '2.6.2'
+  ext.springVersion = '5.3.15'
+  ext.springBootVersion = '2.6.3'
 
   // The pooledJms v2.x level is built against Java 11 so we can't move there yet
   ext.pooledJmsVersion = '1.2.2'
