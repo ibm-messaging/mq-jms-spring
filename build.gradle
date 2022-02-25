@@ -25,9 +25,9 @@ subprojects {
   apply plugin: 'signing'
 
   // Direct Dependencies - give versions here
-  ext.mqVersion = '9.2.4.0'
-  ext.springVersion = '5.3.15'
-  ext.springBootVersion = '2.6.3'
+  ext.mqVersion = '9.2.5.0'
+  ext.springVersion = '5.3.16'
+  ext.springBootVersion = '2.6.4'
 
   // The pooledJms v2.x level is built against Java 11 so we can't move there yet
   ext.pooledJmsVersion = '1.2.2'
