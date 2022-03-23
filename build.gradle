@@ -14,65 +14,69 @@
 
 
 /*
- * This file shows how to build various artifacts for linking IBM MQ with Spring.
- *
+ * This file shows how to build and publish various artifacts for linking IBM MQ with Spring.
  */
+
+/*
+ * The "JMSVERSION" environment variable can be set to "jms2" or "jms3" and that is used
+ * as the prefix for various control files and processing steps. We only build a single version
+ * from this file; to build both jms2 and jms3, you have to run gradle twice.
+ * The default is "jms2" if the env var is not set.
+ */
+ext.jmsVersionProperty = 'JMSVERSION'
+ext.jmsVer             = (System.getenv(jmsVersionProperty)== null?'jms2':System.getenv(jmsVersionProperty))
+ext.propsFile          = new File(rootDir, jmsVer + '.properties')
+
+// Now we know the jms Version, load the specific properties
+apply from: propsFile
 
 subprojects {
   apply plugin: 'java'
-  apply plugin: 'maven'
+  apply plugin: 'java-library'
   apply plugin: 'maven-publish'
   apply plugin: 'signing'
 
-  // Direct Dependencies - give versions here
-  ext.mqVersion = '9.2.5.0'
-  ext.springVersion = '5.3.16'
-  ext.springBootVersion = '2.6.4'
-
-  // The pooledJms v2.x level is built against Java 11 so we can't move there yet
-  ext.pooledJmsVersion = '1.2.2'
-  ext.jUnitVersion = '4.13.2'
+  // This is the MQ client version
+  ext.mqVersion = '9.3.0.0'
 
   // The groupid for the compiled jars when uploaded
   group = 'com.ibm.mq'
-  // The designated version is in an external file. Read its contents here.
-  version = new File(rootDir, 'VERSION').text.trim()
+  version = mqStarterVersion
 
-  // If the version says "snapshot" anywhere assume it is not a release. If property or environment var is set,
-  // then push to a Maven repository (usually to Central) otherwise, keep in a local directory.
-  ext.pushProperty = 'PushToMaven'
-  ext.isReleaseVersion = !version.toUpperCase(Locale.ENGLISH).contains("SNAPSHOT")
-  ext.isLocalDeploy =    ((System.getProperty(pushProperty) == null)  && (System.getenv(pushProperty) == null)) ||
-       version.toUpperCase(Locale.ENGLISH).contains("LOCAL")
-
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-
+  // Include the Spring milestone repository so we get early drops of the Jakarta-based version
   repositories {
     mavenLocal()
-    //maven { url "https://repo.spring.io/snapshot"  }
-    //maven { url "https://repo.spring.io/milestone"  }
-    mavenCentral()
 
+    //maven { url "https://repo.spring.io/snapshot"  }
+    maven { url "https://repo.spring.io/milestone" }
+
+    mavenCentral()
   }
 
   dependencies {
-    // MQ Java client accessed from Maven Central Repository
-    compile group: 'com.ibm.mq', name: 'com.ibm.mq.allclient', version: mqVersion
+    // Using "api" in this section means that the dependency ends up being listed
+    // with scope=compile in the generated POM. So users of this package end up with
+    // the transitive dependency Spring packages on their compile classpath too.
+
+    // The MQ Java client is accessed from Maven Central Repository. The name of the
+    // jar will vary for JMS2 and JMS3
+    api group:'com.ibm.mq', name: mqJar, version: mqVersion
 
     // Spring
-    compile group: 'org.springframework', name: 'spring-core', version: springVersion
-    compile group: 'org.springframework', name: 'spring-context', version: springVersion
-    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
-    compile group: 'org.springframework', name: 'spring-jms', version: springVersion
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+    api group:'org.springframework', name: 'spring-core', version: springVersion
+    api group:'org.springframework', name: 'spring-context', version: springVersion
+    api group:'org.springframework', name: 'spring-beans', version: springVersion
+    api group:'org.springframework', name: 'spring-jms', version: springVersion
+    api group:'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
 
-    //pool
-    compile group: 'org.messaginghub', name: 'pooled-jms', version: pooledJmsVersion
+    //Pooled JMS is not currently available in a Jakarta version so it gets faked
+    if (pooledJmsVersion != '0') {
+      api group: 'org.messaginghub', name: 'pooled-jms', version: pooledJmsVersion
+    }
 
     // Testing
-    testCompile group: 'junit', name: 'junit', version: jUnitVersion
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+    testImplementation group: 'junit', name: 'junit', version: jUnitVersion
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
   }
 
   // Include variable debug info in the compiled classes
@@ -94,8 +98,11 @@ subprojects {
   }
 
   javadoc {
+   failOnError = false
     options.encoding 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
     options.setMemberLevel JavadocMemberLevel.PROTECTED
+    /*
     // Add a logging listener to check for javadoc warnings and fail the build if there are any
     boolean hasJavaDocWarnings = false;
     doFirst {
@@ -112,6 +119,7 @@ subprojects {
         throw new GradleException("Build failed due to javadoc warnings.");
       }
     }
+    */
   }
 
   task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -134,71 +142,64 @@ subprojects {
     }
   }
 
-  signing {
-    // Only apply signing when it is a release and is being published to a real repository
-    required {
-      isReleaseVersion && !isLocalDeploy && gradle.taskGraph.hasTask("uploadArchives")
-    }
+  publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact(sourcesJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
 
-    // When signing, sign the archives
-    if (!isLocalDeploy) {
-      sign configurations.archives
+            pom {
+              name = rootProject.name
+              description = 'Spring configuration for the official IBM MQ library for Java'
+              inceptionYear = '2018'
+              packaging = 'jar'
+              url = 'https://github.com/ibm-messaging/mq-jms-spring'
+              licenses {
+                license {
+                  name = 'The Apache Software License, Version 2.0'
+                  url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                  distribution = 'repo'
+                }
+              }
+              scm {
+                connection = 'scm:git:git://github.com/ibm-messaging/mq-jms-spring.git'
+                developerConnection = 'scm:git:git@github.com/ibm-messaging/mq-jms-spring.git'
+                url = 'https://github.com/ibm-messaging/mq-jms-spring.git'
+              }
+              properties = [
+                'project.build.sourceEncoding': 'UTF-8'
+              ]
+              developers {
+                developer {
+                  name = 'IBM MQ'
+                  url = 'https://ibm.com/software/products/en/ibm-mq'
+                  organization = 'IBM'
+                  organizationUrl = 'http://www.ibm.com'
+                }
+              }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url = version.endsWith('SNAPSHOT') ? snapshotUrl : releasesUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
     }
   }
 
-  uploadArchives {
-    repositories {
-      mavenDeployer {
-        // When publishing sign the pom
-        if (!isLocalDeploy) {
-          beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-        }
-
-        if (isLocalDeploy) {
-          def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-          repository(url: localMavenRepo)
-        } else {
-          // The gradle.properties file contains the username and password for Nexus deployment
-          repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-            authentication(userName: ossrhUsername, password: ossrhPassword)
-          }
-
-          snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-            authentication(userName: ossrhUsername, password: ossrhPassword)
-          }
-        }
-        // Augment the pom with additional information
-        pom.project {
-          name rootProject.name
-          description 'Spring configuration for the official IBM MQ library for Java'
-          inceptionYear '2018'
-          packaging 'jar'
-          url 'https://github.com/ibm-messaging/mq-jms-spring'
-          licenses {
-            license {
-              name 'The Apache Software License, Version 2.0'
-              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-              distribution 'repo'
-            }
-          }
-          scm {
-            connection 'scm:git:git://github.com/ibm-messaging/mq-jms-spring.git'
-            developerConnection 'scm:git:git@github.com/ibm-messaging/mq-jms-spring.git'
-            url 'https://github.com/ibm-messaging/mq-jms-spring.git'
-          }
-          properties {
-            'project.build.sourceEncoding' 'UTF-8'
-          }
-          developers {
-            developer {
-              name 'IBM MQ'
-              url 'https://ibm.com/software/products/en/ibm-mq'
-              organization 'IBM'
-              organizationUrl 'http://www.ibm.com'
-            }
-          }
-        }
-      }
-    }
+  signing {
+       println("Signing the artifacts")
+       sign publishing.publications.mavenJava
   }
 }

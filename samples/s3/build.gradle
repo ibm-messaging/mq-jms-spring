@@ -13,7 +13,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '2.6.4'
+ext.starterVersion = '2.6.5'
 
 
 // The local, flatDir configuration lets us use a modified version from
@@ -27,5 +27,5 @@ repositories {
 }
 
 dependencies {
-  compile(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter", version:starterVersion)
+  implementation(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter", version:starterVersion)
 }

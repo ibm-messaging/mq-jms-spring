@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2021 IBM Corp. All rights reserved.
+ * Copyright © 2018,2022 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,26 +12,26 @@
  * and limitations under the License.
  */
 
-
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
-
 buildscript {
-    repositories {
-        maven { url 'https://repo.spring.io/plugins-release' }
-    }
-    dependencies {
-        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
-    }
+  repositories {
+    maven { url 'https://repo.spring.io/plugins-release' }
+  }
+  dependencies {
+    classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
+  }
 }
 
 dependencies {
-  compile group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
-  compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
+  api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
+  api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
   annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
 }
 
 compileJava.dependsOn(processResources)
+compileJava {
+  sourceCompatibility=javaSourceCompatibility
+  targetCompatibility=javaSourceCompatibility
+}
 
 // This can be useful during development
 /*
@@ -40,5 +40,3 @@ tasks.withType(JavaCompile) {
     options.deprecation = true
 }
 */
-
-
