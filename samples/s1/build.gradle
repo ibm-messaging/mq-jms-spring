@@ -15,7 +15,6 @@ apply plugin: 'org.springframework.boot'
 // The designated version should match the current version in the root of the repo
 ext.starterVersion = '2.6.5'
 
-
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {
