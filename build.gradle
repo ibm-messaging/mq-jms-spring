@@ -26,8 +26,8 @@ subprojects {
 
   // Direct Dependencies - give versions here
   ext.mqVersion = '9.2.5.0'
-  ext.springVersion = '5.3.16'
-  ext.springBootVersion = '2.6.4'
+  ext.springVersion = '5.3.17'
+  ext.springBootVersion = '2.6.5'
 
   // The pooledJms v2.x level is built against Java 11 so we can't move there yet
   ext.pooledJmsVersion = '1.2.2'
