@@ -13,6 +13,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
+ext.starterVersion = '3.0.0-M2'
 
 
 // The local, flatDir configuration lets us use a modified version from
@@ -22,9 +23,8 @@ repositories {
     dirs '../../mq-jms-spring-boot-starter'
   }
   mavenLocal()
-  mavenCentral()
-    maven { url "https://repo.spring.io/milestone"  }
-
+o  mavenCentral()
+ [O
 }
 
 dependencies {
