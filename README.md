@@ -159,9 +159,9 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.tempQPrefix          | The prefix to be used to form the name of an MQ dynamic queue                   |
 | ibm.mq.tempTopicPrefix      | The prefix to be used to form the name of an MQ dynamic topic                   |
 | ibm.mq.tempModel            | The name of a model queue for creating temporary destinations.                  |
-| ibm.mq.defaultReconnect     | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
+| ibm.mq.reconnect            | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
 
-
+The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 #### TLS related options
 
 The following options all default to null, but may be used to assist with configuring TLS
