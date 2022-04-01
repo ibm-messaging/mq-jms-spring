@@ -9,6 +9,8 @@ Newest updates are at the top of this file
 - Preferred config option is now reconnect instead of defaultReconnect but
   both names work
 
+## 2.6.6 (2022-04-01)
+- Update dependencies to Spring Boot 2.6.6 
 
 ## 2.6.5 (2022-03-25)
 - Update dependencies to Spring Boot 2.6.5
