@@ -67,6 +67,9 @@ majors=""
 
 touch $timeStamp
 
+# git seems to lose permissions for this one sometimes so force it
+chmod +x prereqCheck.sh
+
 while getopts :rj: o
 do
   case $o in
