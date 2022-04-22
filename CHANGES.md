@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.6.7 (2022-04-22)
+- Update dependencies to Spring Boot 2.6.7
+
 ## 2.6.6.1 (2022-04-02)
 - Correct a dependency                        
 
