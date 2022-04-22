@@ -13,6 +13,8 @@ and the other to act as a JMSListener that retrieves the message.
 * s2 - Demonstrates use of local transactional control to commit and rollback changes
 * s3 - A request/reply program, with both the requester and responder in the same application.
 The responder side shows how transactions can be controlled within a JMSListener.
+* s3.jms3 - Identical to s3 but changed to use the Jakarta packages and corresponding
+       MQ and Spring dependencies
 
 ## Other resources
 Many other sample programs for MQ can be found in [this repository](https://github.com/ibm-messaging/mq-dev-patterns).

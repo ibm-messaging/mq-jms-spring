@@ -1,0 +1,10 @@
+# Copy this file to gradle.properties and set the values appropriately  
+# 
+# These access the GPG key and certificate
+signing.keyId=xxxxxxxxxxxx
+signing.password=xxxxxxxxxxxxxxxx
+signing.secretKeyRingFile=/home/xxxxxxxx/.gnupg/secring.gpg
+# This is the authentication to Nexus for Maven Central Repository
+ossrhUsername=xxxxxxxx
+ossrhPassword=xxxxxxxxxxxxxxxxxxxxxxxxxx
+

@@ -143,7 +143,8 @@ public class MQConfigurationProperties {
   /**
    * Whether to automatically reconnect to the qmgr when in client mode. Values can be YES/NO/QMGR/DISABLED.
    */
-  private String defaultReconnect = "";
+  private String reconnect = "";
+  private String defaultReconnect = null; // This was the original name but I don't like it. So keep the variable but don't use it.
 
   /**
    * Enter the uniform resource locator (URL) that identifies the name and location of the file that contains
@@ -374,9 +375,9 @@ public class MQConfigurationProperties {
     this.sslKeyResetCount = sslKeyResetCount;
   }
 
-  public int getDefaultReconnectValue() {
+  public int getReconnectValue() {
     int rc = 0;
-    switch (defaultReconnect.toUpperCase()) {
+    switch (reconnect.toUpperCase()) {
     case "QMGR":
       rc = WMQConstants.WMQ_CLIENT_RECONNECT_Q_MGR;
       break;
@@ -395,11 +396,14 @@ public class MQConfigurationProperties {
     return rc;
   }
 
-  public String getDefaultReconnect() {
-    return defaultReconnect;
+  public String getReconnect() {
+    return reconnect;
   }
   public void setDefaultReconnect(String defaultReconnect) {
-    this.defaultReconnect = defaultReconnect;
+    this.reconnect = defaultReconnect;
+  }
+  public void setReconnect(String reconnect) {
+    this.reconnect = reconnect;
   }
 
   public Map<String, String> getAdditionalProperties() {
@@ -420,7 +424,7 @@ public class MQConfigurationProperties {
     logger.trace("channel         : {}", getChannel());
     logger.trace("clientId        : {}", getClientId());
     logger.trace("connName        : {}", getConnName());
-    logger.trace("defaultReconnect: \'{}\' [{}]", getDefaultReconnect(),String.format("0x%08X",getDefaultReconnectValue()));
+    logger.trace("reconnectOption : \'{}\' [{}]", getReconnect(),String.format("0x%08X",getReconnectValue()));
     logger.trace("sslCipherSpec   : {}", getSslCipherSpec());
     logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
     logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());

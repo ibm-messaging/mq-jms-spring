@@ -1,17 +1,14 @@
-/*
- * Copyright © 2017, 2020 IBM Corp. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
- */
-include ':mq-jms-spring-boot-starter'
-
+// Switch which subproject to pull in based on the JmsVersion environment variable
+// JMS2 is the default. The project name is the same regardless of version though.
 
 rootProject.name = 'mq-jms-spring'
+if (System.getenv('JMSVERSION') == 'jms3') {
+  // We want to use the same module name for both JMS2 and JMS3, but just with different
+  // versions. So we rename the project from its default which would be based on the directory name.
+  println("Including JMS3 subproject")
+  include ':mq-jms3-spring-boot-starter'
+  project(":mq-jms3-spring-boot-starter").name="mq-jms-spring-boot-starter"
+} else {
+  println("Including JMS2 subproject")
+  include ':mq-jms-spring-boot-starter'
+}

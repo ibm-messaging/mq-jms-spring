@@ -4,12 +4,20 @@ This repository contains code to help to provide Spring developers with easy con
 
 The library contains:
 
--   `mq-jms-spring-boot-starter` for [Spring Boot 2](https://projects.spring.io/spring-boot/) applications
+-   `mq-jms-spring-boot-starter` for [Spring Boot 2 or 3](https://projects.spring.io/spring-boot/) applications
 
 ## Installation and Usage
 
-The compiled version of this package can be automatically downloaded from Maven Central. For local modifications
-and building it yourself, see [BUILDING.md](./BUILDING.md)
+The compiled versions of this package can be automatically downloaded from Maven Central.
+
+For local modifications
+and building it yourself, you can use the `RUNME.sh` script. It uses gradle as the build mechanism and has tasks that can
+push compiled jars to either a local repository (typically under `$HOME/.m2`) or to Maven Central.
+When signing/authentication of modules is required, use the `gradle.properties.template` file as a starter for your own `gradle.properties`.
+
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3.
+
+The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant does not have a separate source tree in this repository. Instead, the source is generated automatically during the build process, by simply changing package names in the JMS2 code. The created jar files have the same names, but different version numbers.
 
 ### Spring Boot Applications
 
@@ -34,9 +42,8 @@ Maven:
 </dependency>
 ```
 
-**Note** This repository and the corresponding Maven Central artifact require
-Spring Boot 2. For Spring Boot 1 compatibility, you can use the previously-released
-level of the artifact at version 0.0.4.
+**Note** This repository and the corresponding Maven Central artifacts require
+either Spring Boot 2 or 3.
 
 ## Design Approach
 
@@ -152,9 +159,9 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.tempQPrefix          | The prefix to be used to form the name of an MQ dynamic queue                   |
 | ibm.mq.tempTopicPrefix      | The prefix to be used to form the name of an MQ dynamic topic                   |
 | ibm.mq.tempModel            | The name of a model queue for creating temporary destinations.                  |
-| ibm.mq.defaultReconnect     | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
+| ibm.mq.reconnect            | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
 
-
+The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 #### TLS related options
 
 The following options all default to null, but may be used to assist with configuring TLS
@@ -204,6 +211,10 @@ Alternatively you may configure a pooled connection factory by using those prope
 
 These pooling options make use of the [PooledJMS](https://github.com/messaginghub/pooled-jms) implementation. More documentation on
 the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/master/pooled-jms-docs/Configuration.md).
+
+These pooled options are not currently available with Spring Boot 3 because the component has not (yet) been updated to use
+the Jakarta variation. Attempting to use them will result in an exception being generated.
+
 
 ### JMS Polling Listener Timer configuration
 
@@ -305,7 +316,7 @@ The preferred approach for using this package in other projects will be to use t
 
 ### License
 
-Copyright © 2018, 2021 IBM Corp. All rights reserved.
+Copyright © 2018, 2022 IBM Corp. All rights reserved.
 
 Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.
 You may obtain a copy of the license at

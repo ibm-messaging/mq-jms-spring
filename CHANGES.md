@@ -1,6 +1,17 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.6.x and 3.0.0-M2 (2022-xx-xx)
+- Update dependencies to MQ 9.3.0.0
+- Update dependencies to Spring Boot 2.6.5/3.0.0-M1
+- Major restructure of build processing and tools to create
+  packages suitable for both JMS2 and JMS3 (Jakarta) standards
+- Preferred config option is now reconnect instead of defaultReconnect but
+  both names work
+
+## 2.6.7 (2022-04-22)
+- Update dependencies to Spring Boot 2.6.7 
+
 ## 2.6.6.1 (2022-04-02)
 - Correct a dependency                        
 
@@ -8,14 +19,14 @@ Newest updates are at the top of this file
 - Update dependencies to Spring Boot 2.6.6 
 
 ## 2.6.5 (2022-03-25)
-- Update dependencies to Spring Boot 2.6.5 
+- Update dependencies to Spring Boot 2.6.5
 
 ## 2.6.4 (2022-02-25)
 - Update dependencies to MQ 9.2.5
-- Update dependencies to Spring Boot 2.6.4 
+- Update dependencies to Spring Boot 2.6.4
 
 ## 2.6.3 (2022-01-21)
-- Update dependencies to Spring Boot 2.6.3 
+- Update dependencies to Spring Boot 2.6.3
 
 ## 2.6.2 (2021-12-22)
 - Update dependencies to Spring Boot 2.6.2 (includes log4j prereq update)
