@@ -38,9 +38,10 @@ subprojects {
 
   // This is the MQ client version
   ext.mqVersion = '9.3.0.0'
+  ext.mqGroup = 'com.ibm.mq'
 
   // The groupid for the compiled jars when uploaded
-  group = 'com.ibm.mq'
+  group = mqGroup
   version = mqStarterVersion
 
   // Include the Spring milestone repository so we get early drops of the Jakarta-based version
@@ -60,7 +61,7 @@ subprojects {
 
     // The MQ Java client is accessed from Maven Central Repository. The name of the
     // jar will vary for JMS2 and JMS3
-    api group:'com.ibm.mq', name: mqJar, version: mqVersion
+    api group:mqGroup, name: mqJar, version: mqVersion
 
     // Spring
     api group:'org.springframework', name: 'spring-core', version: springVersion
@@ -84,12 +85,16 @@ subprojects {
   // Fail on javac warnings
   compileJava.options.compilerArgs << "-Werror"
 
+  task mqPrereq(type:Exec)  {
+     commandLine ("../prereqCheck.sh", mqGroup, mqJar, mqVersion)
+  }
+
   // Always UTF-8
   tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
   }
 
-  task sourcesJar(type: Jar, dependsOn: classes) {
+  task sourcesJar(type: Jar, dependsOn: ['mqPrereq',classes]) {
     classifier = 'sources'
     sourceSets.all {
       into(name + "/java", { from allJava })
@@ -199,7 +204,7 @@ subprojects {
   }
 
   signing {
-       println("Signing the artifacts")
+       println("Will sign the artifacts")
        sign publishing.publications.mavenJava
   }
 }

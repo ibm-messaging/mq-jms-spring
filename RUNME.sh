@@ -137,6 +137,7 @@ do
 
   if $gaRelease
   then
+    export prereqCheck=true
     target=publishAllPublicationsToMavenRepository
   else
     target=publishToMavenLocal
