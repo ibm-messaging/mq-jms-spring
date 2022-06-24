@@ -212,10 +212,6 @@ Alternatively you may configure a pooled connection factory by using those prope
 These pooling options make use of the [PooledJMS](https://github.com/messaginghub/pooled-jms) implementation. More documentation on
 the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/master/pooled-jms-docs/Configuration.md).
 
-These pooled options are not currently available with Spring Boot 3 because the component has not (yet) been updated to use
-the Jakarta variation. Attempting to use them will result in an exception being generated.
-
-
 ### JMS Polling Listener Timer configuration
 
 The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can now be configured

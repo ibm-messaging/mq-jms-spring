@@ -28,14 +28,8 @@ do
    # Change various package names, but the javax.naming seems to have to remain so we revert that
    # specific change in the final step of the filter.
    cat  $f |\
-      sed "s/org.messaginghub.pooled.jms.JmsPoolConnectionFactory/com.ibm.mq.spring.boot.JmsPoolConnectionFactory/g" |\
-      sed "s/org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProperties/com.ibm.mq.spring.boot.JmsPoolConnectionFactoryProperties/g" |\
-      grep -v "org.apache.commons.pool2" |\
       sed "s/com.ibm.mq.jms/com.ibm.mq.jakarta.jms/g" |\
       sed "s/com.ibm.msg.client/com.ibm.msg.client.jakarta/g" |\
       sed "s/javax/jakarta/g" |
       sed "s/jakarta.naming/javax.naming/g">  $out/$f
 done
-
-# Copy over the Pooled JMS files
-cp $curdir/poolMock/*.java $out/src/main/java/com/ibm/mq/spring/boot

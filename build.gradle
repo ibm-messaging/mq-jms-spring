@@ -64,16 +64,13 @@ subprojects {
     api group:mqGroup, name: mqJar, version: mqVersion
 
     // Spring
-    api group:'org.springframework', name: 'spring-core', version: springVersion
-    api group:'org.springframework', name: 'spring-context', version: springVersion
-    api group:'org.springframework', name: 'spring-beans', version: springVersion
-    api group:'org.springframework', name: 'spring-jms', version: springVersion
+    api group:'org.springframework',      name: 'spring-core',    version: springVersion
+    api group:'org.springframework',      name: 'spring-context', version: springVersion
+    api group:'org.springframework',      name: 'spring-beans',   version: springVersion
+    api group:'org.springframework',      name: 'spring-jms',     version: springVersion
     api group:'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
 
-    //Pooled JMS is not currently available in a Jakarta version so it gets faked
-    if (pooledJmsVersion != '0') {
-      api group: 'org.messaginghub', name: 'pooled-jms', version: pooledJmsVersion
-    }
+    api group: 'org.messaginghub',        name: 'pooled-jms',     version: pooledJmsVersion
 
     // Testing
     testImplementation group: 'junit', name: 'junit', version: jUnitVersion

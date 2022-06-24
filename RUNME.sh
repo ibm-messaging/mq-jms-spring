@@ -158,8 +158,8 @@ done
 # And see what we've created - this was useful debug during devt of the build scripts
 find . -newer $timeStamp -type f -name "mq*.jar" -ls
 #find $curdir/mq-jms*-boot-starter/build -name "*.asc"
-find $HOME/.gradle/ $HOME/.m2 -type f -ls | grep mq-jms-spring
-find $HOME/.gradle/ $HOME/.m2 -name "$project.*.pom" | xargs more
+#find $HOME/.gradle/ $HOME/.m2 -type f -ls | grep mq-jms-spring
+#find $HOME/.gradle/ $HOME/.m2 -name "$project.*.pom" | xargs more
 
 # Expect to see major versions 52 (java 8) and 61 (java 17) if we've done a local build. This validates
 # the compiler options used
