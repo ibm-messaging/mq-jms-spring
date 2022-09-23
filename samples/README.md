@@ -11,6 +11,7 @@ the available properties.
 * s1 - The simplest example that creates two connections to MQ: one to put a message,
 and the other to act as a JMSListener that retrieves the message.
 * s2 - Demonstrates use of local transactional control to commit and rollback changes
+* s2.tls  - Identical to s2 but with information about using a TLS-enabled connection            
 * s3 - A request/reply program, with both the requester and responder in the same application.
 The responder side shows how transactions can be controlled within a JMSListener.
 * s3.jms3 - Identical to s3 but changed to use the Jakarta packages and corresponding

@@ -3,6 +3,7 @@ Newest updates are at the top of this file
 
 ## 2.7.4 and 0.3.0-M6 (2022-09-23)
 - Update dependencies to Spring Boot 2.7.4/3.0.0-M5
+- Add a TLS-enabled sample
 
 ## 2.7.2 and 0.3.0-M4 (2022-07-22)
 - Update dependencies to Spring Boot 2.7.2/3.0.0-M4
