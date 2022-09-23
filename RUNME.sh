@@ -146,8 +146,30 @@ do
     target=publishToMavenLocal
   fi
 
+  if $gaRelease
+  then
+    # Use a private copy of the properties that has the real credentials
+    if [ -r $HOME/.gradle.properties ]
+    then
+      cp $HOME/.gradle.properties ./gradle.properties
+    fi
+
+    if [ ! -r gradle.properties ]
+    then
+      print "ERROR: Need to provide a gradle.properties file with credentials"
+      exit 1
+    fi  
+  else
+    cp gradle.properties.template gradle.properties
+  fi   
+
   # Possible Targets are publishAllPublicationsToMavenRepository publishToMavenLocal
   (./gradlew $args --warning-mode all clean jar $target 2>&1;echo $? > $rcFile) | tee -a $buildLog
+
+  # Always make sure we've got a dummy properties file - the values are not needed from here on
+  cp gradle.properties.template gradle.properties
+
+  # Now we can look for errors
   rc=`cat $rcFile`
   if [ $rc -ne "0" ]
   then
