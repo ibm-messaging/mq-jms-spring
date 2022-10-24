@@ -1,3 +1,6 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.ibm.mq.spring.boot.MQAutoConfiguration
+# This line is used for Spring pre-2.7. It continues to be supported in 2.x but not in 3.x
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.ibm.mq.spring.boot.MQAutoConfiguration
+
+# To drive configuration of the receive-timeout configuration option
 org.springframework.context.ApplicationListener=com.ibm.mq.spring.boot.MQConfigurationListenerDefault
 

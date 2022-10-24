@@ -1,7 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
-## 2.7.4 and 0.3.0-M6 (2022-09-23)
+## 2.7.4 and 0.3.0-RC1 (2022-10-20)
+- Update dependencies to Spring Boot 2.7.5/3.0.0-RC1
+- Add "ibm.mq.autoConfigure" property to permit disabling bean (#86)
+- Spring 3 no longer uses spring.factories for AutoConfiguration 
+
+## 2.7.4 and 0.3.0-M5 (2022-09-23)
 - Update dependencies to Spring Boot 2.7.4/3.0.0-M5
 - Add a TLS-enabled sample
 

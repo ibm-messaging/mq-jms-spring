@@ -37,7 +37,7 @@ subprojects {
   apply plugin: 'signing'
 
   // This is the MQ client version
-  ext.mqVersion = '9.3.0.0'
+  ext.mqVersion = '9.3.1.0'
   ext.mqGroup = 'com.ibm.mq'
 
   // The groupid for the compiled jars when uploaded
