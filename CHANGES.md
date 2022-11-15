@@ -1,7 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
-## 2.7.4 and 0.3.0-RC1 (2022-10-20)
+## 2.7.6 and 3.0.0 (2022-11-24)
+- Update dependencies to Spring Boot 2.7.6/3.0.0
+- Add "ibm.mq.jks.*" attributes to set keystore/truststore 
+  instead of using -D command line flags
+
+## 2.7.5 and 0.3.0-RC1 (2022-10-20)
 - Update dependencies to Spring Boot 2.7.5/3.0.0-RC1
 - Add "ibm.mq.autoConfigure" property to permit disabling bean (#86)
 - Spring 3 no longer uses spring.factories for AutoConfiguration 

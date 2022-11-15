@@ -204,6 +204,9 @@ public class MQConfigurationProperties {
 
   @NestedConfigurationProperty
   private MQConfigurationPropertiesJndi jndi = new MQConfigurationPropertiesJndi();
+  
+  @NestedConfigurationProperty
+  private MQConfigurationPropertiesJks jks = new MQConfigurationPropertiesJks();
 
   public String getQueueManager() {
     return queueManager;
@@ -334,6 +337,10 @@ public class MQConfigurationProperties {
   public MQConfigurationPropertiesJndi getJndi() {
     return jndi;
   }
+  
+  public MQConfigurationPropertiesJks getJks() {
+    return jks;
+  }
 
   public String getTempQPrefix() {
     return tempQPrefix;
@@ -442,7 +449,14 @@ public class MQConfigurationProperties {
 
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
-
+    
+    String pw = getJks().getKeyStorePassword();
+    logger.trace("JKS keystore           : {}",getJks().getKeyStore());
+    logger.trace("JKS keystore pw set    : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
+    pw = getJks().getTrustStorePassword();
+    logger.trace("JKS truststore         : {}",getJks().getTrustStore());
+    logger.trace("JKS truststore pw set  : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
+    
     if (additionalProperties.size() > 0) {
       for (String s: additionalProperties.keySet()) {
         logger.trace("Additional Property - {} : {}",s,additionalProperties.get(s));

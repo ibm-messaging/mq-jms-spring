@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2021 IBM Corp. All rights reserved.
+ * Copyright © 2018,2022 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -57,6 +57,9 @@ public class MQConnectionFactoryFactory {
     String jndiCF = this.properties.getJndi().getProviderContextFactory();
 
     logger.trace("createConnectionFactory for class " + factoryClass.getSimpleName());
+    
+    /* Keystore System properties don't need the CF to be already created */ 
+    configureTLSStores(this.properties);
 
     if (isNotNullOrEmpty(jndiProviderUrl) && isNotNullOrEmpty(jndiCF)) {
       logger.trace("createConnectionFactory using JNDI");
@@ -72,7 +75,8 @@ public class MQConnectionFactoryFactory {
         else {
           cf = (T) ctx.lookup(cfName);
         }
-        // We will not dump the properties as they are not used for most of the configuratin.
+        
+        // We will not dump the properties as they are not used for most of the configuration.
         // The JNDI config may well have overridden the actual values in any resource files.
         // But we will still allow the customize methods to be used.
         customize(cf);
@@ -95,6 +99,7 @@ public class MQConnectionFactoryFactory {
         throw new IllegalStateException("Unable to create MQConnectionFactory" + ((err != null) ? (": " + err) : ""), ex);
       }
     }
+    
     return cf;
   }
 
@@ -190,7 +195,7 @@ public class MQConnectionFactoryFactory {
     if (!isNullOrEmpty(props.getTempModel())) {
       cf.setStringProperty(WMQConstants.WMQ_TEMPORARY_MODEL, props.getTempModel());
     }
-
+    
     /*
      * Additional properties that are not in the pre-defined recognised set can be put onto the
      * CF via a map in the external properties definitions. Use the format
@@ -259,6 +264,34 @@ public class MQConnectionFactoryFactory {
       if (vi == null && vb == null) {
         cf.setStringProperty(key, v);
         logger.trace("Using setStringProperty with key {} and value {}", key, v);
+      }
+    }
+  }
+
+  /*
+   * Access to Java keystores can be controlled by system properties. These are usually
+   * given with -D options on the command line but we can set them here instead. The Spring properties
+   * that drive these will be "ibm.mq.jks.keyStore=" ...  For historic reasons, we set the com.ibm.ssl versions
+   * as well as the regular javax.net.ssl properties. 
+   */
+  private static void configureTLSStores(MQConfigurationProperties props) {
+    String prefixes[] = {"javax.net.ssl.","com.ibm.ssl."};
+    
+    logger.trace("configuring TLS Store system properties");
+  
+    MQConfigurationPropertiesJks jksProperties = props.getJks();
+    for (String prefix : prefixes) {
+      if (!isNullOrEmpty(jksProperties.getKeyStore())) {
+        System.setProperty(prefix + "keyStore", jksProperties.getKeyStore());
+      }
+      if (!isNullOrEmpty(jksProperties.getKeyStorePassword())) {
+        System.setProperty(prefix + "keyStorePassword", jksProperties.getKeyStorePassword());
+      }
+      if (!isNullOrEmpty(jksProperties.getTrustStore())) {
+        System.setProperty(prefix + "trustStore", jksProperties.getTrustStore());
+      }
+      if (!isNullOrEmpty(jksProperties.getTrustStorePassword())) {
+        System.setProperty(prefix + "trustStorePassword", jksProperties.getTrustStorePassword());
       }
     }
   }
