@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.8 and 3.0.2 (2023-01-20)
+- Update dependencies to Spring Boot 2.7.8/3.0.2
+- Add script to create JKS file for sample t2.tls
+
 ## 2.7.6 and 3.0.0 (2022-11-24)
 - Update dependencies to Spring Boot 2.7.6/3.0.0
 - Add "ibm.mq.jks.*" attributes to set keystore/truststore 

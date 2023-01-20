@@ -17,8 +17,8 @@
 # connect to your queue manager.
 #
 # For the simple requirement of one-way authentication here, we have extracted
-# the queue manager's public certificate into qm1.arm. And then imported it (I used
-# strmqikm but command line tools could have been instead) into key.jks.
+# the queue manager's public certificate into qm1.arm. And then imported it. The   
+# buildJks script can be used as an example of doing that.
 
 ###### Cleanup from previous runs
 # Kill any old instances of the application

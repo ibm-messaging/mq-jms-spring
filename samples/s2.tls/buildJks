@@ -1,0 +1,18 @@
+# A very simple script to extract the QMgr's certificate from its kdb file
+# and then add it back into a local JKS file (assuming it exists). This
+# could be made a lot more bulletproof and get parameterised. But it's enough
+# for my environment.
+
+# Password used for both the qmgr's keystore, and the new truststore that this
+# program refers to
+pw="passw0rd"
+
+set -x # So you can see what it's doing
+# Default label for the qmgr certificate. Keystore given in qmgr attributes.
+rm -f qm1.arm
+runmqckm -cert -extract -db /var/mqm/ssl/key.kdb -pw $pw -label ibmwebspheremqqm1 -target qm1.arm
+
+# Now import that cert into a new keystore/truststore
+rm -f key.jks
+runmqckm -keydb -create -db key.jks -pw $pw -type jks
+runmqckm -cert  -add    -db key.jks -pw $pw -file qm1.arm -label ibmwebspheremqqm1
