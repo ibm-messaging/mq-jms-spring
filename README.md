@@ -174,6 +174,7 @@ The following options all default to null, but may be used to assist with config
 | ibm.mq.sslPeerName          | Peer Name,    sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME    |
 | ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
 | ibm.mq.outboundSNI          | Sets property com.ibm.mq.cfg.SSL.OutboundSNI (use HOSTNAME for Openshift qmgrs) |
+| ibm.mq.channelSharing       | Sets strategy for TCP/IP connection sharing - CONNECTION or GLOBAL              |
 
 We also have
 

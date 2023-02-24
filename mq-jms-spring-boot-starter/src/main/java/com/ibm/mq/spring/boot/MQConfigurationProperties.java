@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2021 IBM Corp. All rights reserved.
+ * Copyright © 2018,2023 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -54,6 +54,7 @@ public class MQConfigurationProperties {
   // affect how connections are made.
   private static final String PROPERTY_USE_IBM_CIPHER_MAPPINGS = "com.ibm.mq.cfg.useIBMCipherMappings";
   private static final String PROPERTY_OUTBOUND_SNI            = "com.ibm.mq.cfg.SSL.outboundSNI";
+  private static final String PROPERTY_CHANNEL_SHARING         = "com.ibm.mq.jms.channel.sharing";
 
   /**
    * MQ Queue Manager name
@@ -139,6 +140,11 @@ public class MQConfigurationProperties {
    * otherwise use whatever the default behaviour is in the JMS client.
    */
   private String outboundSNI = ""; // HOSTNAME or CHANNEL are the valid alternatives
+
+  /**
+   * Set to GLOBAL or CONNECTION for strategies to share TCP/IP connections.
+   */
+  private String channelSharing = "";
 
   /**
    * Whether to automatically reconnect to the qmgr when in client mode. Values can be YES/NO/QMGR/DISABLED.
@@ -298,6 +304,15 @@ public class MQConfigurationProperties {
     this.outboundSNI = outboundSNI;
   }
 
+  public String getChannelSharing() {
+    return channelSharing;
+  }
+
+  public void setChannelSharing(String channelSharing) {
+    System.setProperty(PROPERTY_CHANNEL_SHARING,channelSharing);
+    this.channelSharing = channelSharing;
+  }  
+
   // Both forms of this seem to have been used at different times. So we allow
   // either to be set. The local field named after the config option is actually
   // irrelevant; we always set a different common field.
@@ -446,6 +461,8 @@ public class MQConfigurationProperties {
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUseAuthenticationMQCSP());
     logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());
+    logger.trace("channelSharing         : \'{}\'", getChannelSharing());
+
 
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
