@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.10 and 3.0.5 (2023-03-24)
+- Update dependencies to Spring Boot 2.7.10/3.0.5
+
 ## 2.7.9 and 3.0.3 (2023-02-23)
 - Update dependencies to Spring Boot 2.7.9/3.0.3
 - Update dependencies to MQ 9.3.2.0
