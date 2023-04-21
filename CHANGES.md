@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.11 and 3.0.6 (2023-04-21)
+- Update dependencies to Spring Boot 2.7.11/3.0.6
+- Over-enthusiastic conversion to Jakarta names (#91)
+
 ## 2.7.10 and 3.0.5 (2023-03-24)
 - Update dependencies to Spring Boot 2.7.10/3.0.5
 

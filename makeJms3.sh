@@ -12,6 +12,12 @@ curdir=`pwd`
 in="$1"
 out="$2"
 
+if [ -z "$in" -o -z "$out" ]
+then
+  echo "Usage: makeJms3.sh inDir outDir"
+  exit 1
+fi
+
 if [ ! -d $in ]
 then
   echo "Cannot find input directory $in"
@@ -28,8 +34,10 @@ do
    # Change various package names, but the javax.naming seems to have to remain so we revert that
    # specific change in the final step of the filter.
    cat  $f |\
-      sed "s/com.ibm.mq.jms/com.ibm.mq.jakarta.jms/g" |\
-      sed "s/com.ibm.msg.client/com.ibm.msg.client.jakarta/g" |\
-      sed "s/javax/jakarta/g" |
-      sed "s/jakarta.naming/javax.naming/g">  $out/$f
+      sed "s/import com.ibm.mq.jms/import com.ibm.mq.jakarta.jms/g" |\
+      sed "s/import com.ibm.msg.client/import com.ibm.msg.client.jakarta/g" |\
+      sed "s/javax/jakarta/g" |\
+      sed "s/com.ibm.mq.jakarta.jms.channel.sharing/com.ibm.mq.jms.channel.sharing/g" |\
+      sed "s/jakarta.net.ssl/javax.net.ssl/g" |\
+      sed "s/jakarta.naming/javax.naming/g" >  $out/$f
 done
