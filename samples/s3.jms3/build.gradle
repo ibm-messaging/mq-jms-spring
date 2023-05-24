@@ -13,7 +13,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '3.0.6'
+ext.starterVersion = '3.1.0'
 
 
 // The local, flatDir configuration lets us use a modified version from

@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.12 and 3.1.0 (2023-05-24)
+- Update Spring dependencies
+- Update to MQ 9.3.2.1
+
 ## 2.7.11 and 3.0.6 (2023-04-21)
 - Update dependencies to Spring Boot 2.7.11/3.0.6
 - Over-enthusiastic conversion to Jakarta names (#91)
