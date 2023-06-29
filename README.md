@@ -65,9 +65,9 @@ IBM MQ for Developers container which runs the server processes.
 ### Default Configuration
 
 The default options have been selected to match the
-[MQ Docker container](https://github.com/ibm-messaging/mq-container) development configuration.
+[MQ container](https://github.com/ibm-messaging/mq-container) development configuration.
 
-This means that you can run a queue manager using that Docker environment and connect to it. This script
+This means that you can run a queue manager using that environment and connect to it. This script
 will run the container on a Linux system.
 
     docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \
@@ -163,6 +163,7 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.autoConfigure        | If explicitly set to "false", then the autoconfigure bean is disabled           |
 
 The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
+
 #### TLS related options
 
 The following options all default to null, but may be used to assist with configuring TLS
@@ -183,6 +184,16 @@ We also have
 | ibm.mq.sslFIPSRequired      | Force FIPS-compliant algorithms to be used (default false)                      |
 | ibm.mq.sslKeyResetCount     | How many bytes to send before resetting the TLS keys                            |
 
+and
+
+| Option                          | Description                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| ibm.mq.jks.trustStore           | Where is the store holding trusted certificates                              |
+| ibm.mq.jks.trustStorePassword   | Password for the trustStore                                                  |
+| ibm.mq.jks.keyStore             | Where is the keystore with a personal key and certificate                    |
+| ibm.mq.jks.keyStorePassword     | Password for the keyStore                                                    |
+
+These JKS options are an alternative to setting the `javax.net.ssl` system properties.
 
 #### Caching connection factory options
 
