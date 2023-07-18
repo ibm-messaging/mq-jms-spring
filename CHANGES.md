@@ -1,6 +1,11 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.14 and 3.1.2 (2023-07-20)
+- Update Spring dependencies
+- Add SSLBundle configuration option for Boot 3.1 apps (#94)
+- Reverse build process to make Boot 3/Jakarta Messaging the default source tree
+
 ## 2.7.13 and 3.1.1 (2023-06-22)
 - Update Spring dependencies
 - Update to MQ 9.3.3.0

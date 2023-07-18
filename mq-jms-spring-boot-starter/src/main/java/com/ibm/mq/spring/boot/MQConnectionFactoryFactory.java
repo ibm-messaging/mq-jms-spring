@@ -21,16 +21,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.mq.jms.MQConnectionFactory;
-import com.ibm.msg.client.wmq.WMQConstants;
+import com.ibm.mq.jakarta.jms.MQConnectionFactory;
+import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
 /**
  * Factory to create a {@link MQConnectionFactory} instance from properties defined in {@link MQConfigurationProperties}.
@@ -53,6 +54,7 @@ public class MQConnectionFactoryFactory {
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
     T cf = null;
+       
     String jndiProviderUrl = this.properties.getJndi().getProviderUrl();
     String jndiCF = this.properties.getJndi().getProviderContextFactory();
 
@@ -60,6 +62,9 @@ public class MQConnectionFactoryFactory {
     
     /* Keystore System properties don't need the CF to be already created */ 
     configureTLSStores(this.properties);
+    
+    /* From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle */
+    SSLSocketFactory sf = MQConfigurationSslBundles.getSSLSocketFactory(this.properties.getSslBundle());
 
     if (isNotNullOrEmpty(jndiProviderUrl) && isNotNullOrEmpty(jndiCF)) {
       logger.trace("createConnectionFactory using JNDI");
@@ -76,6 +81,10 @@ public class MQConnectionFactoryFactory {
           cf = (T) ctx.lookup(cfName);
         }
         
+        if (sf != null) {
+          cf.setSSLSocketFactory(sf);
+        }
+        
         // We will not dump the properties as they are not used for most of the configuration.
         // The JNDI config may well have overridden the actual values in any resource files.
         // But we will still allow the customize methods to be used.
@@ -89,7 +98,9 @@ public class MQConnectionFactoryFactory {
     else {
       try {
         cf = createConnectionFactoryInstance(factoryClass);
-
+        if (sf != null) {
+          cf.setSSLSocketFactory(sf);
+        }
         configureConnectionFactory(cf, this.properties);
         customize(cf);
       }

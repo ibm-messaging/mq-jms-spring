@@ -53,7 +53,7 @@ public class MQConfigurationPropertiesJks {
   public void setTrustStore(String trustStore) {
     this.trustStore = trustStore;
   }
-
+  
   public String getKeyStorePassword() {
     return keyStorePassword;
   }

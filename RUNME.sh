@@ -40,13 +40,12 @@ EOF
 }
 
 function makeJms3Source {
-  $curdir/makeJms3.sh $1 $2
+  # This is the primary version, so don't need to copy it
   majors="$majors 61"
 }
 
 function makeJms2Source {
-  # There's nothing much needed here. Just make sure
-  # we know what version of compiler to expect.
+  $curdir/makeJms2.sh $1 $2
   majors="$majors 52"
 }
 
@@ -60,8 +59,9 @@ buildLog="/tmp/springBuild.log"
 rcFile="/tmp/springBuild.rc"
 majorsFile="/tmp/springBuild.majors"
 
+# Definitions for how to create the variation 
 in="$curdir/mq-jms-spring-boot-starter"
-out="$curdir/mq-jms3-spring-boot-starter"
+out="$curdir/mq-jms2-spring-boot-starter"
 
 majors=""
 
@@ -129,9 +129,9 @@ for vers in $jmsVersions
 do
   if [ $vers = "jms3" ]
   then
-    makeJms3Source $in $out
+    makeJms3Source 
   else
-    makeJms2Source
+    makeJms2Source $in $out
   fi
 
   cd $curdir
@@ -150,7 +150,7 @@ do
   then
     cp $HOME/.gradle.properties ./gradle.properties
   else
-    cp gradle.properties.template gradle.properties
+    cp -p gradle.properties.template gradle.properties
   fi
 
   if [ ! -r gradle.properties ]
@@ -163,7 +163,7 @@ do
   (./gradlew $args --warning-mode all clean jar $target 2>&1;echo $? > $rcFile) | tee -a $buildLog
 
   # Always make sure we've got a dummy properties file - the values are not needed from here on
-  cp gradle.properties.template gradle.properties
+  cp -p gradle.properties.template gradle.properties
 
   # Now we can look for errors
   rc=`cat $rcFile`

@@ -16,7 +16,7 @@ package com.ibm.mq.spring.boot;
 
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.ibm.mq.jms.MQConnectionFactory;
-import com.ibm.mq.jms.MQXAConnectionFactory;
+import com.ibm.mq.jakarta.jms.MQConnectionFactory;
+import com.ibm.mq.jakarta.jms.MQXAConnectionFactory;
 
 /**
  * Configuration for IBM MQ XA {@link ConnectionFactory}.

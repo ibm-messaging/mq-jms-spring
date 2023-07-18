@@ -14,7 +14,7 @@
 
 package com.ibm.mq.spring.boot;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -29,7 +29,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.ibm.mq.jms.MQConnectionFactory;
+import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 
 // See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0.0-M5-Release-Notes
 // where autoconfiguration was moved from META-INF/spring.factories to a separate file. The
@@ -37,7 +37,7 @@ import com.ibm.mq.jms.MQConnectionFactory;
 
 @Configuration(proxyBeanMethods=false)
 @AutoConfigureBefore(JmsAutoConfiguration.class)
-@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class})
+@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class,MQConfigurationSslBundles.class})
 @ConditionalOnClass({ ConnectionFactory.class, MQConnectionFactory.class })
 @ConditionalOnProperty(prefix = "ibm.mq", name = "autoConfigure", matchIfMissing=true)
 @ConditionalOnMissingBean(ConnectionFactory.class)

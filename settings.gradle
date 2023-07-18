@@ -2,13 +2,16 @@
 // JMS2 is the default. The project name is the same regardless of version though.
 
 rootProject.name = 'mq-jms-spring'
-if (System.getenv('JMSVERSION') == 'jms3') {
-  // We want to use the same module name for both JMS2 and JMS3, but just with different
-  // versions. So we rename the project from its default which would be based on the directory name.
+
+// We want to use the same module name for both JMS2 and JMS3, but just with different
+// versions. So we rename the project from its default which would be based on the directory name.
+if (System.getenv('JMSVERSION') == 'jms3' || System.getenv('JMSVERSION') == null ) {
   println("Including JMS3 subproject")
-  include ':mq-jms3-spring-boot-starter'
-  project(":mq-jms3-spring-boot-starter").name="mq-jms-spring-boot-starter"
+  include ':mq-jms-spring-boot-starter'
+  // Rename not strictly necessary here, but it makes it clearer
+  project(":mq-jms-spring-boot-starter").name="mq-jms-spring-boot-starter"
 } else {
   println("Including JMS2 subproject")
-  include ':mq-jms-spring-boot-starter'
+  include ':mq-jms2-spring-boot-starter'
+  project(":mq-jms2-spring-boot-starter").name="mq-jms-spring-boot-starter"
 }

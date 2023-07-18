@@ -15,9 +15,10 @@ and building it yourself, you can use the `RUNME.sh` script. It uses gradle as t
 push compiled jars to either a local repository (typically under `$HOME/.m2`) or to Maven Central.
 When signing/authentication of modules is required, use the `gradle.properties.template` file as a starter for your own `gradle.properties`.
 
-Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3.
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. Compiler directives are used to build 
+the Spring 2 version as compatible with the older Java 8 runtime.
 
-The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant does not have a separate source tree in this repository. Instead, the source is generated automatically during the build process, by simply changing package names in the JMS2 code. The created jar files have the same names, but different version numbers.
+The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant is the primary source. The older JMS2 version does not have a separate source tree in this repository. Instead, the source is generated automatically during the build process, by simply changing package names in the JMS3 code. The created jar files have the same names, but different version numbers.
 
 ### Spring Boot Applications
 
@@ -67,8 +68,10 @@ IBM MQ for Developers container which runs the server processes.
 The default options have been selected to match the
 [MQ container](https://github.com/ibm-messaging/mq-container) development configuration.
 
-This means that you can run a queue manager using that environment and connect to it. This script
-will run the container on a Linux system.
+This means that you can run a queue manager using that environment and connect to it without special 
+configuration. 
+
+This script will run the container on a Linux system.
 
     docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 \
                --publish 1414:1414 \
@@ -193,7 +196,23 @@ and
 | ibm.mq.jks.keyStore             | Where is the keystore with a personal key and certificate                    |
 | ibm.mq.jks.keyStorePassword     | Password for the keyStore                                                    |
 
-These JKS options are an alternative to setting the `javax.net.ssl` system properties.
+These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line. 
+
+An alternative preferred approach is
+available from Spring 3.1, which introduced the concept of "SSL Bundles". This makes it possible to have different
+SSL configurations - keystores, truststores etc - for different components executing in the same Spring-managed process.
+See [here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl)
+for a description of the options available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options.
+The key can be specified for this package with `ibm.mq.sslBundle` which will then use the Spring elements to create the
+connection configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global
+SSL configuration is used instead. 
+
+| Option                          | Description                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| ibm.mq.sslBundle                | Spring Boot option (from 3.1) for granular certificate configuration         |
+
+To achieve the same effect with Spring 2.x, you could use your own code to create an `SSLSocketFactory` object
+which can be applied to the MQ Connection Factory in a `customise` method before the CF is invoked.
 
 #### Caching connection factory options
 
@@ -202,14 +221,14 @@ preferred method in Spring for holding JMS objects open, rather than the Pooling
 
 | Option                              | Description                                      |
 | ----------------------------------- | ------------------------------------------------ |
-| spring.jms.cache.enabled            | Whether to cache sessions                        |
+| spring.jms.cache.enabled            | Whether to cache sessions (default true)         |
 | spring.jms.cache.consumers          | Whether to cache message consumers               |
 | spring.jms.cache.producers          | Whether to cache message producers               |
 | spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
 
 #### Pooled connection factory options
 
-Alternatively you may configure a pooled connection factory by using those properties:
+Alternatively you may configure a pooled connection factory by using these properties:
 
 | Option                                 | Description                                                                                                                              |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -227,7 +246,7 @@ the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/
 
 ### JMS Polling Listener Timer configuration
 
-The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can now be configured
+The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can be configured
 with the `spring.jms.listener.receiveTimeout` property. If the property is not explicitly set, then this MQ Spring Boot
 component resets the initial timeout value to 30 seconds which has been shown to be more cost-effective. Application code
 can still set its own preferred value.

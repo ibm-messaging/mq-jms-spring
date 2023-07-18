@@ -1,2 +1,3 @@
 # Used in Spring Boot 3 
 com.ibm.mq.spring.boot.MQAutoConfiguration
+com.ibm.mq.spring.boot.MQConfigurationSslBundles

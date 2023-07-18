@@ -16,7 +16,7 @@ package com.ibm.mq.spring.boot;
 
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.commons.pool2.PooledObject;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
-import com.ibm.mq.jms.MQConnectionFactory;
+import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 
 /**
  * Configuration for IBM MQ {@link ConnectionFactory}.

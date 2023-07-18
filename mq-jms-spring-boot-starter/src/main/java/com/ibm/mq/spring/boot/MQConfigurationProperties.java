@@ -23,19 +23,18 @@ import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProper
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import com.ibm.msg.client.wmq.WMQConstants;
+import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
 /**
- * There are many properties that can be set on an MQ Connection Factory, but these are the most commonly-used
- * for both direct and client connections. If you use TLS for client connectivity, most properties related to that
- * (keystore, certificates etc) must be set independently.
+ * There are many properties that can be set on an MQ Connection Factory/ This class allows configuration for most of them
+ * for both direct and client connections. Any that are not explicitly named in here can be managed through the "additionalProperties"
+ * map.
  * <p>
  * This class allows for setting the CipherSuite/CipherSpec property, and an indication of whether or not
  * to use the IBM JRE maps for Cipher names - that's not something that is standardised.
  * <p>
  * The default values have been set to match the settings of the
- * <a href="https://github.com/ibm-messaging/mq-docker">MQ Docker</a>
- * container.
+ * <a href="https://github.com/ibm-messaging/mq-container">developer-configured container</a>.
  *
  * <ul>
  * <li>queueManager = QM1
@@ -187,6 +186,10 @@ public class MQConfigurationProperties {
    */
   private int sslKeyResetCount = -1;
 
+  /**
+   * The key to the SSL Bundle attributes available from Spring Boot 3.1
+   */
+  private String sslBundle;
 
   /**
    * Additional CF properties that are not explicitly known can be provided
@@ -396,6 +399,14 @@ public class MQConfigurationProperties {
   public void setSslKeyResetCount(int sslKeyResetCount) {
     this.sslKeyResetCount = sslKeyResetCount;
   }
+  
+  public String getSslBundle() {
+    return sslBundle;
+  }
+
+  public void setSslBundle(String sslBundle) {
+    this.sslBundle = sslBundle;
+  }
 
   public int getReconnectValue() {
     int rc = 0;
@@ -451,6 +462,8 @@ public class MQConfigurationProperties {
     logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
     logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());
     logger.trace("sslPeerName     : {}", getSslPeerName());
+    logger.trace("sslBundle       : {}",getSslBundle());
+
     logger.trace("tempModel       : {}", getTempModel());
     logger.trace("tempQPrefix     : {}", getTempQPrefix());
     logger.trace("tempTopicPrefix : {}", getTempTopicPrefix());
@@ -463,7 +476,6 @@ public class MQConfigurationProperties {
     logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());
     logger.trace("channelSharing         : \'{}\'", getChannelSharing());
 
-
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
     
@@ -473,7 +485,7 @@ public class MQConfigurationProperties {
     pw = getJks().getTrustStorePassword();
     logger.trace("JKS truststore         : {}",getJks().getTrustStore());
     logger.trace("JKS truststore pw set  : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
-    
+
     if (additionalProperties.size() > 0) {
       for (String s: additionalProperties.keySet()) {
         logger.trace("Additional Property - {} : {}",s,additionalProperties.get(s));

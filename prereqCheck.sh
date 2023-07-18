@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Must have 3 parms
+if [ -z "$3" ]
+then
+  echo "ERROR: Need to provide group/artifact/version parameters"
+  exit 1
+fi  
+
 group=$1
 artifact=$2
 version=$3
