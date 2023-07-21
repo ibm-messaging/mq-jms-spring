@@ -54,6 +54,7 @@ public class MQConnectionFactoryFactory {
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
     T cf = null;
+    SSLSocketFactory sf = null;
        
     String jndiProviderUrl = this.properties.getJndi().getProviderUrl();
     String jndiCF = this.properties.getJndi().getProviderContextFactory();
@@ -61,10 +62,15 @@ public class MQConnectionFactoryFactory {
     logger.trace("createConnectionFactory for class " + factoryClass.getSimpleName());
     
     /* Keystore System properties don't need the CF to be already created */ 
-    configureTLSStores(this.properties);
+    String sslBundle = this.properties.getSslBundle();
     
     /* From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle */
-    SSLSocketFactory sf = MQConfigurationSslBundles.getSSLSocketFactory(this.properties.getSslBundle());
+    /* The bundle name takes priority over the ibm.mq.jks properties */
+    if (MQConfigurationSslBundles.isSupported() && isNotNullOrEmpty(sslBundle)) {
+      sf = MQConfigurationSslBundles.getSSLSocketFactory(this.properties.getSslBundle());
+    } else {
+      configureTLSStores(this.properties);
+    }
 
     if (isNotNullOrEmpty(jndiProviderUrl) && isNotNullOrEmpty(jndiCF)) {
       logger.trace("createConnectionFactory using JNDI");

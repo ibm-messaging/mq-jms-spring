@@ -25,7 +25,13 @@ import org.slf4j.LoggerFactory;
 
 public class MQConfigurationSslBundles {
   private static Logger logger = LoggerFactory.getLogger(MQConfigurationSslBundles.class);
+  
+  static boolean isSupported() {
+    logger.trace("SSLBundles are not supported");
+    return false;
+  }
 
+  /* This should never actually be called */
   public static SSLSocketFactory getSSLSocketFactory(String b) {
     logger.trace("getSSLSocketFactory returning null for bundle {}", b);
     return null;

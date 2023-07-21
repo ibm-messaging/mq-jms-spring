@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * This class gives a mechanism to control access to keystore/truststore JKS files
@@ -38,6 +39,7 @@ public class MQConfigurationPropertiesJks {
 
   private Map<String, String> additionalProperties = new HashMap<String,String>();
 
+  @DeprecatedConfigurationProperty(replacement="spring.ssl.bundle")
   public String getKeyStore() {
     return keyStore;
   }
@@ -46,6 +48,7 @@ public class MQConfigurationPropertiesJks {
     this.keyStore = keyStore;
   }
 
+  @DeprecatedConfigurationProperty(replacement="spring.ssl.bundle")
   public String getTrustStore() {
     return trustStore;
   }
@@ -54,6 +57,7 @@ public class MQConfigurationPropertiesJks {
     this.trustStore = trustStore;
   }
   
+  @DeprecatedConfigurationProperty(replacement="spring.ssl.bundle")
   public String getKeyStorePassword() {
     return keyStorePassword;
   }
@@ -62,6 +66,7 @@ public class MQConfigurationPropertiesJks {
     this.keyStorePassword = keyStorePassword;
   }
 
+  @DeprecatedConfigurationProperty(replacement="spring.ssl.bundle")
   public String getTrustStorePassword() {
     return trustStorePassword;
   }

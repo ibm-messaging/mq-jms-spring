@@ -40,6 +40,11 @@ public class MQConfigurationSslBundles {
     logger.trace("constructor - Bundles are {}", (sslBundles == null) ? "null" : "not null");
     bundles = sslBundles;
   }
+  
+  static boolean isSupported() {
+    logger.trace("SSLBundles are supported");
+    return true;
+  }
 
   /* If the bundle name does not exist, then getBundle throws an exception. Since
      there is always some default bundle, we can't rely on there being no bundle.

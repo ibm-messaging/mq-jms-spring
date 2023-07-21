@@ -198,14 +198,14 @@ and
 
 These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line. 
 
-An alternative preferred approach is
+An alternative preferred approach for setting the key/truststores is
 available from Spring 3.1, which introduced the concept of "SSL Bundles". This makes it possible to have different
 SSL configurations - keystores, truststores etc - for different components executing in the same Spring-managed process.
 See [here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl)
 for a description of the options available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options.
-The key can be specified for this package with `ibm.mq.sslBundle` which will then use the Spring elements to create the
+The key can be specified for this package with `ibm.mq.sslBundle` which then uses the Spring elements to create the
 connection configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global
-SSL configuration is used instead. 
+SSL configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated. 
 
 | Option                          | Description                                                                  |
 | ------------------------------- | ---------------------------------------------------------------------------- |
