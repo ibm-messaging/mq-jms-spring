@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017, 2020 IBM Corp. All rights reserved.
+ * Copyright © 2017, 2023 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -30,8 +30,6 @@ package sample2;
 
 import java.util.Date;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,9 +42,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 import com.ibm.mq.spring.boot.MQConnectionFactoryCustomizer;
-import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
-import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 
 @SpringBootApplication

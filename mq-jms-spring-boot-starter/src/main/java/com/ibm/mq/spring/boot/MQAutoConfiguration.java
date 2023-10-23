@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2020 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2023 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -14,8 +14,8 @@
 
 package com.ibm.mq.spring.boot;
 
-import jakarta.jms.ConnectionFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Import;
 
 import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 
+import jakarta.jms.ConnectionFactory;
+
 // See https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0.0-M5-Release-Notes
 // where autoconfiguration was moved from META-INF/spring.factories to a separate file. The
 // original file can remain in place though for both Boot 2 and Boot 3.
@@ -42,7 +44,11 @@ import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 @ConditionalOnProperty(prefix = "ibm.mq", name = "autoConfigure", matchIfMissing=true)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 @EnableConfigurationProperties({MQConfigurationProperties.class, JmsProperties.class})
-@Import({ MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
+@Import({ MQConfigurationSslBundles.class, MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
 public class MQAutoConfiguration {
+  private static Logger logger = LoggerFactory.getLogger(MQAutoConfiguration.class);
+  public MQAutoConfiguration() {
+    logger.trace("constructor");
+  }
 }
 

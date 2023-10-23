@@ -4,17 +4,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
-    }
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:2.7.17")    }
 }
 
-
 apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'org.springframework.boot' 
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '2.7.14'
-
+ext.starterVersion = '2.7.17'
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {

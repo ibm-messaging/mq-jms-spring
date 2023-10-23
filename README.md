@@ -10,15 +10,18 @@ The library contains:
 
 The compiled versions of this package can be automatically downloaded from Maven Central.
 
-For local modifications
-and building it yourself, you can use the `RUNME.sh` script. It uses gradle as the build mechanism and has tasks that can
-push compiled jars to either a local repository (typically under `$HOME/.m2`) or to Maven Central.
-When signing/authentication of modules is required, use the `gradle.properties.template` file as a starter for your own `gradle.properties`.
+For local modifications and building it yourself, you can use the `RUNME.sh` script. It uses gradle as the build
+mechanism and has tasks that can push compiled jars to either a local repository (typically under `$HOME/.m2`) or to
+Maven Central. When signing/authentication of modules is required, use the `gradle.properties.template` file as a
+starter for your own `gradle.properties`.
 
-Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. Compiler directives are used to build 
-the Spring 2 version as compatible with the older Java 8 runtime.
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. Compiler
+directives are used to build the Spring 2 version as compatible with the older Java 8 runtime.
 
-The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant is the primary source. The older JMS2 version does not have a separate source tree in this repository. Instead, the source is generated automatically during the build process, by simply changing package names in the JMS3 code. The created jar files have the same names, but different version numbers.
+The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant is the primary source. The
+older JMS2 version does not have a separate source tree in this repository. Instead, the source is generated
+automatically during the build process, by simply changing package names in the JMS3 code. The created jar files have
+the same names, but different version numbers.
 
 ### Spring Boot Applications
 
@@ -43,8 +46,7 @@ Maven:
 </dependency>
 ```
 
-**Note** This repository and the corresponding Maven Central artifacts require
-either Spring Boot 2 or 3.
+**Note** This repository and the corresponding Maven Central artifacts require either Spring Boot 2 or 3.
 
 ## Design Approach
 
@@ -89,25 +91,25 @@ The default attributes are
 
 ### Connection security
 
-The default userid and password have been chosen for a commonly-used queue manager
-configuration.
+The default userid and password have been chosen for a commonly-used queue manager configuration.
 
-To disable user/password checking entirely, you must set the `ibm.mq.user` attribute to an empty value
-so that the default is not used.
+To disable user/password checking entirely, you must set the `ibm.mq.user` and `ibm.mq.password` attribute to empty
+values so that the defaults are not used.
 
 ```
    ibm.mq.user=
+   ibm.mq.password=
 ```
 
-Of course, that level of access must be permitted by your queue manager. The usual CHLAUTH and CONNAUTH
-rules will apply to assign an identity to the connection.
+Of course, that level of access must be permitted by your queue manager. The usual CHLAUTH and CONNAUTH rules will apply
+to assign an identity to the connection.
 
 Configuration of secure connections with TLS are discussed below.
 
 ### Configuration Options
 
-If you already have a running MQ queue manager that you want to use, then you can easily modify the
-default configuration to match by providing override values.
+If you already have a running MQ queue manager that you want to use, then you can easily modify the default
+configuration to match by providing override values.
 
 The queue manager name is given as
 
@@ -120,13 +122,12 @@ For client connections to a queue manager, you must also have either
     or
 -   `ibm.mq.ccdtUrl`
 
-If both the channel and connName are empty, and the CCDTURL is not supplied,
-then a local queue manager is assumed. The CCDTURL property is taken in preference to
-the channel and connName. The channel and connName have non-blank defaults, so must be
-explicitly set to empty strings if you do not wish them to be used.
+If both the channel and connName are empty, and the CCDTURL is not supplied, then a local queue manager is assumed. The
+CCDTURL property is taken in preference to the channel and connName. The channel and connName have non-blank defaults,
+so must be explicitly set to empty strings if you do not wish them to be used.
 
-Optionally you can provide a [client id](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q112000_.html)
-and [application name](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.ref.dev.doc/q111810_.htm) if required.
+Optionally you can provide a [client id](https://www.ibm.com/docs/en/ibm-mq/latest?topic=objects-clientid)
+and [application name](https://www.ibm.com/docs/en/ibm-mq/latest?topic=applications-specifying-application-name-in-supported-programming-languages) if required.
 
 -   `ibm.mq.clientId`
 -   `ibm.mq.applicationName`
@@ -164,6 +165,9 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.tempModel            | The name of a model queue for creating temporary destinations.                  |
 | ibm.mq.reconnect            | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
 | ibm.mq.autoConfigure        | If explicitly set to "false", then the autoconfigure bean is disabled           |
+| ibm.mq.balancingApplicationType | Hint how uniform clusters should treat the app. Options of SIMPLE/REQREP    |
+| ibm.mq.balancingTimeout     | Uniform cluster timer. Options NEVER/DEFAULT/IMMEDIATE or integer seconds       |
+| ibm.mq.balancingOptions     | Rebalancing options. Options of NONE/IGNORETRANS. Default NONE.                 |
 
 The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 
@@ -198,14 +202,14 @@ and
 
 These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line. 
 
-An alternative preferred approach for setting the key/truststores is
-available from Spring 3.1, which introduced the concept of "SSL Bundles". This makes it possible to have different
-SSL configurations - keystores, truststores etc - for different components executing in the same Spring-managed process.
-See [here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl)
-for a description of the options available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options.
-The key can be specified for this package with `ibm.mq.sslBundle` which then uses the Spring elements to create the
-connection configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global
-SSL configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated. 
+An alternative preferred approach for setting the key/truststores is available from Spring 3.1, which introduced the
+concept of "SSL Bundles". This makes it possible to have different SSL configurations - keystores, truststores etc - for
+different components executing in the same Spring-managed process. See
+[here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl) for a description of the options
+available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options. The key can be
+specified for this package with `ibm.mq.sslBundle` which then uses the Spring elements to create the connection
+configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global SSL
+configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated.
 
 | Option                          | Description                                                                  |
 | ------------------------------- | ---------------------------------------------------------------------------- |
@@ -246,10 +250,10 @@ the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/
 
 ### JMS Polling Listener Timer configuration
 
-The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can be configured
-with the `spring.jms.listener.receiveTimeout` property. If the property is not explicitly set, then this MQ Spring Boot
-component resets the initial timeout value to 30 seconds which has been shown to be more cost-effective. Application code
-can still set its own preferred value.
+The Spring AbstractPollingMessageListenerContainer interface has a default polling timer of 1 second. This can be
+configured with the `spring.jms.listener.receiveTimeout` property. If the property is not explicitly set, then this MQ
+Spring Boot component resets the initial timeout value to 30 seconds which has been shown to be more cost-effective.
+Application code can still set its own preferred value.
 
 | Option                              | Description                                                                                                                   |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -257,53 +261,50 @@ can still set its own preferred value.
 
 ### Additional properties
 
-Additional properties that are not in the recognised sets listed here can be put onto the
-Connection Factory via a map in the external properties definitions. Use the format
-`ibm.mq.additionalProperties.CONSTANT_NAME=value`. The CONSTANT_NAME can be either the
-real string for the property, and will often begin with "XMSC", or it can be the variable as known
-in the WMQConstants class.
+Additional properties that are not in the recognised sets listed here can be put onto the Connection Factory via a map
+in the external properties definitions. Use the format `ibm.mq.additionalProperties.CONSTANT_NAME=value`. The
+CONSTANT_NAME can be either the real string for the property, and will often begin with "XMSC", or it can be the
+variable as known in the WMQConstants class.
 
-For example, the constant `WMQConstants.WMQ_SECURITY_EXIT` has the value `"XMSC_WMQ_SECURITY_EXIT"`
-and can be written in the properties file either as
-  `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit`
-or as
-  `ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit`
+For example, the constant `WMQConstants.WMQ_SECURITY_EXIT` has the value `"XMSC_WMQ_SECURITY_EXIT"` and can be written
+in the properties file either as `ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit` or as
+`ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit`
 
+There is no error checking on the property name or value. This may help with enabling rarely-used properties and reduce
+the need for a customizer method in application code. See
+[the KnowledgeCenter](https://www.ibm.com/docs/en/ibm-mq/latest?topic=messaging-mqconnectionfactoryconnectionfactoryproperty)
+for a list of all the currently-recognised properties that may be set on a CF - though note that many are now
+deprecated.
 
-There is no error checking on the property name or value. This may help with enabling
-rarely-used properties and reduce the need for a customizer method in application
-code. See [the KnowledgeCenter](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/jms/MQConnectionFactory.ConnectionFactoryProperty.html)
-for a list of all the currently-recognised properties that may be set on a CF - though note that many are now deprecated.
-
-If the value looks like a number, it is treated as such. You can use hex constants beginning "0X" or decimals for a number.
-Similarly if the value is TRUE/FALSE then that is processed as a boolean.
-So you cannot try to set a string property that appears to be an integer.
-Symbols representing the value of integer attributes cannot be used - the real
+If the value looks like a number, it is treated as such. You can use hex constants beginning "0X" or decimals for a
+number. Similarly if the value is TRUE/FALSE then that is processed as a boolean. So you cannot try to set a string
+property that appears to be an integer. Symbols representing the value of integer attributes cannot be used - the real
 number must be given.
 
 ## JNDI
-Spring already has configuration parameters for the use of a JNDI repository with a JMS program.
-See the [Spring documentation](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/jms.html) for more
-details.
+Spring already has configuration parameters for the use of a JNDI repository with a JMS program. See the
+[Spring documentation](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/jms.html) for
+more details.
 
-However this package also enables some simple use of JNDI for Connection definitions (but not Destinations, as they are still always
-handled by the core Spring classes).
+However this package also enables some simple use of JNDI for Connection definitions (but not Destinations, as they are
+still always handled by the core Spring classes).
 
-You can set the `ibm.mq.jndi.providerUrl` and `ibm.mq.jndi.providerContextFactory` attributes to define
-how the lookup is to be carried out. For example,
+You can set the `ibm.mq.jndi.providerUrl` and `ibm.mq.jndi.providerContextFactory` attributes to define how the lookup
+is to be carried out. For example,
 
 ```
   ibm.mq.jndi.providerUrl=file:///home/username/mqjms/jndi
   ibm.mq.jndi.providerContextFactory=com.sun.jndi.fscontext.RefFSContextFactory
 ```
 
-If you choose to use this mechanism, all of the other queue manager properties that might be defined in your resource definitions are ignored and not
-traced in order to avoid confusion. They will instead be picked up from the ConnectionFactory definition in JNDI.
-The `queueManager` property is then more accurately used as the ConnectionFactory name used as the lookup. If you are using
-an LDAP JNDI provider, then the CF name will be modified if necessary to always begin with `cn=`.
+If you choose to use this mechanism, all of the other queue manager properties that might be defined in your resource
+definitions are ignored and not traced in order to avoid confusion. They will instead be picked up from the
+ConnectionFactory definition in JNDI. The `queueManager` property is then more accurately used as the ConnectionFactory
+name used as the lookup. If you are using an LDAP JNDI provider, then the CF name will be modified if necessary to
+always begin with `cn=`.
 
-The `ibm.mq.jndi.additionalProperties` prefix can be used for any other JNDI-related properties that need to be applied to the
-*Context* object. The symbolic name of the field from that Java class can be used. For example,
+The `ibm.mq.jndi.additionalProperties` prefix can be used for any other JNDI-related properties that need to be applied
+to the *Context* object. The symbolic name of the field from that Java class can be used. For example,
 
 ```
 ibm.mq.jndi.additionalProperties.SECURITY_CREDENTIALS=passw0rd
@@ -314,29 +315,27 @@ results in
   env.put(Context.SECURITY_CREDENTIALS,"passw0rd")
 ```
 
-The `MQConnectionFactoryFactory.getJndiContext` method is public so you can use it with your own
-constructed properties object and get access to a JNDI Context object - it might make it easier to work
-with Destinations if you can reuse the same way of getting directory access.
+The `MQConnectionFactoryFactory.getJndiContext` method is public so you can use it with your own constructed properties
+object and get access to a JNDI Context object - it might make it easier to work with Destinations if you can reuse the
+same way of getting directory access.
 
 ## Logging & Tracing
-The package makes use of the logging capabilities within Spring. You can enable
-tracing of this specific component in your application's properties file by setting
-`logging.level.com.ibm.mq.spring.boot=TRACE`. Otherwise it uses the standard
-inheritance of logging configuration from `logging.level.root`downwards.
+The package makes use of the logging capabilities within Spring. You can enable tracing of this specific component in
+your application's properties file by setting `logging.level.com.ibm.mq.spring.boot=TRACE`. Otherwise it uses the
+standard inheritance of logging configuration from `logging.level.root`downwards.
 
 ## Related documentation
 
--   [MQ documentation](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_latest)
+-   [MQ documentation](https://www.ibm.com/docs/en/ibm-mq/latest)
 -   [Spring Boot documentation](https://projects.spring.io/spring-boot/)
 -   [Spring Framework documentation](https://projects.spring.io/spring-framework/)
 
 
 ### Contributions and Pull requests
 
-Contributions to this package can be accepted under the terms of the Developer's Certificate
-of Origin, found in the [DCO file](DCO1.1.txt) of this repository. When
-submitting a pull request, you must include a statement stating you accept the terms
-in the DCO.
+Contributions to this package can be accepted under the terms of the Developer's Certificate of Origin, found in the
+[DCO file](DCO1.1.txt) of this repository. When submitting a pull request, you must include a statement stating you
+accept the terms in the DCO.
 
 ### Using in Other Projects
 
@@ -346,20 +345,20 @@ The preferred approach for using this package in other projects will be to use t
 
 Copyright © 2018, 2023 IBM Corp. All rights reserved.
 
-Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the license.
-You may obtain a copy of the license at
+Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the
+license. You may obtain a copy of the license at
 
     http://www.apache.org/licenses/LICENSE-2.0.html
 
-Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied. See the license for the specific language governing
-permissions and limitations under the license.
+Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an
+"as is" basis, without warranties or conditions of any kind, either express or implied. See the license for the specific
+language governing permissions and limitations under the license.
 
 ### Health Warning
-This package is provided as-is with no guarantees of support or updates. You cannot use
-IBM formal support channels (Cases/PMRs) for assistance with material in this repository.
-There are also no guarantees of compatibility with any future versions of the package;
-the API is subject to change based on any feedback. Versioned releases are made to assist with using stable APIs.
+This package is provided as-is with no guarantees of support or updates. You cannot use IBM formal support channels
+(Cases/PMRs) for assistance with material in this repository. There are also no guarantees of compatibility with any
+future versions of the package; the API is subject to change based on any feedback. Versioned releases are made to
+assist with using stable APIs.
 
 ### Issues
 

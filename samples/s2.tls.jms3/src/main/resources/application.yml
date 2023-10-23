@@ -5,14 +5,18 @@ ibm:
     connName: "localhost(1414)"
     sslCipherSpec: "ANY_TLS12_OR_HIGHER"
     sslBundle: "ibmmq"
-
+   
 # Setup a "bundle" pointing at the truststore. Available from Spring Boot 3.1.
 # The key to the bundle is given in the ibm.mq.sslBundle attribute.
 spring:
+  jms:
+    cache:
+      enabled: true
   ssl:
     bundle:
       jks:
         ibmmq:
+          # protocol: TLSv1.2
           truststore:
             location: "key.jks"
             password: "passw0rd"
@@ -23,8 +27,10 @@ spring:
             type: "JKS"
    
 logging:
+  pattern:
+    console: "%logger{36} - %msg%n"
   level:
-    # root: "TRACE"
+    root: INFO
     com:
       ibm:
         mq:

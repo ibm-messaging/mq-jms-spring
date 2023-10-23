@@ -20,53 +20,66 @@
 
 package com.ibm.mq.spring.boot;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.ssl.NoSuchSslBundleException;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
+@AutoConfigureBefore(MQConfigurationProperties.class)
 public class MQConfigurationSslBundles {
   private static Logger logger = LoggerFactory.getLogger(MQConfigurationSslBundles.class);
 
-  static SslBundles bundles = null;
+  /**
+   * The configured set of SSL Bundles. A map that can be
+   * references by the sslBundle key.
+   */
+  private static SslBundles sslBundles = null;
 
   /* This is called during the initialisation phase */
-  public MQConfigurationSslBundles(SslBundles sslBundles) {
-    logger.trace("constructor - Bundles are {}", (sslBundles == null) ? "null" : "not null");
-    bundles = sslBundles;
+  public MQConfigurationSslBundles(SslBundles _sslBundles) {
+    logger.trace("constructor - Bundles are {}", (_sslBundles == null) ? "null" : "not null");
+    sslBundles = _sslBundles;
   }
-  
+
   static boolean isSupported() {
     logger.trace("SSLBundles are supported");
     return true;
   }
 
   /* If the bundle name does not exist, then getBundle throws an exception. Since
-     there is always some default bundle, we can't rely on there being no bundle.
-     So we log an error, but otherwise try to continue.
+   * there is always some default bundle in Boot 3, we can't rely on there being
+   * a null bundle. So we log an error for your configuration, but otherwise try to continue.
    */
   public static SSLSocketFactory getSSLSocketFactory(String b) {
     SSLSocketFactory sf = null;
-    logger.trace("getSSLSocketFactory for {}", b);
 
     if (b == null || b.isEmpty()) {
+      /* Should never get here as the caller has already checked */
+      logger.trace("getSSLSocketFactory - null/empty bundle name requested");
       return sf;
     }
 
-    if (bundles != null) {
+    if (sslBundles != null) {
       try {
-        SslBundle sb = bundles.getBundle(b);
-        sf = sb.createSslContext().getSocketFactory();
+        SslBundle sb = sslBundles.getBundle(b);
+        logger.trace("SSL Bundle for {} - found", b);
+        SSLContext sc = sb.createSslContext();     
+        // logger.trace("SSL Protocol is {}",sc.getProtocol());
+        sf = sc.getSocketFactory();
       }
       catch (NoSuchSslBundleException e) {
-        logger.error("No SSL bundle found for {}", b);
+        logger.error("SSL bundle for {} - not found", b);
       }
     }
     return sf;
   }
+
 }

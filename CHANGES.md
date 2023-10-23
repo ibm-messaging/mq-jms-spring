@@ -1,6 +1,14 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.17 and 3.1.5 (2023-10-20)
+- Update Spring dependencies
+- Update to MQ 9.3.4.0
+  - Uniform Cluster balancing options now available in JMS
+- Fix SSLBundle sequencing (#96)
+- Update documentation links to reflect IBM site changes (#100)
+- Update to Gradle 8.4
+
 ## 2.7.14 and 3.1.2 (2023-07-20)
 - Update Spring dependencies
 - Add SSLBundle configuration option for Boot 3.1 apps (#94)

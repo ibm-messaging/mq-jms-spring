@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2022 IBM Corp. All rights reserved.
+ * Copyright © 2018,2023 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -67,7 +67,7 @@ public class MQConnectionFactoryFactory {
     /* From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle */
     /* The bundle name takes priority over the ibm.mq.jks properties */
     if (MQConfigurationSslBundles.isSupported() && isNotNullOrEmpty(sslBundle)) {
-      sf = MQConfigurationSslBundles.getSSLSocketFactory(this.properties.getSslBundle());
+      sf = MQConfigurationSslBundles.getSSLSocketFactory(sslBundle);
     } else {
       configureTLSStores(this.properties);
     }
@@ -124,7 +124,6 @@ public class MQConnectionFactoryFactory {
   * This method allows someone to create their own CF and then have it configured
   * using the same MQConfigurationProperties class - which might have been assigned
   * from a different prefix in the properties file.
-  *
   */
   public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {
     // Should usually provide a queue manager name but it can be empty, to connect to the
@@ -136,8 +135,10 @@ public class MQConnectionFactoryFactory {
     props.traceProperties();
 
     String qmName = props.getQueueManager();
-    cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
-
+    if (!isNullOrEmpty(qmName)) {
+      cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
+    }
+    
     // Use the channel name to decide whether to try to connect locally or as a client. If the queue manager
     // code has been installed locally, then this connection will try to use native JNI bindings to match.
     String channel = props.getChannel();
@@ -169,6 +170,19 @@ public class MQConnectionFactoryFactory {
       if (!isNullOrEmpty(props.getReconnect())) {
         cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_OPTIONS, props.getReconnectValue());
       }
+      
+      /* Balancing options for Uniform clusters came available from 9.3.4 */
+      if (!isNullOrEmpty(props.getBalancingApplicationType())) {
+        cf.setIntProperty(WMQConstants.WMQ_BALANCING_APPLICATION_TYPE,props.getBalancingApplicationTypeValue());
+      }
+
+      if (!isNullOrEmpty(props.getBalancingOptions())) {
+        cf.setIntProperty(WMQConstants.WMQ_BALANCING_OPTIONS,props.getBalancingOptionsValue());
+      }
+
+      if (!isNullOrEmpty(props.getBalancingTimeout())) {
+        cf.setIntProperty(WMQConstants.WMQ_BALANCING_TIMEOUT,props.getBalancingTimeoutValue());
+      }
     }
     String applicationName = props.getApplicationName();
     if (!isNullOrEmpty(applicationName)) {
@@ -178,13 +192,16 @@ public class MQConnectionFactoryFactory {
     // Setup the authentication. If there is a userid defined, prefer to use the CSP model for
     // password checking. That is more general than the cf.connect(user,pass) method which has
     // some restrictions in the MQ client. But it is possible to override the choice via a
-    // property, for some compatibility requirements.
+    // property, for some compatibility requirements. It is possible to have a blank userid
+    // while also setting a password - the queue manager authentication mechanism would then
+    // be responsible for allocating an identity.
     String u = props.getUser();
     if (!isNullOrEmpty(u)) {
       cf.setStringProperty(WMQConstants.USERID, u);
-      String p = props.getPassword();
-      if (!isNullOrEmpty(p))
-        cf.setStringProperty(WMQConstants.PASSWORD, p);
+    }  
+    String p = props.getPassword();
+    if (!isNullOrEmpty(p)) {
+      cf.setStringProperty(WMQConstants.PASSWORD, p);
       cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, props.isUseAuthenticationMQCSP());
     }
 
@@ -289,7 +306,8 @@ public class MQConnectionFactoryFactory {
    * Access to Java keystores can be controlled by system properties. These are usually
    * given with -D options on the command line but we can set them here instead. The Spring properties
    * that drive these will be "ibm.mq.jks.keyStore=" ...  For historic reasons, we set the com.ibm.ssl versions
-   * as well as the regular javax.net.ssl properties. 
+   * as well as the regular javax.net.ssl properties. Deprecated in Spring Boot 3 where we try to use
+   * SSLBundles instead.
    */
   private static void configureTLSStores(MQConfigurationProperties props) {
     String prefixes[] = {"javax.net.ssl.","com.ibm.ssl."};
