@@ -146,9 +146,9 @@ do
     target=publishToMavenLocal
   fi
 
-  if [ -r $HOME/.gradle.properties ]
+  if [ -r $HOME/.creds/gradle.properties ]
   then
-    cp $HOME/.gradle.properties ./gradle.properties
+    cp $HOME/.creds/gradle.properties ./gradle.properties
   else
     cp -p gradle.properties.template gradle.properties
   fi

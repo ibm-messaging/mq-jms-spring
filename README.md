@@ -4,7 +4,13 @@ This repository contains code to help to provide Spring developers with easy con
 
 The library contains:
 
--   `mq-jms-spring-boot-starter` for [Spring Boot 2 or 3](https://projects.spring.io/spring-boot/) applications
+-   `mq-jms-spring-boot-starter` for [Spring Boot](https://projects.spring.io/spring-boot/) applications
+
+NOTE: Spring Boot 2 has now reached its end of non-commercial service life.
+So version 2.7.18 is the last update based on Spring 2. Further updates will
+follow the Spring 3 path only. If you want to continue to use Spring 2 with future versions of the MQ jars,
+then overriding the version inherited from the mq-jms-spring-boot in your parent pom.xml should be possible.
+However, this would not give easy access via configuration to any new features available in the MQ client. 
 
 ## Installation and Usage
 

@@ -1,6 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 2.7.18 and 3.2.1 (2024-01-10)
+- Update Spring dependencies
+  NOTE: Spring Boot 2 has now reached its end of non-commercial service life. 
+  So this will be the last update based on Spring 2. Further updates will 
+  follow the Spring 3 path only.
+
 ## 2.7.17 and 3.1.5 (2023-10-20)
 - Update Spring dependencies
 - Update to MQ 9.3.4.0

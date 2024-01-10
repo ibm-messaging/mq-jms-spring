@@ -21,19 +21,17 @@
 package com.ibm.mq.spring.boot;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.ssl.NoSuchSslBundleException;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 
-@Configuration
-@AutoConfigureBefore(MQConfigurationProperties.class)
+@AutoConfiguration
 public class MQConfigurationSslBundles {
   private static Logger logger = LoggerFactory.getLogger(MQConfigurationSslBundles.class);
 
@@ -54,9 +52,11 @@ public class MQConfigurationSslBundles {
     return true;
   }
 
-  /* If the bundle name does not exist, then getBundle throws an exception. Since
+  /*
+   * If the bundle name does not exist, then getBundle throws an exception. Since
    * there is always some default bundle in Boot 3, we can't rely on there being
-   * a null bundle. So we log an error for your configuration, but otherwise try to continue.
+   * a null bundle. So we log an error for your configuration, but otherwise try
+   * to continue.
    */
   public static SSLSocketFactory getSSLSocketFactory(String b) {
     SSLSocketFactory sf = null;
@@ -71,7 +71,7 @@ public class MQConfigurationSslBundles {
       try {
         SslBundle sb = sslBundles.getBundle(b);
         logger.trace("SSL Bundle for {} - found", b);
-        SSLContext sc = sb.createSslContext();     
+        SSLContext sc = sb.createSslContext();
         // logger.trace("SSL Protocol is {}",sc.getProtocol());
         sf = sc.getSocketFactory();
       }
@@ -82,4 +82,11 @@ public class MQConfigurationSslBundles {
     return sf;
   }
 
+  @Bean
+  public MQConnectionFactoryCustomizer noOpCustomizer(MQConfigurationSslBundles ignored) {
+    // This is (hopefully) a temporary way to make sure the SSL info is configured at the right time
+    // See #96 for details
+    // logger.trace("!! dummy to force sequence");
+    return cf -> {};  
+  } 
 }
