@@ -23,6 +23,9 @@
 #
 # Version numbers for the generated files are in the jms*.properties files, along with a few other
 # variables that need to be set differently.
+# 
+# Note that from version 3.2.2, the JMS2 variation will no longer build from the supplied
+# script.
 #
 # The gradle scripts need to be run with a Java 17 JDK or later.
 
@@ -31,7 +34,7 @@ function printSyntax {
 Usage: RUNME.sh [-j jmsVersion] [-r]
 Options:
    -j JMS Version ("jms2" or "jms3"): can be repeated to get both
-      Default builds both.
+      Default builds jms3 only.
    -r Release to Maven staging or snapshot area
 Note that after pushing files to the STAGING area they will
 still require a manual release.
@@ -104,7 +107,7 @@ fi
 
 if [ -z "$jmsVersions" ]
 then
-  jmsVersions="jms2 jms3"
+  jmsVersions="jms3"
 fi
 
 jmsVersionCount=`echo $jmsVersions | wc -w`

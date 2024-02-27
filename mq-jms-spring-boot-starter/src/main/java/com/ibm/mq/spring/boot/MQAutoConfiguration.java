@@ -39,12 +39,12 @@ import jakarta.jms.ConnectionFactory;
 
 @Configuration(proxyBeanMethods=false)
 @AutoConfigureBefore(JmsAutoConfiguration.class)
-@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class,MQConfigurationSslBundles.class})
+@AutoConfigureAfter({ JndiConnectionFactoryAutoConfiguration.class, JtaAutoConfiguration.class})
 @ConditionalOnClass({ ConnectionFactory.class, MQConnectionFactory.class })
 @ConditionalOnProperty(prefix = "ibm.mq", name = "autoConfigure", matchIfMissing=true)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 @EnableConfigurationProperties({MQConfigurationProperties.class, JmsProperties.class})
-@Import({ MQConfigurationSslBundles.class, MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
+@Import({ MQXAConnectionFactoryConfiguration.class,MQConnectionFactoryConfiguration.class })
 public class MQAutoConfiguration {
   private static Logger logger = LoggerFactory.getLogger(MQAutoConfiguration.class);
   public MQAutoConfiguration() {

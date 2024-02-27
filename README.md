@@ -21,13 +21,7 @@ mechanism and has tasks that can push compiled jars to either a local repository
 Maven Central. When signing/authentication of modules is required, use the `gradle.properties.template` file as a
 starter for your own `gradle.properties`.
 
-Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. Compiler
-directives are used to build the Spring 2 version as compatible with the older Java 8 runtime.
-
-The script builds modules for both the JMS2 and JMS3 standards. The JMS3 (Jakarta) variant is the primary source. The
-older JMS2 version does not have a separate source tree in this repository. Instead, the source is generated
-automatically during the build process, by simply changing package names in the JMS3 code. The created jar files have
-the same names, but different version numbers.
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. 
 
 ### Spring Boot Applications
 
@@ -52,7 +46,8 @@ Maven:
 </dependency>
 ```
 
-**Note** This repository and the corresponding Maven Central artifacts require either Spring Boot 2 or 3.
+**Note** This repository and the corresponding Maven Central artifacts requires Spring Boot 3. Maven
+Central continues to provide older versions that work with Spring Boot 2.
 
 ## Design Approach
 
@@ -92,25 +87,33 @@ The default attributes are
     ibm.mq.queueManager=QM1
     ibm.mq.channel=DEV.ADMIN.SVRCONN
     ibm.mq.connName=localhost(1414)
-    ibm.mq.user=admin
-    ibm.mq.password=passw0rd
+    ibm.mq.user=
+    ibm.mq.password=
 
 ### Connection security
 
-The default userid and password have been chosen for a commonly-used queue manager configuration.
+The default userid and password have been removed from this package, as the corresponding default configuration has been
+removed from the MQ Developer images. Authentication must now be explicitly defined both for the queue manager, and for
+the Spring applications.
 
-To disable user/password checking entirely, you must set the `ibm.mq.user` and `ibm.mq.password` attribute to empty
-values so that the defaults are not used.
+To revert to the previous default user/password checking, perhaps if you are still using older Developer images, you
+must now set the `ibm.mq.user` and `ibm.mq.password` attribute.
 
 ```
-   ibm.mq.user=
-   ibm.mq.password=
+   ibm.mq.user=admin
+   ibm.mq.password=passw0rd
 ```
-
-Of course, that level of access must be permitted by your queue manager. The usual CHLAUTH and CONNAUTH rules will apply
-to assign an identity to the connection.
-
 Configuration of secure connections with TLS are discussed below.
+
+
+#### JWT Tokens
+If your queue manager supports authentication with JWT tokens, then you can either set `ibm.mq.token` or the password to
+the token. If you use the `password` attribute, then the `user` must also be set to the empty value (which is now the
+default anyway). Obtaining the token is outside the scope of this package; there are a number of ways that can be done
+through Spring Boot making HTTP calls to the JWT server.
+
+One approach to handling this without needing to put the token into the external configuration properties file is to make the
+HTTP call and then `System.setProperty("ibm.mq.token",token)`.
 
 ### Configuration Options
 
@@ -161,15 +164,17 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | ibm.mq.channel              | Channel Name for SVRCONN                                                        |
 | ibm.mq.connName             | Connection Name, which can be comma-separated list                              |
 | ibm.mq.ccdtUrl              | Location of the MQ CCDT file (URL can reference http/ftp location)              |
-| ibm.mq.user                 | User Name. Must be set to an empty value to turn off authentication attempts    |
-| ibm.mq.password             | Password                                                                        |
+| ibm.mq.user                 | User Name. Default is empty string                                              |
+| ibm.mq.password             | Password. Default is empty string                                               |
+| ibm.mq.token                | JWT token                                                                       |
 | ibm.mq.clientId             | ClientId uniquely identifies the app connection for durable subscriptions       |
 | ibm.mq.applicationName      | Application Name used for Uniform Cluster balancing                             |
 | ibm.mq.userAuthenticationMQCSP| Control authentication mechanism for old queue managers (default true)        |
 | ibm.mq.tempQPrefix          | The prefix to be used to form the name of an MQ dynamic queue                   |
 | ibm.mq.tempTopicPrefix      | The prefix to be used to form the name of an MQ dynamic topic                   |
-| ibm.mq.tempModel            | The name of a model queue for creating temporary destinations.                  |
+| ibm.mq.tempModel            | The name of a model queue for creating temporary destinations                   |
 | ibm.mq.reconnect            | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
+| ibm.mq.reconnectTimeout     | Timeout in seconds before automatic reconnect gives up                          |
 | ibm.mq.autoConfigure        | If explicitly set to "false", then the autoconfigure bean is disabled           |
 | ibm.mq.balancingApplicationType | Hint how uniform clusters should treat the app. Options of SIMPLE/REQREP    |
 | ibm.mq.balancingTimeout     | Uniform cluster timer. Options NEVER/DEFAULT/IMMEDIATE or integer seconds       |

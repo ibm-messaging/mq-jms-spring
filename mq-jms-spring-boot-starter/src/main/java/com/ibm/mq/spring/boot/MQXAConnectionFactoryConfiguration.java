@@ -24,6 +24,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -44,16 +45,16 @@ class MQXAConnectionFactoryConfiguration {
 
   @Primary
   @Bean(name = { "jmsConnectionFactory", "xaJmsConnectionFactory" })
-  public ConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, XAConnectionFactoryWrapper wrapper) throws Exception {
+  public ConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<SslBundles> sslBundles, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, XAConnectionFactoryWrapper wrapper) throws Exception {
     logger.trace("Creating MQXAConnectionFactory");
-    MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
+    MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
     return wrapper.wrapConnectionFactory(connectionFactory);
   }
 
   @Bean
-  public ConnectionFactory nonXaJmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+  public ConnectionFactory nonXaJmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<SslBundles> sslBundles, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
     logger.trace("Creating non-XA MQConnectionFactory");
-    return new MQConnectionFactoryFactory(properties, factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
+    return new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
   }
 
 }

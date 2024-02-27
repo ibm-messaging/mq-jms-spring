@@ -1,6 +1,14 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.2.3 (2024-02-26)
+- Update Spring dependencies
+- Update to MQ 9.3.5.0
+- Add "token" property for JWT authentication
+- Add "reconnectTimeout" property
+- Restructure simplifies SSLBundle processing, now that we do not need to cope with Spring 2.
+- Remove default userid/password to match removal in MQ Developer images
+
 ## 2.7.18 and 3.2.1 (2024-01-10)
 - Update Spring dependencies
   NOTE: Spring Boot 2 has now reached its end of non-commercial service life. 

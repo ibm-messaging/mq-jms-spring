@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2023 IBM Corp. All rights reserved.
+ * Copyright © 2018,2024 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import com.ibm.msg.client.jakarta.wmq.WMQConstants;
@@ -40,14 +41,15 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants;
  * <p>
  * The default values have been set to match the settings of the
  * <a href="https://github.com/ibm-messaging/mq-container">developer-configured
- * container</a>.
- *
+ * container</a>. Note that the default userid/password settings have now been removed;
+ * they must be explicitly enabled for the queue manager.
+ * 
  * <ul>
  * <li>queueManager = QM1
  * <li>connName = localhost(1414)
  * <li>channel = DEV.ADMIN.SVRCONN
- * <li>user = admin
- * <li>password = passw0rd
+ * <li>user = 
+ * <li>password = 
  * </ul>
  */
 @ConfigurationProperties(prefix = "ibm.mq")
@@ -95,22 +97,26 @@ public class MQConfigurationProperties {
   /**
    * MQ user name
    */
-  private String user = "admin";
+  private String user = "";
 
   /**
    * MQ password
    */
-  private String password = "passw0rd";
+  private String password = "";
+  
+  /**
+   * An OIDC/JWT token. The token can either be set in the
+   * password field, in which case the user needs to be overridden to be
+   * blank, or it can be set here explicitly.
+   */
+  private String token = "";
 
   /**
-   * Override the authentication mode. This
-   * should not normally be needed with current maintenance levels of MQ V8 or V9,
-   * but some earlier levels
-   * sometimes got get it wrong and then this flag can be set to "false". There is
-   * also some confusion about
+   * Override the authentication mode. This should not normally be needed with current maintenance 
+   * levels of MQ V8 or V9, but some earlier levels sometimes got get it wrong and then this flag 
+   * can be set to "false". There is also some confusion about
    * whether the field is called "userAuth.." or "useAuth..." So we allow both
-   * spellings and use the explicit setting
-   * to set a different attribute.
+   * spellings and use the explicit setting to set a different attribute.
    */
   @SuppressWarnings("unused")
   private boolean userAuthenticationMQCSP; // These variables appear unused but are needed to ensure the Spring setters
@@ -120,22 +126,19 @@ public class MQConfigurationProperties {
   private boolean authCSP = true;
 
   /**
-   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec
-   * property.
+   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
    * For example, "SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
    */
   private String sslCipherSuite;
 
   /**
-   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec
-   * property.
+   * For TLS connections, you can set either the sslCipherSuite or sslCipherSpec property.
    * For example, "ECDHE_RSA_AES_256_GCM_SHA384"
    */
   private String sslCipherSpec;
 
   /**
-   * Type a distinguished name skeleton that must match that provided by the queue
-   * manager.
+   * Type a distinguished name skeleton that must match that provided by the queue manager.
    */
   private String sslPeerName;
 
@@ -146,13 +149,11 @@ public class MQConfigurationProperties {
   private boolean useIBMCipherMappings = true;
 
   /**
-   * Set to HOSTNAME for connection to OpenShift queue managers where SNI is
-   * important. CHANNEL
+   * Set to HOSTNAME for connection to OpenShift queue managers where SNI is important. CHANNEL
    * can be used for environments where you want to have different certificates
-   * associated with different
-   * channels. The property does not get set unless explicitly configured as an
-   * external property so we would
-   * otherwise use whatever the default behaviour is in the JMS client.
+   * associated with different channels. The property does not get set unless explicitly 
+   * configured as an external property so we would otherwise use whatever the default behaviour 
+   * is in the JMS client.
    */
   private String outboundSNI = ""; // HOSTNAME or CHANNEL are the valid alternatives
 
@@ -166,17 +167,20 @@ public class MQConfigurationProperties {
    * can be YES/NO/QMGR/DISABLED.
    */
   private String reconnect = "";
+  /**
+   * For automatic reconnection, this is the timeout in seconds before giving up. Defaults
+   * to 1800 - 30 minutes.
+   */
+  private int reconnectTimeout = WMQConstants.WMQ_CLIENT_RECONNECT_TIMEOUT_DEFAULT;
 
-  // The following variable appears unused but it's needed for Spring
-  // compatibility on setters
-  @SuppressWarnings("unused")
+  // The following variable is not really used, and is declared purely
+  // to allow a Getter to mark it as deprecated
   private String defaultReconnect = null; // This was the original name but I don't like it.
 
   /**
    * Enter the uniform resource locator (URL) that identifies the name and
    * location of the file that contains
-   * the client channel definition table and specifies how the file can be
-   * accessed.
+   * the client channel definition table and specifies how the file can be accessed.
    * You must set a value for either the Channel property or for the Client
    * Channel Definition Table URL property but not both.
    * For example, "file:///home/admdata/ccdt1.tab"
@@ -239,19 +243,15 @@ public class MQConfigurationProperties {
   /**
    * Additional CF properties that are not explicitly known can be provided
    * with the format "ibm.mq.additionalProperties.SOME_PROPERTY=SOME_VALUE".
-   * Strings,
-   * integers and true/false values are recognised.
+   * Strings, integers and true/false values are recognised.
    *
    * The property is either the actual string for the MQ property, and will
    * usually begin with "XMSC"
-   * Or it can be the name of the variable in the WMQConstants class. So for
-   * example,
+   * Or it can be the name of the variable in the WMQConstants class. So for example,
    * setting the name of a security exit would usually be done in code with
-   * setStringProperty(WMQConstants.WMQ_SECURITY_EXIT). The value of that constant
-   * is
+   * setStringProperty(WMQConstants.WMQ_SECURITY_EXIT). The value of that constant is
    * "XMSC_WMQ_SECURITY_EXIT" so the external property to set can be either
-   * "ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit"
-   * or
+   * "ibm.mq.additionalProperties.XMSC_WMQ_SECURITY_EXIT=com.example.SecExit" or
    * "ibm.mq.additionalProperties.WMQ_SECURITY_EXIT=com.example.SecExit"
    *
    */
@@ -320,6 +320,14 @@ public class MQConfigurationProperties {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+  
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 
   public String getSslCipherSuite() {
@@ -477,16 +485,31 @@ public class MQConfigurationProperties {
     return rc;
   }
 
+  public void setDefaultReconnect(String defaultReconnect) {
+    // Set the preferred property, not the original
+    this.reconnect = defaultReconnect; 
+  }
+  
+  @DeprecatedConfigurationProperty(replacement="ibm.mq.reconnect")
+  public String getDefaultReconnect() {
+    // This method is never called, but we need a getter to mark the deprecation
+    return defaultReconnect;
+  }
+
   public String getReconnect() {
     return reconnect;
   }
 
-  public void setDefaultReconnect(String defaultReconnect) {
-    this.reconnect = defaultReconnect;
-  }
-
   public void setReconnect(String reconnect) {
     this.reconnect = reconnect;
+  }
+  
+  public void setReconnectTimeout(int reconnectTimeout) {
+    this.reconnectTimeout = reconnectTimeout;
+  }
+  
+  public int getReconnectTimeout() {
+    return reconnectTimeout;
   }
 
   public void setBalancingTimeout(String balancingTimeout) {
@@ -603,7 +626,7 @@ public class MQConfigurationProperties {
     }
     return rc;
   }
-
+  
   public Map<String, String> getAdditionalProperties() {
     return additionalProperties;
   }
@@ -623,6 +646,7 @@ public class MQConfigurationProperties {
     logger.trace("clientId        : {}", getClientId());
     logger.trace("connName        : {}", getConnName());
     logger.trace("reconnectOption : \'{}\' [{}]", getReconnect(), String.format("0x%08X", getReconnectValue()));
+    logger.trace("reconnectTimeout: {}", getReconnectTimeout());
     logger.trace("sslCipherSpec   : {}", getSslCipherSpec());
     logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
     logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());
@@ -638,6 +662,8 @@ public class MQConfigurationProperties {
      * one has been configured
      */
     logger.trace("password set    : {}", (getPassword() != null && getPassword().length() > 0) ? "YES" : "NO");
+    logger.trace("token set       : {}", (getToken() != null && getToken().length() > 0) ? "YES" : "NO");
+
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUseAuthenticationMQCSP());
