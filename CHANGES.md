@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.2.4 (2024-04-02)
+- Update Spring dependencies
+
 ## 3.2.3 (2024-02-26)
 - Update Spring dependencies
 - Update to MQ 9.3.5.0
