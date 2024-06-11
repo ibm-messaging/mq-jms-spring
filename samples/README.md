@@ -21,6 +21,7 @@ The responder side shows how transactions can be controlled within a JMSListener
        MQ and Spring dependencies
 * s4 - Shows how to connect to multiple queue managers in the same application and using
 an XA transaction coordinator to reliably transfer messages between them
+* s4a - A modified version of s4 using a JmsListener instead of a polling Receiver
 
 ## Other resources
 Many other sample programs for MQ can be found in [this repository](https://github.com/ibm-messaging/mq-dev-patterns).

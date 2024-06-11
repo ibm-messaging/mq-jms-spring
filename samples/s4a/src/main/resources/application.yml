@@ -1,0 +1,41 @@
+# Rather than using the ibm.mq tree, we use application-specific configuration
+# elements that get passed into the Spring code so we can still construct the MQ CF.
+# All the same properties are available to us of course, including TLS but we're not using 
+# that here for simplicity.             
+qm1: 
+  queueManager: "QM1"
+  channel: "SYSTEM.DEF.SVRCONN"
+  connName: "localhost(1414)"
+    
+qm2: 
+  queueManager: "QM2"
+  channel: "SYSTEM.DEF.SVRCONN"
+  connName: "localhost(1415)"    
+
+# Mostly properties controlling some timers
+spring:
+  jms:
+    listener:
+        receiveTimeout: 2s
+        
+  # Turn down some of the transaction coordinator properties to try to cleanup
+  # more rapidly        
+  jta:
+    atomikos:
+      properties:
+        defaultJtaTimeout: 1000
+        maxTimeout: 2000
+
+# Logging        
+logging:
+  pattern:
+    console: "%logger{36} - %msg%n"
+  level:
+    root: WARN
+    com:
+      ibm:
+        mq:
+          spring:
+            boot: INFO
+
+
