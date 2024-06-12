@@ -20,6 +20,11 @@ import org.springframework.util.ErrorHandler;
 public class DefaultErrorHandler implements ErrorHandler {
   @Override
   public void handleError(Throwable t) {
-    System.out.println("In Error Handler. Error: " + t.getMessage());
+    int i=0;
+    System.out.printf("In Error Handler:\n");
+    while (t != null) {
+      System.out.printf("  [%d] %s\n",++i,t.getMessage());
+      t = t.getCause();
+    }
   }
 }

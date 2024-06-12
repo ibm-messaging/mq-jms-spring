@@ -1,6 +1,5 @@
 package sample4a;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +19,24 @@ import jakarta.jms.TextMessage;
 
 @Component
 public class Listener {
-
-  @JmsListener(destination = Application.qName, containerFactory = "qm1JmsListenerContainerFactory")
+  static final String ID = "S4A.Listener";
+  
+  @JmsListener(destination = Application.qName, containerFactory = "qm1JmsListenerContainerFactory", id = ID)
   @Transactional(rollbackFor = RuntimeException.class)
   public void receiveMessage(Session session, TextMessage msg) throws JMSException, RuntimeException {
-    System.out.println("Received message: " + msg.getText());
 
     if (msg != null) {
+
+      System.out.println("Received message: " + msg.getText());
 
       // If we've done a rollback for a message, then its delivery count will increase and we will see it again.
       // For this example, we are therefore going to exit.
       int dc = (msg.getIntProperty(MQConstants.MQ_JMSX_DELIVERY_COUNT));
       if (dc > 1) {
         System.out.println("Exiting because delivery count indicates repeated delivery. Count: " + dc);
-        // Doing the exit will also force the rollback
-        
-        exit(0);
+        // Tell the application to cleanup and exit. This might be called several times until the main thread
+        // notices and completes the shutdown steps.
+        Application.ok = false;
       }
 
       // Copy the message to the other queue manager
@@ -51,11 +52,4 @@ public class Listener {
       }
     }
   }
-
-  // This is how we force an exit from a Spring application. It might take a little while, and generate
-  // exception stacks, but at least it does finish.
-  public void exit(int rc) {
-    System.exit(SpringApplication.exit(Application.context, () -> rc));
-  }
-
 }

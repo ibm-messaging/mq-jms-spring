@@ -22,8 +22,8 @@
  * At the start of the program, there should be two messages on the input queue (see the
  * startup script). This program sets up a listener. It then get messages copying them
  * to the same-named queue on another queue manager. But the first copy is committed, while the second
- * copy is rolledback. So we should end up with one message on each queue manager, and a BackoutCount of 1
- * on one message.
+ * copy is rolled back. So we should end up with one message on each queue manager, and a non-zero BackoutCount
+ * on one of them.
  */
 
 package sample4a;
@@ -34,6 +34,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,36 +55,75 @@ public class Application {
 
   static final String qName = "DEV.QUEUE.1"; // A queue from the default MQ Developer container config
   static final String[] operations = { "COMMIT", "ROLLBACK" }; // Make sure COMMIT is first
-  
+
   static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-  
-  static ConfigurableApplicationContext context;  
-  static MessageProducer producer; 
+
+  static ConfigurableApplicationContext context;
+  static MessageProducer producer;
+  static Connection conn2;
   static Session sess2;
-  
+
+  static boolean ok = true;
+
   public static void main(String[] args) throws JMSException {
 
     // Launch the application
     context = SpringApplication.run(Application.class, args);
 
     printStarted();
-    
+
     // Get the connection to QM2 created and ready to be used inside the Listener. This is an XA-aware
     // connection, managed by Atomikos
     AtomikosConnectionFactoryBean atcf2 = context.getBean("qm2", AtomikosConnectionFactoryBean.class);
-    Connection conn2 = atcf2.createConnection();
+    conn2 = atcf2.createConnection();
     sess2 = conn2.createSession(Session.SESSION_TRANSACTED);
     producer = sess2.createProducer(new MQQueue(qName));
 
-    // And we're done in the main part of the program. The real work gets done in the Listener
-    System.out.println("Done.");
+    // And we're done in the main part of the program. The real work gets done in the Listener. Just look for
+    // an error, so we know when to clean up and exit.
+    while (ok) {
+      try {
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e) {
+      }
+    }
+    exit(0);
   }
-  
 
   static void printStarted() {
     System.out.println();
     System.out.println("========================================");
     System.out.println("MQ JMS XA Transaction Sample started.");
     System.out.println("========================================");
+  }
+
+  // Cleanup various resources, including stopping the listener
+  static void exit(int rc) {
+    JmsListenerEndpointRegistry registry = context.getBean(JmsListenerEndpointRegistry.class);
+    if (registry != null) {
+      MessageListenerContainer mlc = registry.getListenerContainer(Listener.ID); // The "id" tag on the definition
+      if (mlc != null && mlc.isRunning()) {
+        System.out.println("Stopping listener");
+        mlc.stop();
+      }
+    }
+
+    try {
+      conn2.close();
+    }
+    catch (JMSException e) {
+    }
+
+    // Wait a little while to give everything else a chance to tidy
+    try {
+      Thread.sleep(2000);
+    }
+    catch (InterruptedException e) {
+    }
+
+    // Finally, this is how we force an exit from a Spring application. It might take a little while, and generate
+    // exception stacks, but at least it does finish.
+    System.exit(SpringApplication.exit(context, () -> rc));
   }
 }
