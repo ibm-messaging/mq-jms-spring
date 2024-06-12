@@ -24,7 +24,7 @@ echo "CLEAR QLOCAL(DEV.QUEUE.1)" | runmqsc -e QM2 >/dev/null 2>&1
 # Now run the program. Build using the gradle wrapper in parent directory
 cd ../..
 
-./gradlew -p samples/s4 bootRun
+./gradlew -p samples/s4.jms3 bootRun
 
 # And optionally look to see what's on each the queues on each queue manager. Should have one message on each
 if false

@@ -34,6 +34,7 @@ public class Listener {
       if (dc > 1) {
         System.out.println("Exiting because delivery count indicates repeated delivery. Count: " + dc);
         // Doing the exit will also force the rollback
+        
         exit(0);
       }
 

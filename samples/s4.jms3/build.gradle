@@ -19,7 +19,6 @@ repositories {
   flatDir() {
     dirs '../../mq-jms-spring-boot-starter'
   }
-  mavenLocal()
   mavenCentral()
 }
 

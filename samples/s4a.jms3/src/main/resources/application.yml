@@ -25,6 +25,8 @@ spring:
       properties:
         defaultJtaTimeout: 1000
         maxTimeout: 2000
+        force-shutdown-on-vm-exit: true
+        default-max-wait-time-on-shutdown: 1000
 
 # Logging        
 logging:

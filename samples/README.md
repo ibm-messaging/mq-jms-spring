@@ -19,9 +19,9 @@ and the other to act as a JMSListener that retrieves the message.
 The responder side shows how transactions can be controlled within a JMSListener.
 * s3.jms3 - Identical to s3 but changed to use the Jakarta packages and corresponding
        MQ and Spring dependencies
-* s4 - Shows how to connect to multiple queue managers in the same application and using
+* s4.jms3 - Shows how to connect to multiple queue managers in the same application and using
 an XA transaction coordinator to reliably transfer messages between them
-* s4a - A modified version of s4 using a JmsListener instead of a polling Receiver
+* s4a.jms3 - A modified version of s4 using a JmsListener instead of a polling Receiver
 
 ## Other resources
 Many other sample programs for MQ can be found in [this repository](https://github.com/ibm-messaging/mq-dev-patterns).
