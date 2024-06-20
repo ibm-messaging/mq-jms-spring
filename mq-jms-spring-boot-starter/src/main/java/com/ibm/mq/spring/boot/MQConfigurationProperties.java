@@ -211,6 +211,13 @@ public class MQConfigurationProperties {
    * The reset count of the SSL key.
    */
   private int sslKeyResetCount = -1;
+  
+  /**
+   * Certificate Validation Policy. When "NONE", this allows connection 
+   * without checking if the server's cert is known/trusted. The mqclient.ini
+   * file is spelled this way: "CertificateValPolicy" in the SSL stanza. 
+   */
+  private String sslCertificateValPolicy = "";
 
   /**
    * The key to the SSL Bundle attributes available from Spring Boot 3.1
@@ -448,6 +455,22 @@ public class MQConfigurationProperties {
     this.sslFIPSRequired = sslFIPSRequired;
   }
 
+  public String getSslCertificateValPolicy() {
+    return this.sslCertificateValPolicy;
+  }
+ 
+  public void setSslCertificateValPolicy(String sslCertificateValPolicy) {
+    this.sslCertificateValPolicy = sslCertificateValPolicy;
+  }
+  
+  public boolean isSslCertificateValidationNone() {
+    boolean rc = false;
+    if (this.sslCertificateValPolicy != null && this.sslCertificateValPolicy.equalsIgnoreCase("none")) {
+      rc = true;
+    }
+    return rc;
+  }
+  
   public int getSslKeyResetCount() {
     return sslKeyResetCount;
   }
@@ -651,6 +674,7 @@ public class MQConfigurationProperties {
     logger.trace("sslCipherSuite  : {}", getSslCipherSuite());
     logger.trace("sslKeyresetcount: {}", getSslKeyResetCount());
     logger.trace("sslPeerName     : {}", getSslPeerName());
+
     logger.trace("sslBundle       : {}", getSslBundle());
 
     logger.trace("tempModel       : {}", getTempModel());
@@ -665,6 +689,7 @@ public class MQConfigurationProperties {
     logger.trace("token set       : {}", (getToken() != null && getToken().length() > 0) ? "YES" : "NO");
 
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
+    logger.trace("sslCertValPolicy       : \'{}\'", getSslCertificateValPolicy());
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUseAuthenticationMQCSP());
     logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());
@@ -677,12 +702,17 @@ public class MQConfigurationProperties {
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
 
-    String pw = getJks().getKeyStorePassword();
-    logger.trace("JKS keystore           : {}", getJks().getKeyStore());
-    logger.trace("JKS keystore pw set    : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
-    pw = getJks().getTrustStorePassword();
-    logger.trace("JKS truststore         : {}", getJks().getTrustStore());
-    logger.trace("JKS truststore pw set  : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
+    if (U.isNullOrEmpty(getSslBundle())) {
+      String pw = getJks().getKeyStorePassword();
+      logger.trace("JKS keystore           : {}", getJks().getKeyStore());
+      logger.trace("JKS keystore pw set    : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
+      pw = getJks().getTrustStorePassword();
+      logger.trace("JKS truststore         : {}", getJks().getTrustStore());
+      logger.trace("JKS truststore pw set  : {}", (pw != null && pw.length() > 0) ? "YES" : "NO");
+    }
+    else {
+      logger.trace("JKS key/truststore overridden by sslBundle");
+    }
 
     if (additionalProperties.size() > 0) {
       for (String s : additionalProperties.keySet()) {

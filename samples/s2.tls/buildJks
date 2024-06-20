@@ -10,9 +10,16 @@ pw="passw0rd"
 set -x # So you can see what it's doing
 # Default label for the qmgr certificate. Keystore given in qmgr attributes.
 rm -f qm1.arm
-runmqckm -cert -extract -db /var/mqm/ssl/key.kdb -pw $pw -label ibmwebspheremqqm1 -target qm1.arm
+runmqakm -cert -extract -db /var/mqm/ssl/key.kdb -pw $pw -label ibmwebspheremqqm1 -target qm1.arm
 
 # Now import that cert into a new keystore/truststore
 rm -f key.jks
-runmqckm -keydb -create -db key.jks -pw $pw -type jks
-runmqckm -cert  -add    -db key.jks -pw $pw -file qm1.arm -label ibmwebspheremqqm1
+# From MQ 9.4, the runmqckm command does not exist. We have to use
+# runmqktool to manipulate JKS format stores
+if false
+then
+  runmqckm -keydb -create -db key.jks -pw $pw -type jks
+  runmqckm -cert  -add    -db key.jks -pw $pw -file qm1.arm -label ibmwebspheremqqm1
+else
+  runmqktool -importcert -file qm1.arm -keystore key.jks -alias ibmwebspheremqqm1 -storepass $pw  -noprompt
+fi

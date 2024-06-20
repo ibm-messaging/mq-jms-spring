@@ -1,6 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.3.1 (2024-06-20)
+- Update Spring dependencies
+- Update to MQ 9.4.0.0
+- Add "sslCertificateValPolicy" property
+- Add samples s4,s4a showing JTA/XA and configuration multiple connections
+
 ## 3.2.4 (2024-04-02)
 - Update Spring dependencies
 
@@ -14,8 +20,8 @@ Newest updates are at the top of this file
 
 ## 2.7.18 and 3.2.1 (2024-01-10)
 - Update Spring dependencies
-  NOTE: Spring Boot 2 has now reached its end of non-commercial service life. 
-  So this will be the last update based on Spring 2. Further updates will 
+  NOTE: Spring Boot 2 has now reached its end of non-commercial service life.
+  So this will be the last update based on Spring 2. Further updates will
   follow the Spring 3 path only.
 
 ## 2.7.17 and 3.1.5 (2023-10-20)
@@ -57,13 +63,13 @@ Newest updates are at the top of this file
 
 ## 2.7.6 and 3.0.0 (2022-11-24)
 - Update dependencies to Spring Boot 2.7.6/3.0.0
-- Add "ibm.mq.jks.*" attributes to set keystore/truststore 
+- Add "ibm.mq.jks.*" attributes to set keystore/truststore
   environment variables instead of using -D command line flags
 
 ## 2.7.5 and 0.3.0-RC1 (2022-10-20)
 - Update dependencies to Spring Boot 2.7.5/3.0.0-RC1
 - Add "ibm.mq.autoConfigure" property to permit disabling bean (#86)
-- Spring 3 no longer uses spring.factories for AutoConfiguration 
+- Spring 3 no longer uses spring.factories for AutoConfiguration
 
 ## 2.7.4 and 0.3.0-M5 (2022-09-23)
 - Update dependencies to Spring Boot 2.7.4/3.0.0-M5
@@ -82,13 +88,13 @@ Newest updates are at the top of this file
   but both names work
 
 ## 2.6.7 (2022-04-22)
-- Update dependencies to Spring Boot 2.6.7 
+- Update dependencies to Spring Boot 2.6.7
 
 ## 2.6.6.1 (2022-04-02)
-- Correct a dependency                        
+- Correct a dependency
 
 ## 2.6.6 (2022-04-01)
-- Update dependencies to Spring Boot 2.6.6 
+- Update dependencies to Spring Boot 2.6.6
 
 ## 2.6.5 (2022-03-25)
 - Update dependencies to Spring Boot 2.6.5

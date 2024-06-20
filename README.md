@@ -10,7 +10,7 @@ NOTE: Spring Boot 2 has now reached its end of non-commercial service life.
 So version 2.7.18 is the last update based on Spring 2. Further updates will
 follow the Spring 3 path only. If you want to continue to use Spring 2 with future versions of the MQ jars,
 then overriding the version inherited from the mq-jms-spring-boot in your parent pom.xml should be possible.
-However, this would not give easy access via configuration to any new features available in the MQ client. 
+However, this would not give easy access via configuration to any new features available in the MQ client.
 
 ## Installation and Usage
 
@@ -21,7 +21,7 @@ mechanism and has tasks that can push compiled jars to either a local repository
 Maven Central. When signing/authentication of modules is required, use the `gradle.properties.template` file as a
 starter for your own `gradle.properties`.
 
-Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3. 
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3.
 
 ### Spring Boot Applications
 
@@ -71,8 +71,8 @@ IBM MQ for Developers container which runs the server processes.
 The default options have been selected to match the
 [MQ container](https://github.com/ibm-messaging/mq-container) development configuration.
 
-This means that you can run a queue manager using that environment and connect to it without special 
-configuration. 
+This means that you can run a queue manager using that environment and connect to it without special
+configuration.
 
 This script will run the container on a Linux system.
 
@@ -201,6 +201,7 @@ We also have
 | --------------------------- | ------------------------------------------------------------------------------- |
 | ibm.mq.sslFIPSRequired      | Force FIPS-compliant algorithms to be used (default false)                      |
 | ibm.mq.sslKeyResetCount     | How many bytes to send before resetting the TLS keys                            |
+| ibm.mq.sslCertificateValPolicy | If "none", do not check the server certificate is trusted                    |
 
 and
 
@@ -211,7 +212,7 @@ and
 | ibm.mq.jks.keyStore             | Where is the keystore with a personal key and certificate                    |
 | ibm.mq.jks.keyStorePassword     | Password for the keyStore                                                    |
 
-These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line. 
+These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line.
 
 An alternative preferred approach for setting the key/truststores is available from Spring 3.1, which introduced the
 concept of "SSL Bundles". This makes it possible to have different SSL configurations - keystores, truststores etc - for

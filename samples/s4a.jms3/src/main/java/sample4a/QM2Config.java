@@ -17,7 +17,6 @@ package sample4a;
 // See comments in QM1Config that also describe this class and its purpose.
 
 import java.util.List;
-import java.util.Properties;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;

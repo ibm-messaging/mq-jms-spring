@@ -124,6 +124,7 @@ public class Application {
 
     // Finally, this is how we force an exit from a Spring application. It might take a little while, and generate
     // exception stacks, but at least it does finish.
+    System.out.println("Done.");
     System.exit(SpringApplication.exit(context, () -> rc));
   }
 }

@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,7 @@ import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.boot.ssl.SslManagerBundle;
 
+import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
@@ -55,17 +58,41 @@ public class MQConnectionFactoryFactory {
   private static Logger logger = LoggerFactory.getLogger(MQConnectionFactoryFactory.class);
   private SslBundles sslBundles;
 
+  /*
+   * Create a trust manager that accepts all received certificates. This is
+   * used for the "insecure" mode, replacing the default implementation. The object
+   * is only used when there's an SSLBundle configured; if you are using the default
+   * socket configuration with the older jks properties, then we can pass an option directly
+   * to the client code (from 9.4.0).
+   */
+  private static TrustManager[] trustAllCerts = { new X509TrustManager() {
+    public X509Certificate[] getAcceptedIssuers() {
+      return null;
+    }
+
+    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+    }
+
+    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+    }
+  } };
+
   @SuppressWarnings("unchecked")
-  public MQConnectionFactoryFactory(MQConfigurationProperties properties, SslBundles sslBundles,
-      List<MQConnectionFactoryCustomizer> factoryCustomizers) {
+  public MQConnectionFactoryFactory(MQConfigurationProperties properties, SslBundles sslBundles, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     this.properties = properties;
     this.sslBundles = sslBundles;
-    this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers
-        : Collections.emptyList());
+    this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
     logger.trace("constructor");
-    // logger.trace("!! Bundles = {} ", (sslBundles == null) ? "null" : (getSSLSocketFactory("ibmmq") != null) ? "Has IBMMQ"
-    // : "No IBMMQ bundle");
+    // logger.trace("!! Bundles = {} ", (sslBundles == null) ? "null" : (getSSLSocketFactory("ibmmq") != null) ? "Has IBMMQ" : "No IBMMQ bundle");
   }
+  
+  // Keep a backwards compatible version of the method without the SslBundles parm
+  @SuppressWarnings("unchecked")
+  public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
+    this(properties, null, factoryCustomizers);
+  }
+
+
 
   @SuppressWarnings("unchecked")
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
@@ -85,14 +112,14 @@ public class MQConnectionFactoryFactory {
      * From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle
      * The bundle name takes priority over the ibm.mq.jks properties
      */
-    if (sslBundles != null && isNotNullOrEmpty(sslBundle)) {
+    if (sslBundles != null && U.isNotNullOrEmpty(sslBundle)) {
       sf = getSSLSocketFactory(sslBundle);
     }
     else {
       configureTLSStores(this.properties);
     }
 
-    if (isNotNullOrEmpty(jndiProviderUrl) && isNotNullOrEmpty(jndiCF)) {
+    if (U.isNotNullOrEmpty(jndiProviderUrl) && U.isNotNullOrEmpty(jndiCF)) {
       logger.trace("createConnectionFactory using JNDI");
       try {
         String cfName = this.properties.getQueueManager();
@@ -110,13 +137,18 @@ public class MQConnectionFactoryFactory {
         if (sf != null) {
           cf.setSSLSocketFactory(sf);
         }
+        else {
+          if (this.properties.isSslCertificateValidationNone()) {
+            cf.setIntProperty(MQConstants.CERTIFICATE_VALIDATION_POLICY, MQConstants.MQ_CERT_VAL_POLICY_NONE);
+          }
+        }
 
         // We will not dump the properties as they are not used for most of the configuration.
         // The JNDI config may well have overridden the actual values in any resource files.
         // But we will still allow the customize methods to be used.
         customize(cf);
       }
-      catch (NamingException ex) {
+      catch (NamingException | JMSException ex) {
         logger.trace("createConnectionFactory : exception " + ex.getMessage());
         throw new IllegalStateException("Unable to create MQConnectionFactory" + ((err != null) ? (": " + err) : ""), ex);
       }
@@ -124,14 +156,11 @@ public class MQConnectionFactoryFactory {
     else {
       try {
         cf = createConnectionFactoryInstance(factoryClass);
-        if (sf != null) {
-          cf.setSSLSocketFactory(sf);
-        }
-        configureConnectionFactory(cf, this.properties);
+        configureConnectionFactory(cf, this.properties, sf);
         customize(cf);
       }
-      catch (JMSException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-          | NoSuchMethodException | SecurityException ex) {
+      catch (JMSException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+          | SecurityException ex) {
         logger.trace("createConnectionFactory : exception " + ex.getMessage());
         throw new IllegalStateException("Unable to create MQConnectionFactory" + ((err != null) ? (": " + err) : ""), ex);
       }
@@ -145,7 +174,7 @@ public class MQConnectionFactoryFactory {
    * using the same MQConfigurationProperties class - which might have been assigned
    * from a different prefix in the properties file.
    */
-  public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {
+  public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props, SSLSocketFactory sf) throws JMSException {
     // Should usually provide a queue manager name but it can be empty, to connect to the
     // default queue manager.
     boolean bindingsMode = false;
@@ -155,7 +184,7 @@ public class MQConnectionFactoryFactory {
     props.traceProperties();
 
     String qmName = props.getQueueManager();
-    if (!isNullOrEmpty(qmName)) {
+    if (!U.isNullOrEmpty(qmName)) {
       cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
     }
 
@@ -166,12 +195,12 @@ public class MQConnectionFactoryFactory {
     String connName = props.getConnName();
     String ccdtUrl = props.getCcdtUrl();
 
-    if (!isNullOrEmpty(ccdtUrl)) {
+    if (!U.isNullOrEmpty(ccdtUrl)) {
       cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
       cf.setStringProperty(WMQConstants.WMQ_CCDTURL, ccdtUrl);
     }
     else {
-      if (isNullOrEmpty(channel) || isNullOrEmpty(connName)) {
+      if (U.isNullOrEmpty(channel) || U.isNullOrEmpty(connName)) {
         cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_BINDINGS);
         bindingsMode = true;
       }
@@ -183,32 +212,43 @@ public class MQConnectionFactoryFactory {
     }
 
     String clientId = props.getClientId();
-    if (!isNullOrEmpty(clientId)) {
+    if (!U.isNullOrEmpty(clientId)) {
       cf.setStringProperty(WMQConstants.CLIENT_ID, clientId);
     }
 
     if (!bindingsMode) {
-      if (!isNullOrEmpty(props.getReconnect())) {
+      if (!U.isNullOrEmpty(props.getReconnect())) {
         cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_OPTIONS, props.getReconnectValue());
       }
       cf.setIntProperty(WMQConstants.WMQ_CLIENT_RECONNECT_TIMEOUT, props.getReconnectTimeout());
 
       /* Balancing options for Uniform clusters came available from 9.3.4 */
-      if (!isNullOrEmpty(props.getBalancingApplicationType())) {
+      if (!U.isNullOrEmpty(props.getBalancingApplicationType())) {
         cf.setIntProperty(WMQConstants.WMQ_BALANCING_APPLICATION_TYPE, props.getBalancingApplicationTypeValue());
       }
 
-      if (!isNullOrEmpty(props.getBalancingOptions())) {
+      if (!U.isNullOrEmpty(props.getBalancingOptions())) {
         cf.setIntProperty(WMQConstants.WMQ_BALANCING_OPTIONS, props.getBalancingOptionsValue());
       }
 
-      if (!isNullOrEmpty(props.getBalancingTimeout())) {
+      if (!U.isNullOrEmpty(props.getBalancingTimeout())) {
         cf.setIntProperty(WMQConstants.WMQ_BALANCING_TIMEOUT, props.getBalancingTimeoutValue());
+      }
+      
+      // Setup the socket factory - it will be non-null if it's been created by the SSLBundles support
+      if (sf != null) {
+        cf.setSSLSocketFactory(sf);
+      }
+      else {
+        // Otherwise, accept the default factory, except for setting the validation policy if desired
+        if (props.isSslCertificateValidationNone()) {
+          cf.setIntProperty(MQConstants.CERTIFICATE_VALIDATION_POLICY, MQConstants.MQ_CERT_VAL_POLICY_NONE);
+        }
       }
     }
 
     String applicationName = props.getApplicationName();
-    if (!isNullOrEmpty(applicationName)) {
+    if (!U.isNullOrEmpty(applicationName)) {
       cf.setAppName(applicationName);
     }
 
@@ -221,30 +261,30 @@ public class MQConnectionFactoryFactory {
     // be responsible for allocating an identity - which might come from treating the password
     // as a token.
     String token = props.getToken();
-    if (!isNullOrEmpty(token)) {
+    if (!U.isNullOrEmpty(token)) {
       cf.setStringProperty(WMQConstants.PASSWORD, token);
       cf.setStringProperty(WMQConstants.USERID, "");
       cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
     }
     else {
       String u = props.getUser();
-      if (!isNullOrEmpty(u)) {
+      if (!U.isNullOrEmpty(u)) {
         cf.setStringProperty(WMQConstants.USERID, u);
       }
       String p = props.getPassword();
-      if (!isNullOrEmpty(p)) {
+      if (!U.isNullOrEmpty(p)) {
         cf.setStringProperty(WMQConstants.PASSWORD, p);
         cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, props.isUseAuthenticationMQCSP());
       }
     }
 
-    if (!isNullOrEmpty(props.getSslCipherSuite()))
+    if (!U.isNullOrEmpty(props.getSslCipherSuite()))
       cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SUITE, props.getSslCipherSuite());
 
-    if (!isNullOrEmpty(props.getSslCipherSpec()))
+    if (!U.isNullOrEmpty(props.getSslCipherSpec()))
       cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SPEC, props.getSslCipherSpec());
 
-    if (!isNullOrEmpty(props.getSslPeerName())) {
+    if (!U.isNullOrEmpty(props.getSslPeerName())) {
       cf.setStringProperty(WMQConstants.WMQ_SSL_PEER_NAME, props.getSslPeerName());
     }
     cf.setBooleanProperty(WMQConstants.WMQ_SSL_FIPS_REQUIRED, props.isSslFIPSRequired());
@@ -253,13 +293,13 @@ public class MQConnectionFactoryFactory {
       cf.setIntProperty(WMQConstants.WMQ_SSL_KEY_RESETCOUNT, vi);
     }
 
-    if (!isNullOrEmpty(props.getTempQPrefix())) {
+    if (!U.isNullOrEmpty(props.getTempQPrefix())) {
       cf.setStringProperty(WMQConstants.WMQ_TEMP_Q_PREFIX, props.getTempQPrefix());
     }
-    if (!isNullOrEmpty(props.getTempTopicPrefix())) {
+    if (!U.isNullOrEmpty(props.getTempTopicPrefix())) {
       cf.setStringProperty(WMQConstants.WMQ_TEMP_TOPIC_PREFIX, props.getTempTopicPrefix());
     }
-    if (!isNullOrEmpty(props.getTempModel())) {
+    if (!U.isNullOrEmpty(props.getTempModel())) {
       cf.setStringProperty(WMQConstants.WMQ_TEMPORARY_MODEL, props.getTempModel());
     }
 
@@ -335,6 +375,12 @@ public class MQConnectionFactoryFactory {
       }
     }
   }
+  
+  // In case anyone has used the public method before we added the SocketFactory parameter ... This method maintains a compatability
+  // interface.
+  public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {
+    configureConnectionFactory(cf,props,null);
+ }
 
   /*
    * Access to Java keystores can be controlled by system properties. These are usually
@@ -350,23 +396,23 @@ public class MQConnectionFactoryFactory {
 
     MQConfigurationPropertiesJks jksProperties = props.getJks();
     for (String prefix : prefixes) {
-      if (!isNullOrEmpty(jksProperties.getKeyStore())) {
+      if (!U.isNullOrEmpty(jksProperties.getKeyStore())) {
         System.setProperty(prefix + "keyStore", jksProperties.getKeyStore());
       }
-      if (!isNullOrEmpty(jksProperties.getKeyStorePassword())) {
+      if (!U.isNullOrEmpty(jksProperties.getKeyStorePassword())) {
         System.setProperty(prefix + "keyStorePassword", jksProperties.getKeyStorePassword());
       }
-      if (!isNullOrEmpty(jksProperties.getTrustStore())) {
+      if (!U.isNullOrEmpty(jksProperties.getTrustStore())) {
         System.setProperty(prefix + "trustStore", jksProperties.getTrustStore());
       }
-      if (!isNullOrEmpty(jksProperties.getTrustStorePassword())) {
+      if (!U.isNullOrEmpty(jksProperties.getTrustStorePassword())) {
         System.setProperty(prefix + "trustStorePassword", jksProperties.getTrustStorePassword());
       }
     }
   }
 
-  private <T extends MQConnectionFactory> T createConnectionFactoryInstance(Class<T> factoryClass) throws InstantiationException,
-      IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  private <T extends MQConnectionFactory> T createConnectionFactoryInstance(Class<T> factoryClass)
+      throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     logger.trace("createConnectionFactoryInstance for class " + factoryClass.getSimpleName());
     return factoryClass.getConstructor().newInstance();
   }
@@ -420,17 +466,6 @@ public class MQConnectionFactoryFactory {
     return ctx;
   }
 
-  static boolean isNullOrEmpty(String s) {
-    if (s == null || s.isEmpty())
-      return true;
-    else
-      return false;
-  }
-
-  static boolean isNotNullOrEmpty(String s) {
-    return !isNullOrEmpty(s);
-  }
-
   private SSLSocketFactory getSSLSocketFactory(String b) {
     SSLSocketFactory sf = null;
 
@@ -447,8 +482,26 @@ public class MQConnectionFactoryFactory {
         logger.trace("SSL Bundle for {} - found", b);
 
         sc = sb.createSslContext();
-        // logger.trace("SSL Protocol is {}",sc.getProtocol());
-        sf = sc.getSocketFactory();
+
+        // If the insecure mode option is set, then override the trust manager
+        // associated with the bundle's socket context
+        if (this.properties.isSslCertificateValidationNone()) {
+          SslManagerBundle mgrs = sb.getManagers();
+          KeyManager[] keymanagers = mgrs.getKeyManagers();
+
+          String protocol = sb.getProtocol();
+          try {
+            sc = SSLContext.getInstance(protocol);
+            sc.init(keymanagers, trustAllCerts, null);
+            sf = sc.getSocketFactory();
+          }
+          catch (NoSuchAlgorithmException | KeyManagementException e) {
+            logger.error("Cannot set insecure mode: {}", e);
+          }
+        }
+        else {
+          sf = sc.getSocketFactory();
+        }
       }
       catch (NoSuchSslBundleException e) {
         logger.error("SSL bundle for {} - not found", b);
@@ -456,4 +509,5 @@ public class MQConnectionFactoryFactory {
     }
     return sf;
   }
+
 }
