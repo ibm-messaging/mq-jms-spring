@@ -150,35 +150,49 @@ to override the default values.
 
 For example in an `application.properties` file:
 
+```
     ibm.mq.queueManager=QM1
     ibm.mq.channel=SYSTEM.DEF.SVRCONN
     ibm.mq.connName=server.example.com(1414)
     ibm.mq.user=user1
     ibm.mq.password=passw0rd
+```
+
+Or in the equivalent `application.yml` file:
+
+```
+    ibm:
+      mq:
+        queueManager: QM1
+        channel: SYSTEM.DEF.SVRCONN
+        connName: server.example.com(1414)
+        user: user1
+        password: passw0rd
+```
 
 Spring Boot will then create a ConnectionFactory that can then be used to interact with your queue manager.
 
-| Option                      | Description                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| ibm.mq.queueManager         | Name of queue manager                                                           |
-| ibm.mq.channel              | Channel Name for SVRCONN                                                        |
-| ibm.mq.connName             | Connection Name, which can be comma-separated list                              |
-| ibm.mq.ccdtUrl              | Location of the MQ CCDT file (URL can reference http/ftp location)              |
-| ibm.mq.user                 | User Name. Default is empty string                                              |
-| ibm.mq.password             | Password. Default is empty string                                               |
-| ibm.mq.token                | JWT token                                                                       |
-| ibm.mq.clientId             | ClientId uniquely identifies the app connection for durable subscriptions       |
-| ibm.mq.applicationName      | Application Name used for Uniform Cluster balancing                             |
-| ibm.mq.userAuthenticationMQCSP| Control authentication mechanism for old queue managers (default true)        |
-| ibm.mq.tempQPrefix          | The prefix to be used to form the name of an MQ dynamic queue                   |
-| ibm.mq.tempTopicPrefix      | The prefix to be used to form the name of an MQ dynamic topic                   |
-| ibm.mq.tempModel            | The name of a model queue for creating temporary destinations                   |
-| ibm.mq.reconnect            | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
-| ibm.mq.reconnectTimeout     | Timeout in seconds before automatic reconnect gives up                          |
-| ibm.mq.autoConfigure        | If explicitly set to "false", then the autoconfigure bean is disabled           |
-| ibm.mq.balancingApplicationType | Hint how uniform clusters should treat the app. Options of SIMPLE/REQREP    |
-| ibm.mq.balancingTimeout     | Uniform cluster timer. Options NEVER/DEFAULT/IMMEDIATE or integer seconds       |
-| ibm.mq.balancingOptions     | Rebalancing options. Options of NONE/IGNORETRANS. Default NONE.                 |
+| Option (ibm.mq)          | Description                                                                     |
+| -------------------------| ------------------------------------------------------------------------------- |
+| queueManager             | Name of queue manager                                                           |
+| channel                  | Channel Name for SVRCONN                                                        |
+| connName                 | Connection Name, which can be comma-separated list                              |
+| ccdtUrl                  | Location of the MQ CCDT file (URL can reference http/ftp location)              |
+| user                     | User Name. Default is empty string                                              |
+| password                 | Password. Default is empty string                                               |
+| token                    | JWT token                                                                       |
+| clientId                 | ClientId uniquely identifies the app connection for durable subscriptions       |
+| applicationName          | Application Name used for Uniform Cluster balancing                             |
+| userAuthenticationMQCSP  | Control authentication mechanism for old queue managers (default true)          |
+| tempQPrefix              | The prefix to be used to form the name of an MQ dynamic queue                   |
+| tempTopicPrefix          | The prefix to be used to form the name of an MQ dynamic topic                   |
+| tempModel                | The name of a model queue for creating temporary destinations                   |
+| reconnect                | Whether app tries automatic reconnect. Options of YES/NO/QMGR/DISABLED/DEFAULT  |
+| reconnectTimeout         | Timeout in seconds before automatic reconnect gives up                          |
+| autoConfigure            | If explicitly set to "false", then the autoconfigure bean is disabled           |
+| balancingApplicationType | Hint how uniform clusters should treat the app. Options of SIMPLE/REQREP        |
+| balancingTimeout         | Uniform cluster timer. Options NEVER/DEFAULT/IMMEDIATE or integer seconds       |
+| balancingOptions         | Rebalancing options. Options of NONE/IGNORETRANS. Default NONE.                 |
 
 The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 
@@ -186,31 +200,31 @@ The `reconnect` option was previously named `defaultReconnect` but both names wo
 
 The following options all default to null, but may be used to assist with configuring TLS
 
-| Option                      | Description                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| ibm.mq.sslCipherSuite       | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE |
-| ibm.mq.sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
-| ibm.mq.sslPeerName          | Peer Name,    sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME    |
-| ibm.mq.useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
-| ibm.mq.outboundSNI          | Sets property com.ibm.mq.cfg.SSL.OutboundSNI (use HOSTNAME for Openshift qmgrs) |
-| ibm.mq.channelSharing       | Sets strategy for TCP/IP connection sharing - CONNECTION or GLOBAL              |
+| Option (ibm.mq)      | Description                                                                     |
+| -------------------- | ------------------------------------------------------------------------------- |
+| sslCipherSuite       | Cipher Suite, sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SUITE |
+| sslCipherSpec        | Cipher Spec,  sets connectionFactory property WMQConstants.WMQ_SSL_CIPHER_SPEC  |
+| sslPeerName          | Peer Name,    sets connectionFactory property WMQConstants.WMQ_SSL_PEER_NAME    |
+| useIBMCipherMappings | Sets System property com.ibm.mq.cfg.useIBMCipherMappings                        |
+| outboundSNI          | Sets property com.ibm.mq.cfg.SSL.OutboundSNI (use HOSTNAME for Openshift qmgrs) |
+| channelSharing       | Sets strategy for TCP/IP connection sharing - CONNECTION or GLOBAL              |
 
 We also have
 
-| Option                      | Description                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| ibm.mq.sslFIPSRequired      | Force FIPS-compliant algorithms to be used (default false)                      |
-| ibm.mq.sslKeyResetCount     | How many bytes to send before resetting the TLS keys                            |
-| ibm.mq.sslCertificateValPolicy | If "none", do not check the server certificate is trusted                    |
+| Option (ibm.mq)         | Description                                                     |
+| ----------------------- | ----------------------------------------------------------------|
+| sslFIPSRequired         | Force FIPS-compliant algorithms to be used (default false)      |
+| slKeyResetCount         | How many bytes to send before resetting the TLS keys            |
+| sslCertificateValPolicy | If "none", do not check the server certificate is trusted       |
 
 and
 
-| Option                          | Description                                                                  |
-| ------------------------------- | ---------------------------------------------------------------------------- |
-| ibm.mq.jks.trustStore           | Where is the store holding trusted certificates                              |
-| ibm.mq.jks.trustStorePassword   | Password for the trustStore                                                  |
-| ibm.mq.jks.keyStore             | Where is the keystore with a personal key and certificate                    |
-| ibm.mq.jks.keyStorePassword     | Password for the keyStore                                                    |
+| Option (ibm.mq.jks)  | Description                                                                  |
+| ---------------------| ---------------------------------------------------------------------------- |
+| trustStore           | Where is the store holding trusted certificates                              |
+| trustStorePassword   | Password for the trustStore                                                  |
+| keyStore             | Where is the keystore with a personal key and certificate                    |
+| keyStorePassword     | Password for the keyStore                                                    |
 
 These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line.
 
@@ -223,9 +237,9 @@ specified for this package with `ibm.mq.sslBundle` which then uses the Spring el
 configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global SSL
 configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated.
 
-| Option                          | Description                                                                  |
-| ------------------------------- | ---------------------------------------------------------------------------- |
-| ibm.mq.sslBundle                | Spring Boot option (from 3.1) for granular certificate configuration         |
+| Option (ibm.mq)      | Description                                                                  |
+| -------------------- | ---------------------------------------------------------------------------- |
+| sslBundle            | Spring Boot option (from 3.1) for granular certificate configuration         |
 
 To achieve the same effect with Spring 2.x, you could use your own code to create an `SSLSocketFactory` object
 which can be applied to the MQ Connection Factory in a `customise` method before the CF is invoked.
@@ -235,27 +249,27 @@ which can be applied to the MQ Connection Factory in a `customise` method before
 You may want to use the default Spring Caching connection factory with the default Spring JMS properties. This is now the
 preferred method in Spring for holding JMS objects open, rather than the Pooling options described below.
 
-| Option                              | Description                                      |
-| ----------------------------------- | ------------------------------------------------ |
-| spring.jms.cache.enabled            | Whether to cache sessions (default true)         |
-| spring.jms.cache.consumers          | Whether to cache message consumers               |
-| spring.jms.cache.producers          | Whether to cache message producers               |
-| spring.jms.cache.session-cache-size | Size of the session cache (per JMS Session type) |
+| Option (spring.jms.cache)   | Description                                      |
+| --------------------------- | ------------------------------------------------ |
+| enabled                     | Whether to cache sessions (default true)         |
+| consumers                   | Whether to cache message consumers               |
+| producers                   | Whether to cache message producers               |
+| session-cache-size          | Size of the session cache (per JMS Session type) |
 
 #### Pooled connection factory options
 
 Alternatively you may configure a pooled connection factory by using these properties:
 
-| Option                                 | Description                                                                                                                              |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| ibm.mq.pool.enabled                    | Enabled Pooled connection factory usage                                                                                                  |
-| ibm.mq.pool.blockIfFull                | Blocks a connection request when the pool is full. Default is false                                                                      |
-| ibm.mq.pool.blockIfFullTimeout         | Blocking period before throwing an exception if the pool is still full                                                                   |
-| ibm.mq.pool.idleTimeout                | Connection idle timeout. Default to 30 seconds                                                                                           |
-| ibm.mq.pool.maxConnections             | Maximum number of pooled connections. Default is 1                                                                                       |
-| ibm.mq.pool.maxSessionsPerConnection   | Maximum number of pooled sessions. Default is 500                                                                                        |
-| ibm.mq.pool.timeBetweenExpirationCheck | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
-| ibm.mq.pool.useAnonymousProducers      | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
+| Option (ibm.mq.pool)       | Description                                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| enabled                    | Enabled Pooled connection factory usage                                                                                                  |
+| blockIfFull                | Blocks a connection request when the pool is full. Default is false                                                                      |
+| blockIfFullTimeout         | Blocking period before throwing an exception if the pool is still full                                                                   |
+| idleTimeout                | Connection idle timeout. Default to 30 seconds                                                                                           |
+| maxConnections             | Maximum number of pooled connections. Default is 1                                                                                       |
+| maxSessionsPerConnection   | Maximum number of pooled sessions. Default is 500                                                                                        |
+| timeBetweenExpirationCheck | Time to sleep between runs of the idle connection eviction thread. Disable when negative. Default is -1                                  |
+| useAnonymousProducers      | Whether to use only one anonymous "MessageProducer" instance. Set it to false to create one "MessageProducer" every time one is required |
 
 These pooling options make use of the [PooledJMS](https://github.com/messaginghub/pooled-jms) implementation. More documentation on
 the options can be found [here](https://github.com/messaginghub/pooled-jms/blob/master/pooled-jms-docs/Configuration.md).
@@ -270,6 +284,31 @@ Application code can still set its own preferred value.
 | Option                              | Description                                                                                                                   |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | spring.jms.listener.receiveTimeout  | How frequently to poll for received messages. Default is 1s. Given as a Duration string: "1m", "60s", "60000" are equivalent  |
+
+### MQ JMS Tracing and Logging
+
+The MQ JMS client libraries have a large set of options to control their own tracing and logging behaviour. See for
+example
+[this page](https://www.ibm.com/docs/en/ibm-mq/latest?topic=mcjcf-using-java-standard-environment-trace-configure-java-trace).
+This package exposes some of these options, so they can be set using regular Spring properties, without needing to be
+put into System properties and/or additional external files.Some of these options interact in potentially surprising
+ways, as to what gets printed where (to files, stdout/stderr etc). So you might need to experiment, or revert to the
+full control of setting the separate MQ-documented properties files. If the `ffdcPath` attribute is not set, then FFDCs are
+created in the FFDC directory under the `traceFile` directory. Note that some of the documented MQ attributes use "ffst", while some
+use "ffdc". I've tried to be consistent here and used "ffdc" as that is how the files are actually named.
+
+| Option (ibm.mq.trace)  | Description                                                                                                |
+| -----------------------| ---------------------------------------------------------------------------------------------------------- |
+| status                 | ON or OFF to control overall tracing                                                                       |
+| maxTraceBytes          | Limits on the trace output                                                                                 |
+| traceFileLimit         | Limits on the trace output                                                                                 |
+| traceFileCount         | Limits on the trace output                                                                                 |
+| parameterTrace         | true or false to control level of tracing                                                                  |
+| logFile                | Error log filename                                                                                         |
+| traceFile              | Trace log filename or directory. Can use %PID% in the name as a placeholder                                |
+| ffdcSuppress           | Suppress repeated instances of each FFDC                                                                   |
+| ffdcSuppressProbeIDs   | Completely suppress these specific FFDC Probes                                                             |
+| ffdcPath               | Directory for FFDCs. Generation of FFDCs cannot be fully suppressed - this directory must be writable.     |
 
 ### Additional properties
 
@@ -355,7 +394,7 @@ The preferred approach for using this package in other projects will be to use t
 
 ### License
 
-Copyright © 2018, 2023 IBM Corp. All rights reserved.
+Copyright © 2018, 2024 IBM Corp. All rights reserved.
 
 Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the
 license. You may obtain a copy of the license at

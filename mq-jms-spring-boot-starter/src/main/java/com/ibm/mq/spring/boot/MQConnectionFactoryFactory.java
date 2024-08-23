@@ -92,8 +92,6 @@ public class MQConnectionFactoryFactory {
     this(properties, null, factoryCustomizers);
   }
 
-
-
   @SuppressWarnings("unchecked")
   public <T extends MQConnectionFactory> T createConnectionFactory(Class<T> factoryClass) {
     String err = null;
@@ -107,6 +105,11 @@ public class MQConnectionFactoryFactory {
 
     /* Keystore System properties don't need the CF to be already created */
     String sslBundle = this.properties.getSslBundle();
+    
+    /* 
+     * Set any system properties that might control tracing/ffdcs etc
+     */
+    this.properties.getTrace().setProperties();
 
     /*
      * From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle

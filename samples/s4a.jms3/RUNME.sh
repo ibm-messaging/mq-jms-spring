@@ -9,7 +9,7 @@
 
 ###### Cleanup from previous runs
 # Kill any old instances of the application
-ps -ef|grep gradle | grep sample5.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
+ps -ef|grep gradle | grep sample4a.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
 
 # Set the environment
 . setmqenv -m QM1 -k

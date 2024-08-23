@@ -273,6 +273,9 @@ public class MQConfigurationProperties {
   @NestedConfigurationProperty
   private MQConfigurationPropertiesJks jks = new MQConfigurationPropertiesJks();
 
+  @NestedConfigurationProperty
+  private MQConfigurationPropertiesTrace trace = new MQConfigurationPropertiesTrace();
+  
   public String getQueueManager() {
     return queueManager;
   }
@@ -421,6 +424,10 @@ public class MQConfigurationProperties {
 
   public MQConfigurationPropertiesJks getJks() {
     return jks;
+  }
+  
+  public MQConfigurationPropertiesTrace getTrace() {
+    return trace;
   }
 
   public String getTempQPrefix() {
@@ -733,5 +740,7 @@ public class MQConfigurationProperties {
     else {
       logger.trace("Pooling is disabled");
     }
+    
+    getTrace().traceProperties(logger);
   }
 }

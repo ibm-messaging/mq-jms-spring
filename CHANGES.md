@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.3.3 (2024-08-23)
+- Update Spring dependencies
+- Add properties to control MQ JMS tracing
+
 ## 3.3.1 (2024-06-20)
 - Update Spring dependencies
 - Update to MQ 9.4.0.0
