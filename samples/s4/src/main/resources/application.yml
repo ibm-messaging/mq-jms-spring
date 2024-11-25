@@ -13,11 +13,16 @@ qm2:
   channel: "SYSTEM.DEF.SVRCONN"
   connName: "localhost(1415)"    
 
+spring:
+  jms:
+    cache:
+      enabled: false
+      
 logging:
   pattern:
     console: "%logger{36} - %msg%n"
   level:
-    root: WARN
+    root: INFO 
     com:
       ibm:
         mq:

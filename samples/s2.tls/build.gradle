@@ -4,16 +4,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-	 classpath("org.springframework.boot:spring-boot-gradle-plugin:2.7.18")
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.4.0")
     }
 }
-
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '2.7.18'
+ext.starterVersion = '3.4.0'
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {
@@ -28,9 +27,10 @@ dependencies {
   implementation(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter", version:starterVersion)
 }
 
+// Do not need these properties as they are now supplied via SslBundle attributes
 bootRun {
-  systemProperty('javax.net.ssl.trustStore','key.jks')
-  systemProperty('javax.net.ssl.trustStorePassword','passw0rd')
-  systemProperty('javax.net.ssl.keyStore','key.jks')
-  systemProperty('javax.net.ssl.keyStorePassword','passw0rd')
+  //systemProperty('javax.net.ssl.trustStore','key.jks')
+  //systemProperty('javax.net.ssl.trustStorePassword','passw0rd')
+  //systemProperty('javax.net.ssl.keyStore','key.jks')
+  //systemProperty('javax.net.ssl.keyStorePassword','passw0rd')
 }

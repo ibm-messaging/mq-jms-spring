@@ -30,7 +30,7 @@ package sample2;
 
 import java.util.Date;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

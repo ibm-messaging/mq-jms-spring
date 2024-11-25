@@ -17,13 +17,12 @@ spring:
     bundle:
       jks:
         ibmmq:
-          # protocol: TLSv1.2
           truststore:
-            location: "key.jks"
+            location: "file:key.jks"
             password: "passw0rd"
             type: "JKS"
           keystore:
-            location: "key.jks"
+            location: "file:key.jks"
             password: "passw0rd"
             type: "JKS"
 
@@ -31,7 +30,7 @@ logging:
   pattern:
     console: "%logger{36} - %msg%n"
   level:
-    root: INFO
+    root: WARN 
     com:
       ibm:
         mq:

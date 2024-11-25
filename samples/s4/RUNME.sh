@@ -9,28 +9,22 @@
 
 ###### Cleanup from previous runs
 # Kill any old instances of the application
-ps -ef|grep gradle | grep sample4a.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
+ps -ef|grep gradle | grep sample4.Application | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1
 
 # Set the environment
 . setmqenv -m QM1 -k
-export PATH=$MQ_INSTALLATION_PATH/samp/bin:$PATH
+export PATH=$PATH:$MQ_INSTALLATION_PATH/samp/bin
 
 # Try to clear the queue (assuming it's using local queue managers)
 echo "CLEAR QLOCAL(DEV.QUEUE.1)" | runmqsc -e QM1 >/dev/null 2>&1
 echo "CLEAR QLOCAL(DEV.QUEUE.1)" | runmqsc -e QM2 >/dev/null 2>&1
-
-d=`date`
-echo "COMMIT   Message for Spring $d" | amqsput DEV.QUEUE.1 QM1 >/dev/null 2>&1
-sleep 1 # So we get slightly different dates
-d=`date`
-echo "ROLLBACK Message for Spring $d" | amqsput DEV.QUEUE.1 QM1 >/dev/null 2>&1
 
 ######
 
 # Now run the program. Build using the gradle wrapper in parent directory
 cd ../..
 
-./gradlew -p samples/s4a.jms3 bootRun
+./gradlew -p samples/s4 bootRun
 
 # And optionally look to see what's on each the queues on each queue manager. Should have one message on each
 if false

@@ -30,6 +30,5 @@ echo "CLEAR QLOCAL(DEV.QUEUE.1)" | runmqsc -e QM1 >/dev/null 2>&1
 curdir=`pwd`
 
 # Now run the program. Build using the gradle wrapper in parent directory
-cd ../..
 
-./gradlew -p samples/s2.tls bootRun
+../../gradlew -p .                   bootRun

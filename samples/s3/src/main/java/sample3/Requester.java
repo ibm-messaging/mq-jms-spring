@@ -15,10 +15,10 @@
 // An example of using the Spring Boot JmsTemplate in a request/reply pattern.
 // The main application thread sends a message and then waits for a reply.
 // Meanwhile, a JMS Listener is waiting for an input message to which it replies as
-// part of the same transaction. 
+// part of the same transaction.
 //
 // The jmsTemplate.sendAndReceive method creates a temporary queue to which the reply will be
-// sent. It can make use of the 'ibm.mq.tempModel' configuration property to select which 
+// sent. It can make use of the 'ibm.mq.tempModel' configuration property to select which
 // Model queue to use to underpin that TDQ. If you are going to do many request/reply operations,
 // it will be more efficient to create the reply queue once and use a separate receive() call.
 
@@ -26,11 +26,11 @@ package sample3;
 
 import java.util.Date;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -73,7 +73,7 @@ public class Requester {
     // Create a single message with a timestamp
     String payload = "Hello from IBM MQ at " + new Date();
 
-    // Send the message and wait for a reply for up to the specified timeout 
+    // Send the message and wait for a reply for up to the specified timeout
     Message replyMsg = jmsTemplate.sendAndReceive(qName, new MessageCreator() {
       @Override
       public Message createMessage(Session session) throws JMSException {
@@ -83,7 +83,7 @@ public class Requester {
       }
     });
 
-  
+
     if (replyMsg != null) {
       if (replyMsg instanceof TextMessage) {
         System.out.println("Reply message is: " + ((TextMessage) replyMsg).getText());

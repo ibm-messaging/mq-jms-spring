@@ -13,4 +13,4 @@
  */
 
 
-rootProject.name = 'mq-jms-spring-sample2'
+rootProject.name = 'mq-jms-spring-sample2-tls'

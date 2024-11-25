@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017, 2020 IBM Corp. All rights reserved.
+ * Copyright © 2017, 2023 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -30,16 +30,20 @@ package sample2;
 
 import java.util.Date;
 
-import javax.jms.Message;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.ibm.mq.jakarta.jms.MQConnectionFactory;
+import com.ibm.mq.spring.boot.MQConnectionFactoryCustomizer;
+
+import jakarta.jms.Message;
 
 @SpringBootApplication
 @EnableJms
@@ -48,6 +52,18 @@ public class Application {
 
   static final String qName1 = "DEV.QUEUE.1"; // A queue from the default MQ Developer container config
   static final String qName2 = "DEV.QUEUE.2"; // Another queue from the default MQ Developer container config
+  
+  @Bean
+  public MQConnectionFactoryCustomizer myCustomizer() {
+    MQConnectionFactoryCustomizer c = new MQConnectionFactoryCustomizer() {
+      @Override
+      public void customize(MQConnectionFactory factory) {
+        System.out.println(">> In a customizer method that can modify class " + factory.getClass().getName()); 
+      }
+    };
+    return c;
+
+  }
 
   public static void main(String[] args) {
 
@@ -94,8 +110,8 @@ public class Application {
 
   static void printStarted() {
     System.out.println();
-    System.out.println("========================================");
-    System.out.println("MQ JMS Transaction Sample started.");
-    System.out.println("========================================");
+    System.out.println("====================================================");
+    System.out.println("MQ JMS Transaction Sample with JMS3 and TLS started.");
+    System.out.println("====================================================");
   }
 }

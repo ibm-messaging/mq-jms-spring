@@ -4,15 +4,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.3.5")
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.4.0")
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'org.springframework.boot' 
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '3.3.5'
+ext.starterVersion = '3.4.0'
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {
@@ -21,7 +21,6 @@ repositories {
   }
   mavenCentral()
   mavenLocal()
-
 }
 
 // The Atomikos module is no longer provided with Spring. But we can still get it directly
@@ -30,7 +29,7 @@ dependencies {
   implementation(group:"com.atomikos", name:"transactions-spring-boot3-starter", version:"6.0.0")
 }
 
-// Some atomikos features are controlled by -D Java properties. They can be
+// Some atomikos features are controlled by -D Java properties. They can be 
 // set here as the Spring Boot processing might be too late
 bootRun {
   systemProperty('com.atomikos.icatch.xxxxxxxxxx','true')
