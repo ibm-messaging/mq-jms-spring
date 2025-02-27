@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2024 IBM Corp. All rights reserved.
+ * Copyright © 2018,2025 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -43,13 +43,13 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants;
  * <a href="https://github.com/ibm-messaging/mq-container">developer-configured
  * container</a>. Note that the default userid/password settings have now been removed;
  * they must be explicitly enabled for the queue manager.
- * 
+ *
  * <ul>
  * <li>queueManager = QM1
  * <li>connName = localhost(1414)
  * <li>channel = DEV.ADMIN.SVRCONN
- * <li>user = 
- * <li>password = 
+ * <li>user =
+ * <li>password =
  * </ul>
  */
 @ConfigurationProperties(prefix = "ibm.mq")
@@ -103,7 +103,7 @@ public class MQConfigurationProperties {
    * MQ password
    */
   private String password = "";
-  
+
   /**
    * An OIDC/JWT token. The token can either be set in the
    * password field, in which case the user needs to be overridden to be
@@ -112,8 +112,8 @@ public class MQConfigurationProperties {
   private String token = "";
 
   /**
-   * Override the authentication mode. This should not normally be needed with current maintenance 
-   * levels of MQ V8 or V9, but some earlier levels sometimes got get it wrong and then this flag 
+   * Override the authentication mode. This should not normally be needed with current maintenance
+   * levels of MQ V8 or V9, but some earlier levels sometimes got get it wrong and then this flag
    * can be set to "false". There is also some confusion about
    * whether the field is called "userAuth.." or "useAuth..." So we allow both
    * spellings and use the explicit setting to set a different attribute.
@@ -151,8 +151,8 @@ public class MQConfigurationProperties {
   /**
    * Set to HOSTNAME for connection to OpenShift queue managers where SNI is important. CHANNEL
    * can be used for environments where you want to have different certificates
-   * associated with different channels. The property does not get set unless explicitly 
-   * configured as an external property so we would otherwise use whatever the default behaviour 
+   * associated with different channels. The property does not get set unless explicitly
+   * configured as an external property so we would otherwise use whatever the default behaviour
    * is in the JMS client.
    */
   private String outboundSNI = ""; // HOSTNAME or CHANNEL are the valid alternatives
@@ -211,11 +211,11 @@ public class MQConfigurationProperties {
    * The reset count of the SSL key.
    */
   private int sslKeyResetCount = -1;
-  
+
   /**
-   * Certificate Validation Policy. When "NONE", this allows connection 
+   * Certificate Validation Policy. When "NONE", this allows connection
    * without checking if the server's cert is known/trusted. The mqclient.ini
-   * file is spelled this way: "CertificateValPolicy" in the SSL stanza. 
+   * file is spelled this way: "CertificateValPolicy" in the SSL stanza.
    */
   private String sslCertificateValPolicy = "";
 
@@ -248,6 +248,14 @@ public class MQConfigurationProperties {
   private String balancingOptions = "";
 
   /**
+   * Uniform cluster applications will normally use the application name
+   * as the way to detect whether rebalancing is needed. Setting this
+   * option to "JVM" will cause all connections from the same JRE process
+   * to be treated as equivalent.
+   */
+  private String balancingInstanceMode = "";
+
+  /**
    * Additional CF properties that are not explicitly known can be provided
    * with the format "ibm.mq.additionalProperties.SOME_PROPERTY=SOME_VALUE".
    * Strings, integers and true/false values are recognised.
@@ -275,7 +283,7 @@ public class MQConfigurationProperties {
 
   @NestedConfigurationProperty
   private MQConfigurationPropertiesTrace trace = new MQConfigurationPropertiesTrace();
-  
+
   public String getQueueManager() {
     return queueManager;
   }
@@ -331,7 +339,7 @@ public class MQConfigurationProperties {
   public void setPassword(String password) {
     this.password = password;
   }
-  
+
   public String getToken() {
     return token;
   }
@@ -422,10 +430,11 @@ public class MQConfigurationProperties {
     return jndi;
   }
 
+
   public MQConfigurationPropertiesJks getJks() {
     return jks;
   }
-  
+
   public MQConfigurationPropertiesTrace getTrace() {
     return trace;
   }
@@ -465,11 +474,11 @@ public class MQConfigurationProperties {
   public String getSslCertificateValPolicy() {
     return this.sslCertificateValPolicy;
   }
- 
+
   public void setSslCertificateValPolicy(String sslCertificateValPolicy) {
     this.sslCertificateValPolicy = sslCertificateValPolicy;
   }
-  
+
   public boolean isSslCertificateValidationNone() {
     boolean rc = false;
     if (this.sslCertificateValPolicy != null && this.sslCertificateValPolicy.equalsIgnoreCase("none")) {
@@ -477,7 +486,7 @@ public class MQConfigurationProperties {
     }
     return rc;
   }
-  
+
   public int getSslKeyResetCount() {
     return sslKeyResetCount;
   }
@@ -517,9 +526,9 @@ public class MQConfigurationProperties {
 
   public void setDefaultReconnect(String defaultReconnect) {
     // Set the preferred property, not the original
-    this.reconnect = defaultReconnect; 
+    this.reconnect = defaultReconnect;
   }
-  
+
   @DeprecatedConfigurationProperty(replacement="ibm.mq.reconnect")
   public String getDefaultReconnect() {
     // This method is never called, but we need a getter to mark the deprecation
@@ -533,11 +542,11 @@ public class MQConfigurationProperties {
   public void setReconnect(String reconnect) {
     this.reconnect = reconnect;
   }
-  
+
   public void setReconnectTimeout(int reconnectTimeout) {
     this.reconnectTimeout = reconnectTimeout;
   }
-  
+
   public int getReconnectTimeout() {
     return reconnectTimeout;
   }
@@ -560,6 +569,10 @@ public class MQConfigurationProperties {
 
   public void setBalancingOptions(String balancingOptions) {
     this.balancingOptions = balancingOptions;
+  }
+
+  public void setBalancingInstanceMode(String balancingInstanceMode) {
+    this.balancingInstanceMode = balancingInstanceMode;
   }
 
   public String getBalancingOptions() {
@@ -656,7 +669,11 @@ public class MQConfigurationProperties {
     }
     return rc;
   }
-  
+
+  public String getBalancingInstanceMode() {
+    return this.balancingInstanceMode;
+  }
+
   public Map<String, String> getAdditionalProperties() {
     return additionalProperties;
   }
@@ -705,6 +722,7 @@ public class MQConfigurationProperties {
     logger.trace("balancingAppType       : \'{}\' [{}]", getBalancingApplicationType(), getBalancingApplicationTypeValue());
     logger.trace("balancingTimeout       : \'{}\' [{}]", getBalancingTimeout(), getBalancingTimeoutValue());
     logger.trace("balancingOptions       : \'{}\' [{}]", getBalancingOptions(), getBalancingOptionsValue());
+    logger.trace("balancingInstanceMode  : \'{}\' ", getBalancingInstanceMode());
 
     logger.trace("jndiCF          : {}", getJndi().getProviderContextFactory());
     logger.trace("jndiProviderUrl : {}", getJndi().getProviderUrl());
@@ -740,7 +758,7 @@ public class MQConfigurationProperties {
     else {
       logger.trace("Pooling is disabled");
     }
-    
+
     getTrace().traceProperties(logger);
   }
 }

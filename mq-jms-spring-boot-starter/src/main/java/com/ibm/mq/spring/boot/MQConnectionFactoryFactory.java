@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2024 IBM Corp. All rights reserved.
+ * Copyright © 2018,2025 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -85,7 +85,7 @@ public class MQConnectionFactoryFactory {
     logger.trace("constructor");
     // logger.trace("!! Bundles = {} ", (sslBundles == null) ? "null" : (getSSLSocketFactory("ibmmq") != null) ? "Has IBMMQ" : "No IBMMQ bundle");
   }
-  
+
   // Keep a backwards compatible version of the method without the SslBundles parm
   @SuppressWarnings("unchecked")
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
@@ -105,8 +105,8 @@ public class MQConnectionFactoryFactory {
 
     /* Keystore System properties don't need the CF to be already created */
     String sslBundle = this.properties.getSslBundle();
-    
-    /* 
+
+    /*
      * Set any system properties that might control tracing/ffdcs etc
      */
     this.properties.getTrace().setProperties();
@@ -237,7 +237,16 @@ public class MQConnectionFactoryFactory {
       if (!U.isNullOrEmpty(props.getBalancingTimeout())) {
         cf.setIntProperty(WMQConstants.WMQ_BALANCING_TIMEOUT, props.getBalancingTimeoutValue());
       }
-      
+
+      /*
+       * This should be set once and once-only for the process. Odd things might happen if
+       * you try to change it between configurations in the same process.
+       */
+      String appBalancingMode = props.getBalancingInstanceMode();
+      if (!U.isNullOrEmpty(appBalancingMode) && appBalancingMode.equalsIgnoreCase("JVM")) {
+        System.setProperty("com.ibm.mq.cfg.jmqi.AppInstanceMode","JVM");
+      }
+
       // Setup the socket factory - it will be non-null if it's been created by the SSLBundles support
       if (sf != null) {
         cf.setSSLSocketFactory(sf);
@@ -378,7 +387,7 @@ public class MQConnectionFactoryFactory {
       }
     }
   }
-  
+
   // In case anyone has used the public method before we added the SocketFactory parameter ... This method maintains a compatability
   // interface.
   public static void configureConnectionFactory(MQConnectionFactory cf, MQConfigurationProperties props) throws JMSException {

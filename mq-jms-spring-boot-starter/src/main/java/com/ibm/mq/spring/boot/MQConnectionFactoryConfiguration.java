@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2021 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2025 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -14,6 +14,7 @@
 
 package com.ibm.mq.spring.boot;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import jakarta.jms.ConnectionFactory;
@@ -38,20 +39,19 @@ import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 /**
  * Configuration for IBM MQ {@link ConnectionFactory}.
  */
-@Configuration(proxyBeanMethods=false)
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingBean(ConnectionFactory.class)
-class MQConnectionFactoryConfiguration {
+public class MQConnectionFactoryConfiguration {
   private static Logger logger = LoggerFactory.getLogger(MQConnectionFactoryConfiguration.class);
-  
-  @Configuration(proxyBeanMethods=false)
+
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnClass({ CachingConnectionFactory.class })
   @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "false", matchIfMissing = true)
   static class RegularMQConnectionFactoryConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "spring.jms.cache", name = "enabled", havingValue = "false")
-    public MQConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties,
-        ObjectProvider<SslBundles> sslBundles,
+    public MQConnectionFactory jmsConnectionFactory(MQConfigurationProperties properties, ObjectProvider<SslBundles> sslBundles,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
       logger.trace("Creating single MQConnectionFactory");
       return createConnectionFactory(properties, sslBundles, factoryCustomizers);
@@ -60,11 +60,11 @@ class MQConnectionFactoryConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "spring.jms.cache", name = "enabled", havingValue = "true", matchIfMissing = true)
     public CachingConnectionFactory cachingJmsConnectionFactory(MQConfigurationProperties properties,
-        ObjectProvider<SslBundles> sslBundles,
-        ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers, JmsProperties jmsProperties) {
+        ObjectProvider<SslBundles> sslBundles, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers,
+        JmsProperties jmsProperties) {
 
       JmsProperties.Cache cacheProperties = jmsProperties.getCache();
-      
+
       logger.trace("Creating caching MQConnectionFactory");
       MQConnectionFactory wrappedConnectionFactory = createConnectionFactory(properties, sslBundles, factoryCustomizers);
 
@@ -79,50 +79,59 @@ class MQConnectionFactoryConfiguration {
   }
 
   private static MQConnectionFactory createConnectionFactory(MQConfigurationProperties properties,
-      ObjectProvider<SslBundles> sslBundles,
-      ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
-    return new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
+      ObjectProvider<SslBundles> sslBundles, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+    return new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable())
+        .createConnectionFactory(MQConnectionFactory.class);
   }
 
-  @Configuration(proxyBeanMethods=false)
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnClass({ JmsPoolConnectionFactory.class, PooledObject.class })
-  static class PooledMQConnectionFactoryConfiguration {
+  static public class PooledMQConnectionFactoryConfiguration {
 
     @Bean(destroyMethod = "stop")
     @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "true", matchIfMissing = false)
     public JmsPoolConnectionFactory pooledJmsConnectionFactory(MQConfigurationProperties properties,
-        ObjectProvider<SslBundles> sslBundles,
-        ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+        ObjectProvider<SslBundles> sslBundles, ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
       logger.trace("Creating pooled MQConnectionFactory");
       MQConnectionFactory connectionFactory = createConnectionFactory(properties, sslBundles, factoryCustomizers);
 
-      return create(connectionFactory, properties.getPool());
+      return createInstance(JmsPoolConnectionFactory.class, connectionFactory, properties.getPool());
     }
 
-    private JmsPoolConnectionFactory create(ConnectionFactory connectionFactory, JmsPoolConnectionFactoryProperties poolProperties) {
+    public static <T extends JmsPoolConnectionFactory> T createInstance(Class<T> factoryClass, ConnectionFactory connectionFactory,
+        JmsPoolConnectionFactoryProperties poolProperties) {
 
-      JmsPoolConnectionFactory pooledConnectionFactory = new JmsPoolConnectionFactory();
-      pooledConnectionFactory.setConnectionFactory(connectionFactory);
+      logger.trace("Creating pooled MQConnectionFactory instance for type {}",factoryClass.getSimpleName());
 
-      pooledConnectionFactory.setBlockIfSessionPoolIsFull(poolProperties.isBlockIfFull());
+      T pooledConnectionFactory = null;
 
-      if (poolProperties.getBlockIfFullTimeout() != null) {
-        pooledConnectionFactory.setBlockIfSessionPoolIsFullTimeout(poolProperties.getBlockIfFullTimeout().toMillis());
+      try {
+        pooledConnectionFactory = factoryClass.getConstructor().newInstance();
+
+        pooledConnectionFactory.setConnectionFactory(connectionFactory);
+        pooledConnectionFactory.setBlockIfSessionPoolIsFull(poolProperties.isBlockIfFull());
+
+        if (poolProperties.getBlockIfFullTimeout() != null) {
+          pooledConnectionFactory.setBlockIfSessionPoolIsFullTimeout(poolProperties.getBlockIfFullTimeout().toMillis());
+        }
+
+        if (poolProperties.getIdleTimeout() != null) {
+          pooledConnectionFactory.setConnectionIdleTimeout((int) poolProperties.getIdleTimeout().toMillis());
+        }
+
+        pooledConnectionFactory.setMaxConnections(poolProperties.getMaxConnections());
+        pooledConnectionFactory.setMaxSessionsPerConnection(poolProperties.getMaxSessionsPerConnection());
+
+        if (poolProperties.getTimeBetweenExpirationCheck() != null) {
+          pooledConnectionFactory.setConnectionCheckInterval(poolProperties.getTimeBetweenExpirationCheck().toMillis());
+        }
+
+        pooledConnectionFactory.setUseAnonymousProducers(poolProperties.isUseAnonymousProducers());
       }
-
-      if (poolProperties.getIdleTimeout() != null) {
-        pooledConnectionFactory.setConnectionIdleTimeout((int) poolProperties.getIdleTimeout().toMillis());
+      catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+          | NoSuchMethodException | SecurityException e) {
       }
-
-      pooledConnectionFactory.setMaxConnections(poolProperties.getMaxConnections());
-      pooledConnectionFactory.setMaxSessionsPerConnection(poolProperties.getMaxSessionsPerConnection());
-
-      if (poolProperties.getTimeBetweenExpirationCheck() != null) {
-        pooledConnectionFactory.setConnectionCheckInterval(poolProperties.getTimeBetweenExpirationCheck().toMillis());
-      }
-
-      pooledConnectionFactory.setUseAnonymousProducers(poolProperties.isUseAnonymousProducers());
       return pooledConnectionFactory;
     }
 

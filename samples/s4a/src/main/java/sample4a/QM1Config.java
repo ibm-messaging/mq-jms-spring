@@ -41,7 +41,7 @@ import jakarta.jms.ConnectionFactory;
  * to have multiple connections defined and managed within the same process and resource definitions.
  * 
  * Because we want to use two-phase XA transactions, we need to instantiate an XAConnectionFactory. In fact, because
- * we are using Atomkios as the coordinator, we can explicitly create an appropriate bean here. It then gets associated
+ * we are using Atomikos as the coordinator, we can explicitly create an appropriate bean here. It then gets associated
  * with the JmsListener. 
  * 
  * A variation of this class with QM1 replaced by QM2 gives the beans for the second queue manager.

@@ -10,6 +10,12 @@ the available properties.
 All samples are now using JMS3/Jakarta forms of the Java classes and have been
 renamed to remove any "jms3" suffix. Older versions of the samples have been removed.
 
+The Atomikos samples have not been updated to use the latest Spring Boot, as the
+package currently fails to build against it. 
+See [this issue](https://github.com/atomikos/transactions-essentials/issues/234) in 
+the Atomikos repository.
+
+
 ## Contents
 * s1 - The simplest example that creates two connections to MQ: one to put a message,
 and the other to act as a JMSListener that retrieves the message.

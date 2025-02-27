@@ -1,6 +1,13 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.4.3 (2025-02-28)
+- Update Spring dependencies
+  - Samples using Atomikos not updated because of [this](https://github.com/atomikos/transactions-essentials/issues/234)
+- Update to MQ 9.4.2.0
+- Add "balancingInstanceMode" property 
+- Simplify creation of Pooled XAConnectionFactories
+
 ## 3.3.5 (2024-10-25)
 - Update Spring dependencies
 - Update to MQ 9.4.1.0

@@ -1,8 +1,9 @@
 # This script compiles and runs the sample program in this directory.
 #
-# The program puts a single message to the DEV.QUEUE.1 queue and tries to 
-# retrieve it via a JMS Listener.
-# 
+# The program puts a single message to the DEV.QUEUE.1 queue and uses transactional operations 
+# first commit that operation, and then rollback a "move" stage.
+# So you should end up with one message on DEV.QUEUE.1 whose BackoutCount is 1
+#
 # You may need to modify the application.properties file to get it to 
 # connect to your queue manager.
 

@@ -3,8 +3,8 @@
 # Generate JMS2 source from the JMS3:
 #
 # This script creates a copy of the Boot Starter code which is functionally (almost) identical
-# but has the jakarta package names replaced by javax in most places. 
-# 
+# but has the jakarta package names replaced by javax in most places.
+#
 # Note that from version 3.2.2, the JMS3 code cannot be simply replicated in this way. Classes
 # that are unique to Spring 3 are now being used. However, this script is being left in here for now
 # as an example; it should still be possible to convert the Spring 3 code to Spring 2, but additional
@@ -41,7 +41,7 @@ do
       grep -v "DeprecatedConfigurationProperty" |\
       sed "s/jakarta/javax/g" |\
       sed "s/ibm.mq.javax/ibm.mq/g" |\
-      sed "s/import org.springframework.boot.ssl.*;//g" |\    
+      sed "s/import org.springframework.boot.ssl.*;//g" |\
       sed "s/ibm.msg.client.javax/ibm.msg.client/g ">  $out/$f
 done
 
@@ -53,25 +53,39 @@ do
   cp $f $out/$n
 done
 
-# This creates a minimal mockup of the Spring Boot 3 SslBundles interface 
-# in an attempt to allow the JMS3 code to compile as JMS2. 
+# This creates a minimal mockup of the Spring Boot 3 SslBundles interface
+# in an attempt to allow the JMS3 code to compile as JMS2.
 # But it's not been seriously tested.
 cat << EOF >$out/src/main/java/com/ibm/mq/spring/boot/SslBundles.java
 package com.ibm.mq.spring.boot;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.KeyManager;
+
+class NoSuchSslBundleException extends Exception {
+}
+
 class SslBundles {
    SslBundle getBundle(String s) throws NoSuchSslBundleException{
      return null;
    }
 }
 
+class SslManagerBundle {
+  KeyManager[] getKeyManagers() {
+    return null;
+  }
+}
+
 class SslBundle {
    SSLContext createSslContext() {
      return null;
    }
-}
-
-class NoSuchSslBundleException extends Exception {
+   SslManagerBundle getManagers() {
+     return null;
+   }
+   String getProtocol() {
+     return "N/A";
+   }
 }
 
 EOF

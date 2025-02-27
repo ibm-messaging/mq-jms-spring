@@ -1,0 +1,10 @@
+
+ibm:
+  mq:
+    queueManager: QM1
+    channel: SYSTEM.DEF.SVRCONN
+    connName: localhost(1414)
+    # Change the following lines as necessary.
+    #user: mqguest
+    #password: passw0rd
+    

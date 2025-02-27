@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2020 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2025 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -16,13 +16,15 @@ package com.ibm.mq.spring.boot;
 
 import java.util.List;
 
-import jakarta.jms.ConnectionFactory;
-
+import org.apache.commons.pool2.PooledObject;
+import org.messaginghub.pooled.jms.JmsPoolXAConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,9 @@ import org.springframework.context.annotation.Primary;
 
 import com.ibm.mq.jakarta.jms.MQConnectionFactory;
 import com.ibm.mq.jakarta.jms.MQXAConnectionFactory;
+import com.ibm.mq.spring.boot.MQConnectionFactoryConfiguration.PooledMQConnectionFactoryConfiguration;
+
+import jakarta.jms.ConnectionFactory;
 
 /**
  * Configuration for IBM MQ XA {@link ConnectionFactory}.
@@ -40,8 +45,7 @@ import com.ibm.mq.jakarta.jms.MQXAConnectionFactory;
 @ConditionalOnBean(XAConnectionFactoryWrapper.class)
 @ConditionalOnMissingBean(ConnectionFactory.class)
 class MQXAConnectionFactoryConfiguration {
-  private static Logger logger = LoggerFactory.getLogger(MQXAConnectionFactory.class);
-
+  private static Logger logger = LoggerFactory.getLogger(MQXAConnectionFactoryConfiguration.class);
 
   @Primary
   @Bean(name = { "jmsConnectionFactory", "xaJmsConnectionFactory" })
@@ -57,4 +61,20 @@ class MQXAConnectionFactoryConfiguration {
     return new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
   }
 
+  @Configuration(proxyBeanMethods=false)
+  @ConditionalOnClass({ JmsPoolXAConnectionFactory.class, PooledObject.class })
+  static public class PooledMQXAConnectionFactoryConfiguration {
+
+    @Bean(destroyMethod = "stop")
+    @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "true", matchIfMissing = false)
+    JmsPoolXAConnectionFactory pooledJmsXAConnectionFactory(MQConfigurationProperties properties,
+        ObjectProvider<SslBundles> sslBundles,
+        ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
+
+      logger.trace("Creating pooled MQXAConnectionFactory");
+      MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
+
+      return PooledMQConnectionFactoryConfiguration.createInstance(JmsPoolXAConnectionFactory.class, connectionFactory, properties.getPool());
+    }
+  }
 }

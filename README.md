@@ -107,13 +107,12 @@ Configuration of secure connections with TLS are discussed below.
 
 
 #### JWT Tokens
-If your queue manager supports authentication with JWT tokens, then you can either set `ibm.mq.token` or the password to
-the token. If you use the `password` attribute, then the `user` must also be set to the empty value (which is now the
-default anyway). Obtaining the token is outside the scope of this package; there are a number of ways that can be done
-through Spring Boot making HTTP calls to the JWT server.
+If the queue manager has been configured to authenticate applications based on JWT tokens, then those tokens can be
+provided through the JMS layer.
 
-One approach to handling this without needing to put the token into the external configuration properties file is to make the
-HTTP call and then `System.setProperty("ibm.mq.token",token)`.
+To use this, you can either set `ibm.mq.token`
+or the password to the token. If you use the `password` attribute, then the `user` must also be set to the empty value
+(which is now the default anyway).
 
 ### Configuration Options
 
@@ -193,6 +192,7 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 | balancingApplicationType | Hint how uniform clusters should treat the app. Options of SIMPLE/REQREP        |
 | balancingTimeout         | Uniform cluster timer. Options NEVER/DEFAULT/IMMEDIATE or integer seconds       |
 | balancingOptions         | Rebalancing options. Options of NONE/IGNORETRANS. Default NONE.                 |
+| balancingInstanceMode    | Rebalancing. Set to JVM to treat all app names in this process as equivalent.   |
 
 The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 
@@ -243,6 +243,10 @@ configuration is used instead. However the `ibm.mq.jks` properties are now marke
 
 To achieve the same effect with Spring 2.x, you could use your own code to create an `SSLSocketFactory` object
 which can be applied to the MQ Connection Factory in a `customise` method before the CF is invoked.
+
+Spring Boot 3.4.0 changed how the sslBundles are loaded. If you have a simple file name such as `location: "key.jks"`
+and there is an exception saying that the file cannot be found, then change the property to `location: "file:key.jks"`.
+This regression has been fixed in Spring Boot 3.4.2, so you should not see this problem.
 
 #### Caching connection factory options
 
@@ -394,7 +398,7 @@ The preferred approach for using this package in other projects will be to use t
 
 ### License
 
-Copyright © 2018, 2024 IBM Corp. All rights reserved.
+Copyright © 2018, 2025 IBM Corp. All rights reserved.
 
 Licensed under the apache license, version 2.0 (the "license"); you may not use this file except in compliance with the
 license. You may obtain a copy of the license at

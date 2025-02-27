@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -51,6 +52,7 @@ import org.springframework.jms.annotation.JmsListener;
  */
 @ConditionalOnClass({ JmsProperties.Listener.class, JmsListener.class })
 @ConditionalOnMissingBean(JmsListener.class)
+@Configuration
 public class MQConfigurationListenerDefault implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
   
   private static Logger logger = LoggerFactory.getLogger(MQConfigurationListenerDefault.class);
