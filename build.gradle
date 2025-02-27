@@ -18,14 +18,14 @@
  */
 
 /*
- * The "JMSVERSION" environment variable can be set to "jms2" or "jms3" and that is used
+ * The "BOOTVERSION" environment variable can be set to "boot2", "boot3" or "boot4" and that is used
  * as the prefix for various control files and processing steps. We only build a single version
- * from this file; to build both jms2 and jms3, you have to run gradle twice.
- * The default is "jms3" if the env var is not set.
+ * from this file; to build both boot2 and boot3, you have to run gradle twice.
+ * The default is "boot3" if the env var is not set.
  */
-ext.jmsVersionProperty = 'JMSVERSION'
-ext.jmsVer             = (System.getenv(jmsVersionProperty)== null?'jms3':System.getenv(jmsVersionProperty))
-ext.propsFile          = new File(rootDir, jmsVer + '.properties')
+ext.bootVersionProperty = 'BOOTVERSION'
+ext.bootVer             = (System.getenv(bootVersionProperty)== null?'boot3':System.getenv(bootVersionProperty))
+ext.propsFile          = new File(rootDir, bootVer + '.properties')
 
 // Now we know the jms Version, load the specific properties
 apply from: propsFile
@@ -80,8 +80,9 @@ subprojects {
   // Include variable debug info in the compiled classes
   compileJava.options.debugOptions.debugLevel = "source,lines,vars"
   // Fail on javac warnings
-  compileJava.options.compilerArgs << "-Werror"
-
+  if (bootVer != "boot2") {
+    compileJava.options.compilerArgs << "-Werror"
+  }
   task mqPrereq(type:Exec)  {
      commandLine ("../prereqCheck.sh", mqGroup, mqJar, mqVersion)
   }

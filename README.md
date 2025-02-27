@@ -21,7 +21,7 @@ mechanism and has tasks that can push compiled jars to either a local repository
 Maven Central. When signing/authentication of modules is required, use the `gradle.properties.template` file as a
 starter for your own `gradle.properties`.
 
-Java 17 is required as the compiler level when building this package, as that is the baseline for Spring 3.
+Java 17 is required as the compiler level when building this package, as that is the baseline for Spring Boot 3.
 
 ### Spring Boot Applications
 

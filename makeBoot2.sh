@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Generate JMS2 source from the JMS3:
+# Generate JMS2 (Boot2) source from the JMS3 (Boot3):
 #
 # This script creates a copy of the Boot Starter code which is functionally (almost) identical
 # but has the jakarta package names replaced by javax in most places.
@@ -17,10 +17,10 @@ out="$2"
 
 if [ -z "$in" -o -z "$out" ]
 then
-  echo "Usage: makeJms2.sh inDir outDir"
+  echo "Usage: makeBoot2.sh inDir outDir"
   exit 1
 fi
-# echo "Copying files for JMS2 build from $in to $out"
+# echo "Copying files for Boot2 build from $in to $out"
 
 if [ ! -d $in ]
 then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2022, 2023 IBM Corp. All rights reserved.
+# Copyright 2022, 2025 IBM Corp. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 # except in compliance with the License. You may obtain a copy of the License at
@@ -13,9 +13,7 @@
 # and limitations under the License.
 #
 
-# This script is used to build the MQ Spring Boot Starter modules. It handles both the JMS2
-# and JMS3 versions - JMS3 source code is created automatically from the JMS2 tree, renaming
-# packages as necessary to the jakarta variant.
+# This script is used to build the MQ Spring Boot Starter modules. 
 #
 # When called with the -r option, it will try to upload the modules to Maven Central. Although you
 # would need to change a few things in build.gradle to reset the artifact coordinates, and create a settings.gradle
@@ -24,17 +22,14 @@
 # Version numbers for the generated files are in the jms*.properties files, along with a few other
 # variables that need to be set differently.
 # 
-# Note that from version 3.2.2, the JMS2 variation will no longer build from the supplied
-# script.
-#
 # The gradle scripts need to be run with a Java 17 JDK or later.
 
 function printSyntax {
   cat << EOF
-Usage: RUNME.sh [-j jmsVersion] [-r]
+Usage: RUNME.sh [-b bootVersion] [-r]
 Options:
-   -j JMS Version ("jms2" or "jms3"): can be repeated to get both
-      Default builds jms3 only.
+   -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations. 
+      Default builds boot3 only.
    -r Release to Maven staging or snapshot area
 Note that after pushing files to the STAGING area they will
 still require a manual release.
@@ -42,19 +37,24 @@ EOF
   exit 1
 }
 
-function makeJms3Source {
-  # This is the primary version, so don't need to copy it
+function makeBoot4Source {
+  $curdir/makeBoot4.sh $1 $2
   majors="$majors 61"
 }
 
-function makeJms2Source {
-  $curdir/makeJms2.sh $1 $2
+function makeBoot3Source {
+  $curdir/makeBoot3.sh $1 $2
+  majors="$majors 61"
+}
+
+function makeBoot2Source {
+  $curdir/makeBoot2.sh $1 $2
   majors="$majors 52"
 }
 
 curdir=`pwd`
 gaRelease=false
-jmsVersions=""
+bootVersions=""
 project="mq-jms-spring-boot-starter"
 
 timeStamp="/tmp/springBuild.time"
@@ -64,28 +64,32 @@ majorsFile="/tmp/springBuild.majors"
 
 # Definitions for how to create the variation 
 in="$curdir/mq-jms-spring-boot-starter"
-out="$curdir/mq-jms2-spring-boot-starter"
+out2="$curdir/mq-boot2-spring-boot-starter"
+out3="$curdir/mq-boot3-spring-boot-starter"
+out4="$curdir/mq-boot4-spring-boot-starter"
 
 majors=""
 
 touch $timeStamp
+# Git sometimes loses permissions
+chmod +x makeBoot*.sh
 
 # git seems to lose permissions for this one sometimes so force it
 chmod +x prereqCheck.sh
 
-while getopts :rj: o
+while getopts :b:r o
 do
   case $o in
   r)
     gaRelease=true
     ;;
-  j)
+  b)
     case $OPTARG in
-    2|3)
-      jmsVersions="$jmsVersions jms$OPTARG"
+    2|3|4)
+      bootVersions="$bootVersions boot$OPTARG"
       ;;
-    jms2|jms3)
-      jmsVersions="$jmsVersions $OPTARG"
+    boot2|boot3|boot4)
+      bootVersions="$bootVersions $OPTARG"
       ;;
     *)
       printSyntax
@@ -105,21 +109,21 @@ then
   printSyntax
 fi
 
-if [ -z "$jmsVersions" ]
+if [ -z "$bootVersions" ]
 then
-  jmsVersions="jms3"
+  bootVersions="boot3"
 fi
 
-jmsVersionCount=`echo $jmsVersions | wc -w`
-if [ $jmsVersionCount -lt 1 -o $jmsVersionCount -gt 2 ]
+bootVersionCount=`echo $bootVersions | wc -w`
+if [ $bootVersionCount -lt 1 -o $bootVersionCount -gt 3 ]
 then
-  print "ERROR: Incorrect number of jms versions requested: $jmsVersions"
+  print "ERROR: Incorrect number of boot versions requested: $bootVersions"
   exit 1
 fi
 
 # Clean out a bunch of stuff so we can tell that we've actually built it during this process
 rm -f $rcFile
-rm -rf  $out $in/build
+rm -rf  $out2 $out4 $in/build
 rm -f $buildLog
 
 rm -rf $HOME/.m2/repository/com/ibm/mq/$project
@@ -128,17 +132,25 @@ unset JAVA_HOME
 
 cd $curdir
 
-for vers in $jmsVersions
+for vers in $bootVersions
 do
-  if [ $vers = "jms3" ]
-  then
-    makeJms3Source 
-  else
-    makeJms2Source $in $out
-  fi
+  case $vers in 
+  boot2)
+    makeBoot2Source $in $out2
+    ;;
+  boot3)
+    # This is the primary for now, but we'll copy it
+    # to a new tree for symmetry. And for when Boot4 becomes
+    # the primary.
+    makeBoot3Source  $in $out3
+    ;;
+  boot4)
+    makeBoot4Source  $in $out4
+    ;;
+  esac
 
   cd $curdir
-  export JMSVERSION=$vers
+  export BOOTVERSION=$vers
   args="" # "--stacktrace --debug" # Gradle debugging options
 
   if $gaRelease
@@ -184,7 +196,7 @@ find . -newer $timeStamp -type f -name "mq*.jar" -ls
 
 # Expect to see major versions 52 (java 8) and 61 (java 17) if we've done a local build. This validates
 # the compiler options used
-find mq-jms*-spring-boot-starter/build -name "*.class" | xargs javap -v | grep major | sort -u > $majorsFile
+find mq-*-spring-boot-starter/build -name "*.class" | xargs javap -v | grep major | sort -u > $majorsFile
 cat $majorsFile
 for v in $majors
 do
@@ -202,7 +214,7 @@ then
 
 The files appear to have been successfully uploaded to Maven Central.
 You now need to log on to Sonatype Nexus, and check the newly-created repository or
-repositories. There might be one for each of JMS2 and JMS3, or they might be combined in a single repo.
+repositories. There might be one for each of BOOT2, BOOT3 and BOOT4, or they might be combined in a single repo.
 If it all looks OK, then CLOSE and RELEASE the repo.
 
 EOF
