@@ -27,6 +27,7 @@ and the other to act as a JMSListener that retrieves the message.
 The responder side shows how transactions can be controlled within a JMSListener.
 * s4 - Shows how to connect to multiple queue managers in the same application and using
 an XA transaction coordinator to reliably transfer messages between them
+* s4n - Functionally identical to s4, but using Narayana as an alternative transaction manager
 * s4a - A modified version of s4 using a JmsListener instead of a polling Receiver
 
 ## Other resources
