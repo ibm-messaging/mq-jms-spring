@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## <No new version> (2025-03-06)
+- Add Narayana-based global transaction sample 
+- Update build process in preparation for Boot 4.
+
 ## 3.4.3 (2025-02-28)
 - Update Spring dependencies
   - Samples using Atomikos not updated because of [this](https://github.com/atomikos/transactions-essentials/issues/234)
