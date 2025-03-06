@@ -27,7 +27,7 @@ ext.bootVersionProperty = 'BOOTVERSION'
 ext.bootVer             = (System.getenv(bootVersionProperty)== null?'boot3':System.getenv(bootVersionProperty))
 ext.propsFile          = new File(rootDir, bootVer + '.properties')
 
-// Now we know the jms Version, load the specific properties
+// Now we know the Boot Version to build for, load the specific properties
 apply from: propsFile
 
 subprojects {
