@@ -14,7 +14,6 @@
 
 buildscript {
   repositories {
-    // maven { url 'https://repo.spring.io/plugins-release' }
     mavenCentral()
   }
   dependencies {
@@ -23,16 +22,33 @@ buildscript {
 }
 
 dependencies {
-  api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
+  // Using "api" in this section means that the dependency ends up being listed
+  // with scope=compile in the generated POM. So users of this package end up with
+  // the transitive dependency Spring packages on their compile classpath too.
+
+  // The MQ Java client is accessed from Maven Central Repository. The name of the
+  // jar will vary for JMS2 and JMS3
+  api group:mqGroup, name: mqJar, version: mqVersion
+
+  // Spring
+  api group: 'org.springframework',      name: 'spring-core',    version: springVersion
+  api group: 'org.springframework',      name: 'spring-context', version: springVersion
+  api group: 'org.springframework',      name: 'spring-beans',   version: springVersion
+  api group: 'org.springframework',      name: 'spring-jms',     version: springVersion
+  
+  api group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+  api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion     
   api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
+  
   annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
+
+  api group: 'org.messaginghub',        name: 'pooled-jms',     version: pooledJmsVersion     
+
+  // Testing - these are not put into the pom.xml describing our uploaded jars
+  testImplementation group: 'junit', name: 'junit', version: jUnitVersion
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
 }
 
-compileJava.dependsOn(processResources)
-compileJava {
-  sourceCompatibility=javaSourceCompatibility
-  targetCompatibility=javaSourceCompatibility
-}
 
 // This can be useful during development
 /*

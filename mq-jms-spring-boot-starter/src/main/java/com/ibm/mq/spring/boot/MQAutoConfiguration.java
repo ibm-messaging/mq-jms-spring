@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -49,6 +50,13 @@ public class MQAutoConfiguration {
   private static Logger logger = LoggerFactory.getLogger(MQAutoConfiguration.class);
   public MQAutoConfiguration() {
     logger.trace("constructor");
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(MQConnectionDetails.class)
+  PropertiesMQConnectionDetails mqConnectionDetails(MQConfigurationProperties properties) {
+    logger.trace("About to create PropertiesMQConnectionDetails");
+    return new PropertiesMQConnectionDetails(properties);
   }
 }
 

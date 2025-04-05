@@ -9,20 +9,41 @@ if (System.getenv('BOOTVERSION') == null ) {
   // This default clause is used when working inside, say, Eclipse where the environment variable
   // is not set. Real builds will use one of the following sections.
   println("Including Default (BOOT3) subproject")
+  include(':mq-java-testcontainer')
+  project(':mq-java-testcontainer').name='mq-java-testcontainer'
+
+  include(':mq-jms-spring-testcontainer')
+  project(':mq-jms-spring-testcontainer').name='mq-jms-spring-testcontainer'
+
   include ':mq-jms-spring-boot-starter'
   project(":mq-jms-spring-boot-starter").name="mq-jms-spring-boot-starter"
-} else if (System.getenv('BOOTVERSION') == 'boot4') {
-  println("Including BOOT4 subproject")
-  include ':mq-boot4-spring-boot-starter'
-  project(":mq-boot4-spring-boot-starter").name="mq-jms-spring-boot-starter"  
-} else if (System.getenv('BOOTVERSION') == 'boot3') {
-  println("Including BOOT3 subproject")
-  include ':mq-boot3-spring-boot-starter'
-  project(":mq-boot3-spring-boot-starter").name="mq-jms-spring-boot-starter"
-} else if (System.getenv('BOOTVERSION') == 'boot2') {
-  println("Including BOOT2 subproject")
-  include ':mq-boot2-spring-boot-starter'
-  project(":mq-boot2-spring-boot-starter").name="mq-jms-spring-boot-starter"
+
 } else {
-  throw new GradleException("Unrecognised value for BOOTVERSION environment variable");
- }
+    if (System.getenv('TESTCONTAINERBUILD') != null) {
+      include(':mq-java-testcontainer')
+      project(':mq-java-testcontainer').name='mq-java-testcontainer'
+    }
+
+    if (System.getenv('BOOTVERSION') == 'boot4') {
+      println("Including BOOT4 subproject")
+      include(':mq-boot4-spring-testcontainer')
+      project(':mq-boot4-spring-testcontainer').name='mq-jms-spring-testcontainer'
+
+      include ':mq-boot4-spring-boot-starter'
+      project(":mq-boot4-spring-boot-starter").name="mq-jms-spring-boot-starter"
+    } else if (System.getenv('BOOTVERSION') == 'boot3') {
+      println("Including BOOT3 subproject")
+      include(':mq-boot3-spring-testcontainer')
+      project(':mq-boot3-spring-testcontainer').name='mq-jms-spring-testcontainer'
+
+      include ':mq-boot3-spring-boot-starter'
+      project(":mq-boot3-spring-boot-starter").name="mq-jms-spring-boot-starter"
+    } else if (System.getenv('BOOTVERSION') == 'boot2') {
+      println("Including BOOT2 subproject")
+      include ':mq-boot2-spring-boot-starter'
+      project(":mq-boot2-spring-boot-starter").name="mq-jms-spring-boot-starter"
+    } else {
+      throw new GradleException("Unrecognised value for BOOTVERSION environment variable");
+    }
+}
+

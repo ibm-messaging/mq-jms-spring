@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.service.connection.ConnectionDetailsFactory=com.ibm.mq.spring.testcontainers.service.connection.MQContainerConnectionDetailsFactory
