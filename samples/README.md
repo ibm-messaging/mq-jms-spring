@@ -10,11 +10,6 @@ the available properties.
 All samples are now using JMS3/Jakarta forms of the Java classes and have been
 renamed to remove any "jms3" suffix. Older versions of the samples have been removed.
 
-The Atomikos samples have not been updated to use the latest Spring Boot, as the
-package currently fails to build against it. 
-See [this issue](https://github.com/atomikos/transactions-essentials/issues/234) in 
-the Atomikos repository.
-
 
 ## Contents
 * s1 - The simplest example that creates two connections to MQ: one to put a message,
@@ -29,6 +24,12 @@ The responder side shows how transactions can be controlled within a JMSListener
 an XA transaction coordinator to reliably transfer messages between them
 * s4n - Functionally identical to s4, but using Narayana as an alternative transaction manager
 * s4a - A modified version of s4 using a JmsListener instead of a polling Receiver
+
+### Note: Atomikos samples
+The current version of Atomikos does not work with the latest Spring Boot, as it uses deprecated and now-removed
+functions in Spring. See [this issue](https://github.com/atomikos/transactions-essentials/issues/234) in the Atomikos
+repository for more details. However, that issue does contain a workround for the problem, which has now been applied to
+the samples here.
 
 ## Other resources
 Many other sample programs for MQ can be found in [this repository](https://github.com/ibm-messaging/mq-dev-patterns).
