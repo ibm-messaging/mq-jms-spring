@@ -11,7 +11,7 @@ one to integrate that with Spring.
 * com.ibm.com:mq-jms-spring-testcontainer
 
 The intention is eventually to release these jar files to Maven Central in the same way as other MQ java packages.
-Initially however, just to give early acess and to validate that the components have the right options, features and
+Initially however, just to give early access and to validate that the components have the right options, features and
 overall shape, only the source code is available via this repository. You can then build the jar files and use them from
 your own environment.
 
@@ -66,7 +66,7 @@ cd samples/s5
 You should see the container being started, along with the test itself being executed.
 
 Look at the _src/test/java/TestContainersTest.java_ file to see the initial configuration and execution phases. This
-test program assumes existence of a docker volume called `varmqm`. While many test scenarions will want to start from
+test program assumes existence of a docker volume called `varmqm`. While many test scenarios will want to start from
 scratch on each run, reusing the data volume can speed things up if we know the queue manager does not need to be
 recreated. Remove the line that mounts that volume if you prefer.
 

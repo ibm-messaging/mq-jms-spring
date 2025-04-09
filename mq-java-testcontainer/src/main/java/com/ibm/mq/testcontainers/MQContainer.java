@@ -95,7 +95,7 @@ public class MQContainer extends GenericContainer<MQContainer> {
     }
 
     if (isNotNullOrEmpty(this.startupMQSC)) {
-      withCopyToContainer(MountableFile.forClasspathResource(startupMQSC),"/etc/mqm/" + this.startupMQSC);
+      withCopyToContainer(MountableFile.forClasspathResource(startupMQSC,0444),"/etc/mqm/" + this.startupMQSC);
     }
     withEnv("MQ_QMGR_NAME", queueManager);
 
