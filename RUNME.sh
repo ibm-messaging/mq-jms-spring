@@ -26,12 +26,13 @@
 
 function printSyntax {
   cat << EOF
-Usage: RUNME.sh [-b bootVersion] [-c] [-n] [-r]
+Usage: RUNME.sh [-b bootVersion] [-c] [-k] [-n] [-r]
 Options:
    -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations.
       Default builds boot3 only.
    -c Build the TestContainer module. Do not set this if building for Maven publication and
       the version number has not changed.
+   -k Keep artifacts built previously at a different version
    -n Do not sign the generated artifacts for local builds
    -r Release to Maven staging or snapshot area
 Note that after pushing files to the STAGING area they will
@@ -58,6 +59,7 @@ function makeBoot2Source {
 curdir=`pwd`
 gaRelease=false
 testContainerBuild=false
+deleteArtifacts=true
 bootVersions=""
 strProject="mq-jms-spring-boot-starter"
 cntProject="mq-jms-spring-testcontainer"
@@ -94,7 +96,7 @@ chmod +x makeBoot*.sh
 # git seems to lose permissions for this one sometimes so force it
 chmod +x prereqCheck.sh
 
-while getopts :b:cnr o
+while getopts :b:cknr o
 do
   case $o in
   b)
@@ -112,6 +114,9 @@ do
     ;;
   c)
     testContainerBuild=true
+    ;;
+  k)
+    deleteArtifacts=false
     ;;
   n) export NOSIGN=true
       ;;
@@ -150,11 +155,14 @@ rm -rf  $cntIn/build $cntout2 $cntOut3 $cntOut4
 rm -rf  $cntBaseIn/uild
 rm -f $buildLog
 
-for p in $strProject $cntProject $cntBaseProject
-do
-  rm -rf $HOME/.m2/repository/com/ibm/mq/$p
-  find $HOME/.gradle | grep $p | xargs rm -rf
-done
+if $deleteArtifacts
+then
+  for p in $strProject $cntProject $cntBaseProject
+  do
+    rm -rf $HOME/.m2/repository/com/ibm/mq/$p
+    find $HOME/.gradle | grep $p | xargs rm -rf
+  done
+fi
 unset JAVA_HOME
 
 cd $curdir
