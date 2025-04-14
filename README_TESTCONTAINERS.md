@@ -1,4 +1,4 @@
-# TestContainers for IBM MQ
+# Testcontainers for IBM MQ
 
 This commit introduces an initial version of support for the [testcontainers](https://testcontainers.org) project.
 
@@ -21,7 +21,7 @@ intention is that this MQ support enables all of the common testing patterns in 
 While the testcontainers project has packages for a variety of languages, for now we are only providing a Java version.
 
 ## Container image licensing
-*NOTE* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That image
+*NOTE:* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That image
 has license restrictions, constraining it to internal development and unit testing. See
 [here](https://www.ibm.com/support/customer/csol/terms/?id=L-HYGL-6STWD6&lc=en) for full terms.
 
@@ -125,3 +125,6 @@ Many more capabilities can be applied to a container when your test program star
 variables, provide `ini` file updates, configure TLS or setup authentication methods. These can all be done as part of
 the container creation process. But many of those options are perhaps going beyond what is necessary for a basic testing
 setup.
+
+#### Acknowledgements
+Matthias Bechtold (mbechto): Implementation PoC

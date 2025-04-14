@@ -43,7 +43,8 @@ public class MQContainer extends GenericContainer<MQContainer> {
   // The known users in the Developer image. The container does not provide any
   // default passwords; they have to be set externally. We will make
   // them the same as the userid unless overridden. Set the passwords to empty
-  //
+  // if you do not want to use them, or your image has an alternative authentication
+  // method defined.
   private static final String DEFAULT_APP_USER = "app";
   private static final String DEFAULT_ADMIN_USER = "admin";
 
@@ -67,8 +68,12 @@ public class MQContainer extends GenericContainer<MQContainer> {
   private String  startupMQSC = null;
   private String  startupMsg = ".*AMQ5026.*"; // Msgid for "The listener <insert> has started";
 
-  // The constructor. As recommended by testcontainers.org, a name is always to be
-  // passed in. But we do provide a DEFAULT_IMAGE to simplify that.
+  /** Constructor.
+   * As recommended by testcontainers.org, a name is always to be
+   * passed in. But we do provide a DEFAULT_IMAGE to simplify that.
+   *
+   * @param imageName
+   */
   public MQContainer(DockerImageName imageName) {
     super(imageName);
 
@@ -79,11 +84,23 @@ public class MQContainer extends GenericContainer<MQContainer> {
     logger.trace("Creating container from image: {}",imageName.toString());
   }
 
+  /** Constructor.
+   *
+   * @param stringImageName A parsable image name
+   */
+  public MQContainer(String stringImageName) {
+    this(DockerImageName.parse(stringImageName));
+  }
+
+  /** This method is called before the image is actually started. So we can do things like
+   * set environment variables, or mount additional files into the container.
+   */
   @Override
-  // This method is called before the image is actually started. So we can do things like
-  // set environment variables, or mount additional files into the container.
   protected void configure() {
     logger.trace("configuring image");
+
+    withEnv("MQ_QMGR_NAME", queueManager);
+
     // The container passwords should not be passed via environment variables.
     // That mechanism is deprecated. Instead, they are set via a secret. We use
     // these lines to create a temporary file for the password, and mount/copy that into the MQ container.
@@ -94,10 +111,11 @@ public class MQContainer extends GenericContainer<MQContainer> {
       withCopyToContainer(Transferable.of(appPassword),"/run/secrets/mqAppPassword");
     }
 
+    // Copy the startup MQSC script into /etc/mqm so it is automatically executed. Ensure
+    // it's readable.
     if (isNotNullOrEmpty(this.startupMQSC)) {
       withCopyToContainer(MountableFile.forClasspathResource(startupMQSC,0444),"/etc/mqm/" + this.startupMQSC);
     }
-    withEnv("MQ_QMGR_NAME", queueManager);
 
     if (this.startWeb) {
       // This message does not have an AMQ msgid. But it is also not translated.
@@ -121,7 +139,9 @@ public class MQContainer extends GenericContainer<MQContainer> {
     }
   }
 
-  // The "MQ Advanced for Developer" image needs you to explicitly accept the license
+  /**
+   *  The "MQ Advanced for Developer" image needs you to explicitly accept the license
+   */
   public MQContainer acceptLicense() {
     addEnv("LICENSE", "accept");
     return this;
@@ -162,8 +182,16 @@ public class MQContainer extends GenericContainer<MQContainer> {
     return this;
   }
 
-  public MQContainer withStartupMQSC(String s) {
-    this.startupMQSC = s;
+  /**
+   * A file on the classpath that contains MQSC commands to
+   * be executed during startup. For example to define additional
+   * objects.
+   *
+   * @param fileName
+   * @return
+   */
+  public MQContainer withStartupMQSC(String fileName) {
+    this.startupMQSC = fileName;
     return this;
   }
 

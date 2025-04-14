@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.dockerjava.api.model.Bind;
@@ -42,6 +43,7 @@ import com.ibm.mq.testcontainers.MQContainer;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @Import(TestcontainersTest.Config.class)
+@TestPropertySource(locations = "classpath:application.properties")
 public class TestcontainersTest {
 
   private static final String QNAME = "DEV.QUEUE.1";

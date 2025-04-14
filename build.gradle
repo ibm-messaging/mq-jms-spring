@@ -155,7 +155,7 @@ subprojects {
             inceptionYear = '2018'
           } else {
             name = project.name
-            description = 'TestContainers configuration for IBM MQ'  
+            description = 'Testcontainers configuration for IBM MQ'  
             inceptionYear = '2025'
           }
               

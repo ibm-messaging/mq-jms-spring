@@ -3,6 +3,7 @@ ibm:
     queueManager: QM1
     channel: SYSTEM.DEF.SVRCONN
     connName: localhost(1414)
+    applicationName: Sample5
 
 logging:
   pattern:

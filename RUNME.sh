@@ -30,7 +30,7 @@ Usage: RUNME.sh [-b bootVersion] [-c] [-k] [-n] [-r]
 Options:
    -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations.
       Default builds boot3 only.
-   -c Build the TestContainer module. Do not set this if building for Maven publication and
+   -c Build the Testcontainer module. Do not set this if building for Maven publication and
       the version number has not changed.
    -k Keep artifacts built previously at a different version
    -n Do not sign the generated artifacts for local builds
