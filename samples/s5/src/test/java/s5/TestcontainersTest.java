@@ -43,7 +43,7 @@ import com.ibm.mq.testcontainers.MQContainer;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @Import(TestcontainersTest.Config.class)
-@TestPropertySource(locations = "classpath:application.properties")
+//@TestPropertySource(locations = "classpath:application.properties")
 public class TestcontainersTest {
 
   private static final String QNAME = "DEV.QUEUE.1";

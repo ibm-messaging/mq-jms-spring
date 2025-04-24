@@ -10,6 +10,8 @@
         <appender-ref ref="STDOUT"/>
     </root>
     <!--logger name="com.ibm.mq.spring.boot" level="trace"/-->
-    <logger name="com.ibm.mq.spring" level="trace"/>
-    <logger name="org.testcontainers" level="info"/>
+    <logger name="*" level="warn"/>
+    <logger name="com.ibm.mq.spring" level="info"/>
+    <logger name="com.ibm.mq.testcontainers" level="info"/>
+    <logger name="org.testcontainers" level="warn"/>
 </configuration>
