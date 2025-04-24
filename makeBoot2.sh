@@ -36,12 +36,15 @@ find . -type f | grep -v ".jms3" | cpio -upad $out
 find . -type f -name "*.java" | while read f
 do
    # Change various package names to replace jakarta with javax in most places.
-   # But the original MQ package names have neither in there.
+   # But the original MQ package names have neither in there. The TestContainers packages
+   # also need to be
    cat  $f |\
       grep -v "DeprecatedConfigurationProperty" |\
       sed "s/jakarta/javax/g" |\
       sed "s/ibm.mq.javax/ibm.mq/g" |\
       sed "s/import org.springframework.boot.ssl.*;//g" |\
+      sed "s/import org.springframework.boot.autoconfigure.service.*;//g" |\
+      sed "s/extends ConnectionDetails//g" |\
       sed "s/ibm.msg.client.javax/ibm.msg.client/g ">  $out/$f
 done
 

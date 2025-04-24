@@ -13,7 +13,7 @@
 # and limitations under the License.
 #
 
-# This script is used to build the MQ Spring Boot Starter modules. 
+# This script is used to build the MQ Spring Boot Starter modules.
 #
 # When called with the -r option, it will try to upload the modules to Maven Central. Although you
 # would need to change a few things in build.gradle to reset the artifact coordinates, and create a settings.gradle
@@ -21,15 +21,19 @@
 #
 # Version numbers for the generated files are in the jms*.properties files, along with a few other
 # variables that need to be set differently.
-# 
+#
 # The gradle scripts need to be run with a Java 17 JDK or later.
 
 function printSyntax {
   cat << EOF
-Usage: RUNME.sh [-b bootVersion] [-r]
+Usage: RUNME.sh [-b bootVersion] [-c] [-k] [-n] [-r]
 Options:
-   -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations. 
+   -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations.
       Default builds boot3 only.
+   -c Build the Testcontainer module. Do not set this if building for Maven publication and
+      the version number has not changed.
+   -k Keep artifacts built previously at a different version
+   -n Do not sign the generated artifacts for local builds
    -r Release to Maven staging or snapshot area
 Note that after pushing files to the STAGING area they will
 still require a manual release.
@@ -54,21 +58,36 @@ function makeBoot2Source {
 
 curdir=`pwd`
 gaRelease=false
+testContainerBuild=false
+deleteArtifacts=true
 bootVersions=""
-project="mq-jms-spring-boot-starter"
+strProject="mq-jms-spring-boot-starter"
+cntProject="mq-jms-spring-testcontainer"
+cntBaseProject="mq-java-testcontainer"
+testContainerBuild=false
 
 timeStamp="/tmp/springBuild.time"
 buildLog="/tmp/springBuild.log"
 rcFile="/tmp/springBuild.rc"
 majorsFile="/tmp/springBuild.majors"
 
-# Definitions for how to create the variation 
-in="$curdir/mq-jms-spring-boot-starter"
-out2="$curdir/mq-boot2-spring-boot-starter"
-out3="$curdir/mq-boot3-spring-boot-starter"
-out4="$curdir/mq-boot4-spring-boot-starter"
+# Definitions for how to create the variation
+strIn="$curdir/mq-jms-spring-boot-starter"
+strOut2="$curdir/mq-boot2-spring-boot-starter"
+strOut3="$curdir/mq-boot3-spring-boot-starter"
+strOut4="$curdir/mq-boot4-spring-boot-starter"
+
+# The testContainer builds.
+cntBaseIn="$curdir/mq-java-testcontainer"
+
+cntIn="$curdir/mq-jms-spring-testcontainer"
+cntOut2="$curdir/mq-boot2-spring-testcontainer"
+cntOut3="$curdir/mq-boot3-spring-testcontainer"
+cntOut4="$curdir/mq-boot4-spring-testcontainer"
 
 majors=""
+
+unset NOSIGN
 
 touch $timeStamp
 # Git sometimes loses permissions
@@ -77,12 +96,9 @@ chmod +x makeBoot*.sh
 # git seems to lose permissions for this one sometimes so force it
 chmod +x prereqCheck.sh
 
-while getopts :b:r o
+while getopts :b:cknr o
 do
   case $o in
-  r)
-    gaRelease=true
-    ;;
   b)
     case $OPTARG in
     2|3|4)
@@ -95,6 +111,17 @@ do
       printSyntax
       ;;
     esac
+    ;;
+  c)
+    testContainerBuild=true
+    ;;
+  k)
+    deleteArtifacts=false
+    ;;
+  n) export NOSIGN=true
+      ;;
+  r)
+    gaRelease=true
     ;;
   *)
     printSyntax
@@ -114,7 +141,7 @@ then
   bootVersions="boot3"
 fi
 
-bootVersionCount=`echo $bootVersions | wc -w`
+bootVersionCount=`echo $bootVersions | sort -u | wc -w`
 if [ $bootVersionCount -lt 1 -o $bootVersionCount -gt 3 ]
 then
   print "ERROR: Incorrect number of boot versions requested: $bootVersions"
@@ -123,29 +150,49 @@ fi
 
 # Clean out a bunch of stuff so we can tell that we've actually built it during this process
 rm -f $rcFile
-rm -rf  $out2 $out4 $in/build
+rm -rf  $strIn/build $strOut2 $strOut3 $strOut4
+rm -rf  $cntIn/build $cntout2 $cntOut3 $cntOut4
+rm -rf  $cntBaseIn/uild
 rm -f $buildLog
 
-rm -rf $HOME/.m2/repository/com/ibm/mq/$project
-find $HOME/.gradle | grep $project | xargs rm -rf
+if $deleteArtifacts
+then
+  for p in $strProject $cntProject $cntBaseProject
+  do
+    rm -rf $HOME/.m2/repository/com/ibm/mq/$p
+    find $HOME/.gradle | grep $p | xargs rm -rf
+  done
+fi
 unset JAVA_HOME
 
 cd $curdir
 
 for vers in $bootVersions
 do
-  case $vers in 
+  unset TESTCONTAINERBUILD
+
+  case $vers in
   boot2)
-    makeBoot2Source $in $out2
+    makeBoot2Source $strIn $strOut2
     ;;
   boot3)
     # This is the primary for now, but we'll copy it
     # to a new tree for symmetry. And for when Boot4 becomes
     # the primary.
-    makeBoot3Source  $in $out3
+    makeBoot3Source  $strIn $strOut3
+    makeBoot3Source  $cntIn $cntOut3
+    if $testContainerBuild
+    then
+      export TESTCONTAINERBUILD=true
+    fi
     ;;
   boot4)
-    makeBoot4Source  $in $out4
+    makeBoot4Source  $strIn $strOut4
+    makeBoot4Source  $cntIn $cntOut4
+    if $testContainerBuild
+    then
+      export TESTCONTAINERBUILD=true
+    fi
     ;;
   esac
 
@@ -172,9 +219,9 @@ do
   then
     print "ERROR: Need to provide a gradle.properties file with credentials"
     exit 1
-  fi  
+  fi
 
-  # Possible Targets are publishAllPublicationsToMavenRepository publishToMavenLocal
+  # Possible Targets are: publishAllPublicationsToMavenRepository publishToMavenLocal
   (./gradlew $args --warning-mode all clean jar $target 2>&1;echo $? > $rcFile) | tee -a $buildLog
 
   # Always make sure we've got a dummy properties file - the values are not needed from here on
@@ -192,11 +239,12 @@ done
 find . -newer $timeStamp -type f -name "mq*.jar" -ls
 #find $curdir/mq-jms*-boot-starter/build -name "*.asc"
 #find $HOME/.gradle/ $HOME/.m2 -type f -ls | grep mq-jms-spring
-#find $HOME/.gradle/ $HOME/.m2 -name "$project.*.pom" | xargs more
+#find $HOME/.gradle/ $HOME/.m2 -name "$strProject.*.pom" | xargs more
 
 # Expect to see major versions 52 (java 8) and 61 (java 17) if we've done a local build. This validates
 # the compiler options used
-find mq-*-spring-boot-starter/build -name "*.class" | xargs javap -v | grep major | sort -u > $majorsFile
+find mq-*-spring-boot-starter/build mq-*-spring-testcontainer/build mq-java-testcontainer/build -name "*.class" |\
+     xargs javap -v | grep major | sort -u > $majorsFile
 cat $majorsFile
 for v in $majors
 do

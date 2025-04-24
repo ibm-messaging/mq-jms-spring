@@ -120,7 +120,7 @@ public class MQConfigurationProperties {
    */
   @SuppressWarnings("unused")
   private boolean userAuthenticationMQCSP; // These variables appear unused but are needed to ensure the Spring setters
-                                           // recognise them
+  // recognise them
   @SuppressWarnings("unused")
   private boolean useAuthenticationMQCSP;
   private boolean authCSP = true;
@@ -581,8 +581,9 @@ public class MQConfigurationProperties {
 
   public int getBalancingApplicationTypeValue() {
     int rc = 0;
-    if (balancingApplicationType == null || balancingApplicationType.equals(""))
+    if (balancingApplicationType == null || balancingApplicationType.equals("")) {
       return rc;
+    }
 
     String ba = balancingApplicationType.trim().toUpperCase().replaceAll("_", "");
     switch (ba) {
@@ -603,8 +604,9 @@ public class MQConfigurationProperties {
   public int getBalancingTimeoutValue() {
     int rc = WMQConstants.WMQ_BALANCING_TIMEOUT_AS_DEFAULT;
 
-    if (balancingTimeout == null || balancingTimeout.equals(""))
+    if (balancingTimeout == null || balancingTimeout.equals("")) {
       return rc;
+    }
 
     String ba = balancingTimeout.toUpperCase();
     switch (ba) {
@@ -682,16 +684,17 @@ public class MQConfigurationProperties {
     this.additionalProperties = properties;
   }
 
-  public void traceProperties() {
-    if (!logger.isTraceEnabled())
+  public void traceProperties(MQConnectionDetails connectionDetails) {
+    if (!logger.isTraceEnabled()) {
       return;
+    }
 
-    logger.trace("queueManager    : {}", getQueueManager());
+    logger.trace("queueManager    : {}", connectionDetails.getQueueManager());
     logger.trace("applicationName : {}", getApplicationName());
     logger.trace("ccdtUrl         : {}", getCcdtUrl());
-    logger.trace("channel         : {}", getChannel());
+    logger.trace("channel         : {}", connectionDetails.getChannel());
     logger.trace("clientId        : {}", getClientId());
-    logger.trace("connName        : {}", getConnName());
+    logger.trace("connName        : {}", connectionDetails.getConnName());
     logger.trace("reconnectOption : \'{}\' [{}]", getReconnect(), String.format("0x%08X", getReconnectValue()));
     logger.trace("reconnectTimeout: {}", getReconnectTimeout());
     logger.trace("sslCipherSpec   : {}", getSslCipherSpec());
@@ -704,12 +707,12 @@ public class MQConfigurationProperties {
     logger.trace("tempModel       : {}", getTempModel());
     logger.trace("tempQPrefix     : {}", getTempQPrefix());
     logger.trace("tempTopicPrefix : {}", getTempTopicPrefix());
-    logger.trace("user            : \'{}\'", getUser());
+    logger.trace("user            : \'{}\'", connectionDetails.getUser());
     /*
      * Obviously we don't want to trace a password. But it is OK to indicate whether
      * one has been configured
      */
-    logger.trace("password set    : {}", (getPassword() != null && getPassword().length() > 0) ? "YES" : "NO");
+    logger.trace("password set    : {}", (connectionDetails.getPassword() != null && connectionDetails.getPassword().length() > 0) ? "YES" : "NO");
     logger.trace("token set       : {}", (getToken() != null && getToken().length() > 0) ? "YES" : "NO");
 
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());

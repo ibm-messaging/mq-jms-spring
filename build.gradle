@@ -40,42 +40,27 @@ subprojects {
   ext.mqVersion = '9.4.2.0'
   ext.mqGroup = 'com.ibm.mq'
 
+  // This is the testcontainers base jar version - these should match the current org.testcontainers level
+  // It's only built once, so we don't need to put the MQ-specific module in one of the version properties.
+  // The MQ version ought to match the base version, but it's not an absolute requirement so we split the
+  // properties.
+  ext.tcVer   = '1.21.0'
+  ext.mqTCVer = '0.0.9'
+
   // The groupid for the compiled jars when uploaded
   group = mqGroup
   version = mqStarterVersion
 
-  // Could enable access to early-release Spring packages if we need it
+  // Spring no longer release early milestone/snapshot package to their own repository so we 
+  // don't need to have them in here
   repositories {
     mavenLocal()
-
-    //maven { url "https://repo.spring.io/snapshot"  }
-    //maven { url "https://repo.spring.io/milestone" }
-
     mavenCentral()
   }
-
+  
   dependencies {
-    // Using "api" in this section means that the dependency ends up being listed
-    // with scope=compile in the generated POM. So users of this package end up with
-    // the transitive dependency Spring packages on their compile classpath too.
-
-    // The MQ Java client is accessed from Maven Central Repository. The name of the
-    // jar will vary for JMS2 and JMS3
-    api group:mqGroup, name: mqJar, version: mqVersion
-
-    // Spring
-    api group:'org.springframework',      name: 'spring-core',    version: springVersion
-    api group:'org.springframework',      name: 'spring-context', version: springVersion
-    api group:'org.springframework',      name: 'spring-beans',   version: springVersion
-    api group:'org.springframework',      name: 'spring-jms',     version: springVersion
-    api group:'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
-
-    api group: 'org.messaginghub',        name: 'pooled-jms',     version: pooledJmsVersion
-
-    // Testing
-    testImplementation group: 'junit', name: 'junit', version: jUnitVersion
-    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
-  }
+    // Now live in the underlying project's build.gradle files
+  }  
 
   // Include variable debug info in the compiled classes
   compileJava.options.debugOptions.debugLevel = "source,lines,vars"
@@ -90,6 +75,12 @@ subprojects {
   // Always UTF-8
   tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+  }
+  
+  compileJava.dependsOn(processResources)
+  compileJava {
+    sourceCompatibility=javaSourceCompatibility
+    targetCompatibility=javaSourceCompatibility
   }
 
   task sourcesJar(type: Jar, dependsOn: ['mqPrereq',classes]) {
@@ -147,62 +138,77 @@ subprojects {
 
   publishing {
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact(sourcesJar) {
-                classifier = 'sources'
-            }
-            artifact(javadocJar) {
-                classifier = 'javadoc'
-            }
+      mavenJava(MavenPublication) {
+        from components.java
+        artifact(sourcesJar) {
+            classifier = 'sources'
+        }
+        artifact(javadocJar) {
+            classifier = 'javadoc'
+        }
 
-            pom {
-              name = rootProject.name
-              description = 'Spring configuration for the official IBM MQ library for Java'
-              inceptionYear = '2018'
-              packaging = 'jar'
-              url = 'https://github.com/ibm-messaging/mq-jms-spring'
-              licenses {
-                license {
-                  name = 'The Apache Software License, Version 2.0'
-                  url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                  distribution = 'repo'
-                }
-              }
-              scm {
-                connection = 'scm:git:git://github.com/ibm-messaging/mq-jms-spring.git'
-                developerConnection = 'scm:git:git@github.com/ibm-messaging/mq-jms-spring.git'
-                url = 'https://github.com/ibm-messaging/mq-jms-spring.git'
-              }
-              properties = [
-                'project.build.sourceEncoding': 'UTF-8'
-              ]
-              developers {
-                developer {
-                  name = 'IBM MQ'
-                  url = 'https://ibm.com/software/products/en/ibm-mq'
-                  organization = 'IBM'
-                  organizationUrl = 'http://www.ibm.com'
-                }
-              }
+        pom {
+          name = rootProject.name
+          if (project.name.contains("spring")) {
+            name = rootProject.name
+            description = 'Spring configuration for the official IBM MQ library for Java'
+            inceptionYear = '2018'
+          } else {
+            name = project.name
+            description = 'Testcontainers configuration for IBM MQ'  
+            inceptionYear = '2025'
+          }
+              
+          packaging = 'jar'
+          url = 'https://github.com/ibm-messaging/mq-jms-spring'
+          licenses {
+            license {
+              name = 'The Apache Software License, Version 2.0'
+              url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+              distribution = 'repo'
             }
+          }
+              
+          scm {
+            connection = 'scm:git:git://github.com/ibm-messaging/mq-jms-spring.git'
+            developerConnection = 'scm:git:git@github.com/ibm-messaging/mq-jms-spring.git'
+            url = 'https://github.com/ibm-messaging/mq-jms-spring.git'
+          }
+          properties = [
+            'project.build.sourceEncoding': 'UTF-8'
+          ]
+              
+          developers {
+            developer {
+              name = 'IBM MQ'
+              url = 'https://ibm.com/software/products/en/ibm-mq'
+              organization = 'IBM'
+              organizationUrl = 'http://www.ibm.com'
+            }
+          }
         }
+      }
     }
+    
     repositories {
-        maven {
-            def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-            def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            url = version.endsWith('SNAPSHOT') ? snapshotUrl : releasesUrl
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
-            }
+      maven {
+        def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+        def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+        url = version.endsWith('SNAPSHOT') ? snapshotUrl : releasesUrl
+        credentials {
+          username ossrhUsername
+          password ossrhPassword
         }
+      }
     }
   }
 
   signing {
+    if (System.getenv('NOSIGN')== null) {
        println("Will sign the artifacts")
        sign publishing.publications.mavenJava
+    } else {
+        // println("Will not sign the artifacts")
+    }
   }
 }

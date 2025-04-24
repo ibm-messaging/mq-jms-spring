@@ -1,0 +1,17 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <!--logger name="com.ibm.mq.spring.boot" level="trace"/-->
+    <logger name="*" level="warn"/>
+    <logger name="com.ibm.mq.spring" level="info"/>
+    <logger name="com.ibm.mq.testcontainers" level="info"/>
+    <logger name="org.testcontainers" level="warn"/>
+</configuration>
