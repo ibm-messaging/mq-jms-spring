@@ -133,7 +133,7 @@ done
 shift $((OPTIND-1))
 if [ "$1" != "" ]
 then
-  printSyntax
+  tasks=$*    
 fi
 
 if [ -z "$bootVersions" ]
@@ -198,7 +198,8 @@ do
 
   cd $curdir
   export BOOTVERSION=$vers
-  args="" # "--stacktrace --debug" # Gradle debugging options
+  mkdir  -p /tmp/mvn.repo
+  args=""  # "-Dmaven.repo.local=/tmp/mvn.repo" # "--stacktrace --debug" # Gradle debugging options
 
   if $gaRelease
   then
@@ -222,7 +223,7 @@ do
   fi
 
   # Possible Targets are: publishAllPublicationsToMavenRepository publishToMavenLocal
-  (./gradlew $args --warning-mode all clean jar $target 2>&1;echo $? > $rcFile) | tee -a $buildLog
+  (./gradlew $args --warning-mode all clean jar $target $tasks 2>&1;echo $? > $rcFile) | tee -a $buildLog
 
   # Always make sure we've got a dummy properties file - the values are not needed from here on
   cp -p gradle.properties.template gradle.properties

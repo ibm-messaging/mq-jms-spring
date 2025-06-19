@@ -1,16 +1,21 @@
 # IBM MQ JMS Spring Components
 
-This repository contains code to help to provide Spring developers with easy configuration of the IBM MQ JMS package.
+This repository contains code to help to provide Spring developers with easy configuration and testing of the IBM MQ JMS
+package.
 
 The library contains:
 
 -   `mq-jms-spring-boot-starter` for [Spring Boot](https://projects.spring.io/spring-boot/) applications
+-   `mq-jms-spring-testcontainer` for testing Spring Boot applications
+-   `mq-java-testcontainer` for integration with the [Testcontainers](https://testcontainers.org) project
 
-NOTE: Spring Boot 2 has now reached its end of non-commercial service life.
-So version 2.7.18 is the last update based on Spring 2. Further updates will
-follow the Spring 3 path only. If you want to continue to use Spring 2 with future versions of the MQ jars,
-then overriding the version inherited from the mq-jms-spring-boot in your parent pom.xml should be possible.
-However, this would not give easy access via configuration to any new features available in the MQ client.
+NOTE: Spring Boot 2 has now reached its end of non-commercial service life. So version 2.7.18 is the last update based
+on Spring 2. Further updates will follow the Spring 3 path only. If you want to continue to use Spring 2 with future
+versions of the MQ jars, then overriding the version inherited from the mq-jms-spring-boot in your parent pom.xml should
+be possible. However, this would not give easy access via configuration to any new features available in the MQ client.
+
+NOTE: Spring Boot 4 is under development planned for release later in 2025. While this package does not currently do
+anything specific for Boot 4, the pieces are already in place to be able to build against it once it is available.
 
 ## Installation and Usage
 
@@ -49,14 +54,20 @@ Maven:
 **Note** This repository and the corresponding Maven Central artifacts requires Spring Boot 3. Maven
 Central continues to provide older versions that work with Spring Boot 2.
 
+## Testcontainers
+For testing Spring Boot applications, you may need to provision a queue manager as part of the process. This can be
+done by using the Testcontainers framework. For more information about the MQ package, see [here](README_TESTCONTAINERS.md).
+Also look at the `samples/s5` directory for a demonstration.
+
 ## Design Approach
 
 The approach taken here is to follow the model for JMS applications shown in the
 [Spring Getting Started Guide for JMS](https://spring.io/guides/gs/messaging-jms/). That in turn
 is based on using the [JmsTemplate Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#jms-jmstemplate)
 
-Some simple example programs using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh program in
-each subdirectory compiles and executes it. The application.properties files in that tree may need modification for your environment.
+Some simple example programs using Spring Boot and JMS interfaces can be found in the samples directory. The RUNME.sh
+program in each subdirectory compiles and executes it. The _application.properties_ or _application.yml_ files in that
+tree may need modification for your environment.
 
 Essentially what gets configured from this package are a ConnectionFactory which Spring's JmsTemplate implementation
 exploits to provide a simpler interface, and a MessageListener.
@@ -64,7 +75,7 @@ exploits to provide a simpler interface, and a MessageListener.
 ## Getting Started
 
 To get started quickly, you can use the default configuration settings in this package along with the
-IBM MQ for Developers container which runs the server processes.
+IBM MQ Advanced for Developers container which runs the server processes.
 
 ### Default Configuration
 
@@ -80,7 +91,7 @@ This script will run the container on a Linux system.
                --publish 1414:1414 \
                --publish 9443:9443 \
                --detach \
-               ibmcom/mq
+               icr.io:ibm-messaging/mq:latest
 
 The default attributes are
 
@@ -90,7 +101,7 @@ The default attributes are
     ibm.mq.user=
     ibm.mq.password=
 
-### Connection security
+### Authentication with passwords
 
 The default userid and password have been removed from this package, as the corresponding default configuration has been
 removed from the MQ Developer images. Authentication must now be explicitly defined both for the queue manager, and for
@@ -106,11 +117,27 @@ must now set the `ibm.mq.user` and `ibm.mq.password` attribute.
 Configuration of secure connections with TLS are discussed below.
 
 
-#### JWT Tokens
+### Authentication with JWT tokens
 If the queue manager has been configured to authenticate applications based on JWT tokens, then those tokens can be
 provided through the JMS layer.
 
-To use this, you can either set `ibm.mq.token`
+#### MQ-retrieved tokens
+The JMS client code can generate and retrieve tokens from a server automatically, without needing the application to
+explicitly contact the token server itself. The application needs configuration of how to contact the server, but then
+the communication to the token server (eg Keycloak) is handled automatically. The `ibm.mq.tokenServer` section of the
+configuration provides the route and authentication mechanism for the server.
+
+**Note:** There are some current constraints on how this mechanism works, with respect to the HTTPS connection that needs
+to be made to the token server:
+* The keystore/truststore uses process-wide environment variables that might affect other components of the application
+  if they also use the `javax.net.ssl` properties.
+* The keystore/truststore must be local JKS files, not embedded in the jar and its classpath
+* The `validateCertificatePolicy` setting cannot be used to always trust a token server's certificate
+
+
+#### Explicity-provided tokens
+Having the token provided directly in the application configuration continues to work, but is not the recommended
+approach, now that the MQ JMS layer can do that retrieval itself. To use this method, you can either set `ibm.mq.token`
 or the password to the token. If you use the `password` attribute, then the `user` must also be set to the empty value
 (which is now the default anyway).
 
@@ -196,9 +223,31 @@ Spring Boot will then create a ConnectionFactory that can then be used to intera
 
 The `reconnect` option was previously named `defaultReconnect` but both names work in the configuration.
 
+For contacting a Token Server, these options define its address and authentication. All three properties
+have to be supplied if you are using this authentication mechanism:
+
+| Option (ibm.mq.tokenServer)  | Description                                                                    |
+| -----------------------------| ------------------------------------------------------------------------------ |
+| endpoint                     | URL pointing at the token server (eg https://my.keycloak.server)               |
+| clientId                     | The ClientId for authentication to the server (unrelated to ibm.mq.clientId)   |
+| clientSecret                 | The ClientSecret for authentication to the server                              |
+
 #### TLS related options
 
-The following options all default to null, but may be used to assist with configuring TLS
+The preferred approach for setting the key/truststores is available from Spring 3.1, which introduced the
+concept of "SSL Bundles". This makes it possible to have different SSL configurations - keystores, truststores etc - for
+different components executing in the same Spring-managed process. See
+[here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl) for a description of the options
+available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options. The key can be
+specified for this package with `ibm.mq.sslBundle` which then uses the Spring elements to create the connection
+configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global SSL
+configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated.
+
+| Option (ibm.mq)      | Description                                                                  |
+| -------------------- | ---------------------------------------------------------------------------- |
+| sslBundle            | Spring Boot option (from 3.1) for granular certificate configuration         |
+
+The following options all default to null, but may also be used to assist with configuring TLS
 
 | Option (ibm.mq)      | Description                                                                     |
 | -------------------- | ------------------------------------------------------------------------------- |
@@ -226,27 +275,8 @@ and
 | keyStore             | Where is the keystore with a personal key and certificate                    |
 | keyStorePassword     | Password for the keyStore                                                    |
 
-These JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the command line.
-
-An alternative preferred approach for setting the key/truststores is available from Spring 3.1, which introduced the
-concept of "SSL Bundles". This makes it possible to have different SSL configurations - keystores, truststores etc - for
-different components executing in the same Spring-managed process. See
-[here](https://spring.io/blog/2023/06/07/securing-spring-boot-applications-with-ssl) for a description of the options
-available. Each bundle has an identifier with the `spring.ssl.bundle.jks.<key>` tree of options. The key can be
-specified for this package with `ibm.mq.sslBundle` which then uses the Spring elements to create the connection
-configuration. The default value for this key is empty, meaning that `SSLBundles` will not be used; the global SSL
-configuration is used instead. However the `ibm.mq.jks` properties are now marked as deprecated.
-
-| Option (ibm.mq)      | Description                                                                  |
-| -------------------- | ---------------------------------------------------------------------------- |
-| sslBundle            | Spring Boot option (from 3.1) for granular certificate configuration         |
-
-To achieve the same effect with Spring 2.x, you could use your own code to create an `SSLSocketFactory` object
-which can be applied to the MQ Connection Factory in a `customise` method before the CF is invoked.
-
-Spring Boot 3.4.0 changed how the sslBundles are loaded. If you have a simple file name such as `location: "key.jks"`
-and there is an exception saying that the file cannot be found, then change the property to `location: "file:key.jks"`.
-This regression has been fixed in Spring Boot 3.4.2, so you should not see this problem.
+These deprecated JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the
+command line. They are not used if you have set the `sslBundle` property.
 
 #### Caching connection factory options
 
@@ -344,8 +374,13 @@ more details.
 However this package also enables some simple use of JNDI for Connection definitions (but not Destinations, as they are
 still always handled by the core Spring classes).
 
-You can set the `ibm.mq.jndi.providerUrl` and `ibm.mq.jndi.providerContextFactory` attributes to define how the lookup
-is to be carried out. For example,
+| Option (ibm.mq.jndi)   | Description                                 |
+| -----------------------| ------------------------------------------- |
+| providerUrl            | Location of the directory                   |
+| providerContextFactory | Class implementing the directory            |
+| additionalProperties   | For further configuration - class-dependent |
+
+For example,
 
 ```
   ibm.mq.jndi.providerUrl=file:///home/username/mqjms/jndi

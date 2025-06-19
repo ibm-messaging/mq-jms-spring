@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.4.4")
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.5.1")
     }
 }
 
@@ -12,8 +12,9 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.mqStarterVersion = '3.4.4'
-ext.springBootVersion = mqStarterVersion
+ext.starterVersion = '3.5.1'
+ext.mqStarterVersion = starterVersion
+ext.springBootVersion = starterVersion
 
 // Look for a local copy of the dependencies as well as in Maven Central (if not already cached)
 repositories {
@@ -28,7 +29,7 @@ dependencies {
 }
 
 configurations {
-    // We seem to get two versions of the org.json classes. Since we're not doing anything with 
+    // We seem to get two versions of the org.json classes. Since we're not doing anything with
     // android, exclude it to avoid any warning messages.
     all*.exclude module: 'android-json'
 }

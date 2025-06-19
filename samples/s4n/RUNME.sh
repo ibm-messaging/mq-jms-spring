@@ -30,7 +30,7 @@ curdir=`pwd`
 # Now run the program. Build using the gradle wrapper in parent directory
 cd ../..
 
-./gradlew -p samples/s4n bootRun 2>&1 | tee -a /tmp/jms/trace.log # $curdir/t.out
+./gradlew -p samples/s4n bootRun 2>&1 | tee -a /tmp/jms/trace.log  # $curdir/t.out
 
 # And optionally look to see what's on each the queues on each queue manager. Should have one message on each
 if true 

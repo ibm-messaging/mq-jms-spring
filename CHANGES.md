@@ -1,6 +1,13 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.1 (2025-06-19)
+- Update to MQ 9.4.3.0
+- Update Spring dependencies
+- Add Testcontainers enablement
+  - See README_TESTCONTAINERS.md
+  - See samples/s5
+
 ## <No new version> (2025-03-06)
 - Add Narayana-based global transaction sample 
 - Update build process in preparation for Boot 4.

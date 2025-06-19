@@ -35,6 +35,8 @@ import javax.net.ssl.X509TrustManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.ssl.JksSslBundleProperties;
+import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.boot.ssl.NoSuchSslBundleException;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
@@ -58,6 +60,7 @@ public class MQConnectionFactoryFactory {
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
   private static Logger logger = LoggerFactory.getLogger(MQConnectionFactoryFactory.class);
   private SslBundles sslBundles;
+  private SslProperties sslProperties;
 
   /*
    * Create a trust manager that accepts all received certificates. This is
@@ -82,7 +85,11 @@ public class MQConnectionFactoryFactory {
   } };
 
   @SuppressWarnings("unchecked")
-  public MQConnectionFactoryFactory(MQConnectionDetails connectionDetails, MQConfigurationProperties properties, SslBundles sslBundles, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
+  public MQConnectionFactoryFactory(MQConnectionDetails connectionDetails,
+      MQConfigurationProperties properties,
+      SslBundles sslBundles,
+      SslProperties sslProperties,
+      List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     if (connectionDetails == null) {
       this.connectionDetails = new PropertiesMQConnectionDetails(properties);
     } else {
@@ -90,21 +97,24 @@ public class MQConnectionFactoryFactory {
     }
     this.properties = properties;
     this.sslBundles = sslBundles;
+    this.sslProperties = sslProperties;
     this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
     logger.trace("constructor");
     // logger.trace("!! Bundles = {} ", (sslBundles == null) ? "null" : (getSSLSocketFactory("ibmmq") != null) ? "Has IBMMQ" : "No IBMMQ bundle");
   }
 
-  // Keep backwards compatible versions of the method without the SslBundles parm and/or the connectionDetails.
+  // Keep backwards compatible versions of the method without the SslBundles, SslProperties and/or the connectionDetails.
   // We don't need all the variations as these parameters were introduced at different times.
+  /*
   @SuppressWarnings("unchecked")
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
-    this(null, properties, null, factoryCustomizers);
+    this(null, properties, null, null, factoryCustomizers);
   }
+   */
 
   @SuppressWarnings("unchecked")
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, SslBundles sslBundles, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
-    this(null, properties, sslBundles, factoryCustomizers);
+    this(null, properties, sslBundles, null, factoryCustomizers);
   }
 
   @SuppressWarnings("unchecked")
@@ -132,6 +142,13 @@ public class MQConnectionFactoryFactory {
      */
     if (sslBundles != null && U.isNotNullOrEmpty(sslBundle)) {
       sf = getSSLSocketFactory(sslBundle);
+      // The JWT Token Server code does not currently respect custom SSLSocketFactories. It can only
+      // work with the older environment variable-based configuration. To avoid having to
+      // deal with that duplicated config in the application's resource file, we extract
+      // information from the Bundle. There are still restrictions noted in the below function.
+      if (U.isNotNullOrEmpty(this.properties.getTokenServer().getEndpoint())) {
+        setTokenServerSslProps(sslBundle);
+      }
     }
     else {
       configureTLSStores(this.properties);
@@ -187,6 +204,7 @@ public class MQConnectionFactoryFactory {
     return cf;
   }
 
+
   /*
    * This method allows someone to create their own CF and then have it configured
    * using the same MQConfigurationProperties class - which might have been assigned
@@ -205,6 +223,7 @@ public class MQConnectionFactoryFactory {
     if (!U.isNullOrEmpty(qmName)) {
       cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, qmName);
     }
+
 
     // Use the channel name to decide whether to try to connect locally or as a
     // client. If the queue manager code has been installed locally, then this connection
@@ -288,10 +307,24 @@ public class MQConnectionFactoryFactory {
     // be responsible for allocating an identity - which might come from treating the password
     // as a token.
     String token = props.getToken();
+    MQConfigurationPropertiesTokenServer tokenServerProperties = props.getTokenServer();
     if (!U.isNullOrEmpty(token)) {
       cf.setStringProperty(WMQConstants.PASSWORD, token);
       cf.setStringProperty(WMQConstants.USERID, "");
       cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
+    } else if (U.isNotNullOrEmpty(tokenServerProperties.getEndpoint())) {
+      // These lines only work if you are running the app with assertions enabled (not the
+      // default. Without the validation, the connection will fail anyway with a reasonable
+      // JMSException
+      assert (U.isNotNullOrEmpty(tokenServerProperties.getClientId()));
+      assert (U.isNotNullOrEmpty(tokenServerProperties.getClientSecret()));
+
+      cf.setStringProperty(WMQConstants.TOKEN_ENDPOINT, tokenServerProperties.getEndpoint());
+      cf.setStringProperty(WMQConstants.TOKEN_CLIENT_ID, tokenServerProperties.getClientId());
+      cf.setStringProperty(WMQConstants.TOKEN_CLIENT_SECRET, tokenServerProperties.getClientSecret());
+
+      cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
+
     }
     else {
       String u = connectionDetails.getUser();
@@ -480,6 +513,7 @@ public class MQConnectionFactoryFactory {
     Map<String, String> additionalProperties = jproperties.getAdditionalProperties();
     for (String k : additionalProperties.keySet()) {
       String v = additionalProperties.get(k);
+
       try {
         Field f = Context.class.getField(k);
         if (f != null) {
@@ -544,4 +578,49 @@ public class MQConnectionFactoryFactory {
     return sf;
   }
 
+
+
+  /**
+   * The JWT Token Server code does not respect currently custom SSLSocketFactories. It can only
+   * work with the older environment variable-based configuration. To avoid having to
+   * deal with that duplicated config in the application's resource file, we extract
+   * information from the Bundle.
+   *
+   * Constraints here include
+   * a) The environment variables might affect other components of the application
+   * b) The keystore/truststore must be local JKS files, not embedded in the jar and its classpath
+   * c) The validateCertificatePolicy setting cannot be used to always trust a Token Server's certificate
+   *
+   */
+  private void setTokenServerSslProps(String sslBundle) {
+    logger.trace("setTokenServerSslProps Bundle: {}", sslBundle);
+
+    // This function is removed for the auto-conversion of source when building for Spring Boot 2
+    // as none of the SSLBundle methods are available
+    // NOTBOOT2 START
+    try {
+      JksSslBundleProperties jksSslBundleProperties = null;
+
+      jksSslBundleProperties = this.sslProperties.getBundle().getJks().get(sslBundle);
+      if (jksSslBundleProperties != null) {
+        properties.getJks().setKeyStore(stripProtocol(jksSslBundleProperties.getKeystore().getLocation()));
+        properties.getJks().setKeyStorePassword(jksSslBundleProperties.getKeystore().getPassword());
+        properties.getJks().setTrustStore(stripProtocol(jksSslBundleProperties.getTruststore().getLocation()));
+        properties.getJks().setTrustStorePassword(jksSslBundleProperties.getTruststore().getPassword());
+        configureTLSStores(properties);
+      }
+    } catch (NoSuchSslBundleException e) {
+      logger.error("SSL JKS bundle for {} - not found", sslBundle);
+    }
+    // NOTBOOT2 END
+  }
+
+  /** The location of a JKS file may look like "file:key.jks". That's not going to work for the environment variable form needed (for
+   * now) with the JWT access mechanism. There might be other protocol elements, but that's the only one we'll pay special attention to.
+   * Other protocols will simply fail.
+   */
+  private String stripProtocol(String s) {
+    s = s.replaceFirst("^file:","");
+    return s;
+  }
 }

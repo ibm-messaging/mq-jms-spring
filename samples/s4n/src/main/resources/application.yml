@@ -43,7 +43,7 @@ narayana:
 # Logging        
 logging:
   pattern:
-    console:
+    console: "%logger{1}"
     # console: "%logger{36} - %msg%n"
     file: "[%date{dd/MM/yy HH:mm:ss.SSS}   ] %thread %logger{36} - %msg%n"
   file: 

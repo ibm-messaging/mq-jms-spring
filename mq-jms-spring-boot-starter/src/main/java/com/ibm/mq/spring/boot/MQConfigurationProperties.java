@@ -284,6 +284,9 @@ public class MQConfigurationProperties {
   @NestedConfigurationProperty
   private MQConfigurationPropertiesTrace trace = new MQConfigurationPropertiesTrace();
 
+  @NestedConfigurationProperty
+  private MQConfigurationPropertiesTokenServer tokenServer = new MQConfigurationPropertiesTokenServer();
+
   public String getQueueManager() {
     return queueManager;
   }
@@ -437,6 +440,10 @@ public class MQConfigurationProperties {
 
   public MQConfigurationPropertiesTrace getTrace() {
     return trace;
+  }
+
+  public MQConfigurationPropertiesTokenServer getTokenServer() {
+    return tokenServer;
   }
 
   public String getTempQPrefix() {
@@ -714,6 +721,8 @@ public class MQConfigurationProperties {
      */
     logger.trace("password set    : {}", (connectionDetails.getPassword() != null && connectionDetails.getPassword().length() > 0) ? "YES" : "NO");
     logger.trace("token set       : {}", (getToken() != null && getToken().length() > 0) ? "YES" : "NO");
+
+    getTokenServer().traceProperties(logger);
 
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("sslCertValPolicy       : \'{}\'", getSslCertificateValPolicy());

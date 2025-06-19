@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package s5;
+package sample5.test;
 
 /*
  * This is a simple demonstration of how a testing setup can exploit
@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.dockerjava.api.model.Bind;
@@ -53,7 +52,7 @@ public class TestcontainersTest {
   // And uncomment the block.
   //
   // You might also have external ways of setting these keys via configuration
-  // or doing a "docker login" before running the tests. See the testcontainers
+  // or doing a "docker login" before running the tests. See the Testcontainers
   // documentation for alternative ways to reach a private registry.
   /*
   static {
@@ -66,13 +65,22 @@ public class TestcontainersTest {
   @Autowired
   JmsTemplate jmsTemplate;
 
+  static MQContainer container;
+
+  /**
+   * A simple test that puts a message and then polls the listener that is reading it back.
+   * We assume that the queue was empty - which it will be if the container starts empty.
+   * @throws InterruptedException
+   */
   @Test
-  public void test() throws InterruptedException {
+  public void test1() throws InterruptedException {
+    // Print the container startup logs
+    // System.out.println("LOGS:" + container.getLogs());
+
     String testMessage = "Hello from JMS";
     System.out.printf("Running a test put/get\n");
 
-    // Put a message and then poll the listener that is reading it back. We assume
-    // that the queue was empty - which it will be if the container starts empty.
+    Listener.reset();
     jmsTemplate.convertAndSend(QNAME, testMessage);
     while (Listener.lastMessage == null) {
       sleep(500);
@@ -84,14 +92,39 @@ public class TestcontainersTest {
     // Thread.sleep(10000000);
   }
 
+  /**
+   * Another test that's doing the same thing, but showing how we can
+   * have multiple tests in the same source file.
+   * @throws InterruptedException
+   */
+  @Test
+  public void test2() throws InterruptedException {
+
+    String testMessage = "Hello again from JMS";
+    System.out.printf("Running another test put/get\n");
+
+    Listener.reset();
+    jmsTemplate.convertAndSend(QNAME, testMessage);
+    while (Listener.lastMessage == null) {
+      sleep(500);
+    }
+    assertThat(Listener.lastMessage).isEqualTo(testMessage);
+  }
+
   @TestComponent
   static class Listener {
-    static String lastMessage;
+    static String lastMessage = null;
 
     @JmsListener(destination = QNAME)
     public void listen(Message<String> message) {
       lastMessage = message.getPayload();
       System.out.printf("Received message from %s = %s\n",QNAME, lastMessage);
+    }
+
+    // Make sure the last read message is null before a test is run. So a second
+    // test doesn't pick it up.
+    public static void reset() {
+      lastMessage = null;
     }
   }
 
@@ -103,21 +136,24 @@ public class TestcontainersTest {
     public MQContainer mqContainer() {
       System.out.printf("About to start MQContainer\n");
 
-      // This option uses the default public image (which has a :latest tag). If you need to use one of the licensed
-      // images (possibly using the non-production license if it's used for testing) then you probably
-      // need to set credentials at the top of this test program. Or change the image to point at a private repository.
-      //
-      // This test also shows how to mount a pre-created Docker volume to make startup faster after the qmgr
-      // has been initially created.
-      // Note that the web server is not started by default. The 'withWebServer()' enables that if you need it.
-      //
-      // *NOTE* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That image
-      // has license restrictions, constraining it to internal development and unit testing. See
-      // https://www.ibm.com/support/customer/csol/terms/?id=L-HYGL-6STWD6&lc=en for full terms.
-      return  new MQContainer(MQContainer.DEFAULT_IMAGE)
+      /* This option uses the default public image (which has a :latest tag). If you need to use one of the licensed
+       * images (possibly using the non-production license if it's used for testing) then you probably
+       * need to set credentials at the top of this test program. Or change the image to point at a private repository.
+       *
+       * This test also shows how to mount a pre-created Docker volume to make startup faster after the qmgr
+       * has been initially created.
+       * Note that the web server is not started by default. The 'withWebServer()' enables that if you need it.
+       *
+       * *NOTE* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That image
+       * has license restrictions, constraining it to internal development and unit testing. See
+       * https://www.ibm.com/support/customer/csol/terms/?id=L-HYGL-6STWD6&lc=en for full terms.
+       */
+      container = new MQContainer(MQContainer.DEFAULT_IMAGE)
           .acceptLicense()
           .withStartupMQSC("99-startup.mqsc")
           .withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withBinds(Bind.parse("varmqm:/var/mqm")));
+
+      return container;
     }
 
     @Bean

@@ -44,7 +44,13 @@ do
       sed "s/ibm.mq.javax/ibm.mq/g" |\
       sed "s/import org.springframework.boot.ssl.*;//g" |\
       sed "s/import org.springframework.boot.autoconfigure.service.*;//g" |\
+      sed "s/import org.springframework.boot.autoconfigure.ssl.*;//g" |\
       sed "s/extends ConnectionDetails//g" |\
+      awk ' BEGIN {p=1}
+        /NOTBOOT2 START/ {p=0}
+        {if (p) print $0}
+        /NOTBOOT2 END/ {p=1}
+      ' |\
       sed "s/ibm.msg.client.javax/ibm.msg.client/g ">  $out/$f
 done
 
@@ -90,6 +96,11 @@ class SslBundle {
      return "N/A";
    }
 }
+
+class SslProperties {
+
+}
+
 
 EOF
 

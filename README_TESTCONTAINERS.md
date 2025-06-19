@@ -1,6 +1,6 @@
 # Testcontainers for IBM MQ
 
-This commit introduces an initial version of support for the [testcontainers](https://testcontainers.org) project.
+This repo introduces enablement for the [testcontainers](https://testcontainers.org) project.
 
 The project simplifies use of various resources as part of an application's automated testing, making it convenient for
 use in things like CI pipelines.
@@ -10,19 +10,14 @@ one to integrate that with Spring.
 * com.ibm.com:mq-java-testcontainer
 * com.ibm.com:mq-jms-spring-testcontainer
 
-The intention is eventually to release these jar files to Maven Central in the same way as other MQ java packages.
-Initially however, just to give early access and to validate that the components have the right options, features and
-overall shape, only the source code is available via this repository. You can then build the jar files and use them from
-your own environment.
-
 I'm not going to go into details about using the `testcontainers` framework and how it fits into testing strategies. The
 intention is that this MQ support enables all of the common testing patterns in the same way as other resources.
 
 While the testcontainers project has packages for a variety of languages, for now we are only providing a Java version.
 
 ## Container image licensing
-*NOTE:* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That image
-has license restrictions, constraining it to internal development and unit testing. See
+*NOTE:* The default container referenced in the `MQContainer` class points at the MQ Advanced for Developers image. That
+image has license restrictions, constraining it to internal development and unit testing. See
 [here](https://www.ibm.com/support/customer/csol/terms/?id=L-HYGL-6STWD6&lc=en) for full terms.
 
 Other licensed container images can be used that do not have the same restrictions. Just name the appropriate image in the
@@ -30,9 +25,9 @@ test configuration and provide credentials for authenticating to the container r
 
 ## Known limitations
 The only prebuilt public MQ container image released by IBM is for Linux/x64 systems. Therefore this `testcontainers`
-function will can only use the default image on that platform. However, it is possible to reference non-public IBM images or to
-build your own containers for other platforms - in particular for Linux on Arm64 systems for MacOS developers - and then
-refer to that private container image.
+function can only use the default image on that platform. However, it is possible to reference non-public IBM images or
+to build your own containers for other platforms - in particular for Linux on Arm64 systems for MacOS developers - and
+then refer to that private container image.
 
 Some of the controls assume options from an image built by the
 [`mq-container`](https://github.com/ibm-messaging/mq-container) scripts. That includes the default developer objects
@@ -40,17 +35,6 @@ such as `DEV.QUEUE.1` and the `app`/`admin` userids.
 
 If you are not using the MQ Advanced for Developers image, then application authentication (in particular) may need some
 consideration.
-
-## Building the package
-Make sure you are in the `testcont` branch of the repository and use the RUNME.sh script to build the jar files. Java 17
-is the minimum level required to build the packages.
-
-```
-git clone git@github.com:ibm-messaging/mq-jms-spring
-cd mq-jms-spring      # To get into the root directory
-git checkout testcont # Make the branch active
-./RUNME.sh -b 3 -c -n # Compile the various components. They will appear under $HOME/.m2
-```
 
 ## Sample Test program
 The *s5* sample has a basic "normal" application, which is not very interesting. But there is also a "test" option that
@@ -74,15 +58,14 @@ The _src/test/resources/99-startup.mqsc_ file has additional MQSC commands to be
 that file is included by default for the Classpath resource loaders at runtime. Also in that directory is some
 configuration for the logger, to show execution information.
 
-Look at _build.gradle_ for the required dependencies. This includes looking locally for the jars that you have built in
-the previous step.
+Look at _build.gradle_ for the required dependencies.
 
 ## The MQContainer class
 The core of the container management is in the `com.ibm.mq.testcontainers.MQContainer` class. This ends up in the
 `mq-java-testcontainer.jar` package.
 
-An image name (of type `DockerImageName`) must always be passed to the constructor for this class. You can use the
-`MQContainer.DEFAULT_IMAGE` to select the MQ Advanced for Developers image at whatever level the `latest` tag points at.
+An image name must always be passed to the constructor for this class. You can use the `MQContainer.DEFAULT_IMAGE` to
+select the MQ Advanced for Developers image at whatever level the `latest` tag points at.
 
 There are then methods to apply some simple configuration changes. Not every possible option for connectivity is applied
 or exposed; the intention here is to have just enough for basic testing. In particular, nothing is done about TLS
@@ -94,9 +77,9 @@ configurations. Public methods include:
 * withChannel, withQueueManager
 * withWebServer: start the web server during container initialisation (default does not start it). Enable this feature
   if you want to test an application using one of the MQ REST APIs for messaging or administration.
-* withStartupMQSC: names an MQSC file on the Classpath that gets loaded into the container for automatic execution
+* withStartupMQSC: names a single MQSC file on the Classpath that gets loaded into the container for automatic execution
   during queue manager startup. This allows you to create additional objects or reset state if you are reusing an
-  existing queue manager (eg a mounted external docker volume).
+  existing queue manager (eg because you have mounted an external docker volume).
 
 The `appPassword` ends up being the `password` value used for the Spring Boot JMS connection.
 

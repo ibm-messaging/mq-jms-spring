@@ -23,3 +23,5 @@ else
 fi
 
 ./gradlew -p samples/s5 $task
+rc=$?
+echo "Gradle rc = $rc"
