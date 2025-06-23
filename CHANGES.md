@@ -1,6 +1,9 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.3 (2025-06-23)
+- Update to match Spring Boot versions after their rapid reissues 
+
 ## 3.5.1 (2025-06-19)
 - Update to MQ 9.4.3.0
 - Update Spring dependencies

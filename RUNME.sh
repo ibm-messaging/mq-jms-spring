@@ -59,6 +59,7 @@ function makeBoot2Source {
 curdir=`pwd`
 gaRelease=false
 testContainerBuild=false
+justTestContainerBuild=false
 deleteArtifacts=true
 bootVersions=""
 strProject="mq-jms-spring-boot-starter"
@@ -96,7 +97,7 @@ chmod +x makeBoot*.sh
 # git seems to lose permissions for this one sometimes so force it
 chmod +x prereqCheck.sh
 
-while getopts :b:cknr o
+while getopts :b:cjknr o
 do
   case $o in
   b)
@@ -114,6 +115,10 @@ do
     ;;
   c)
     testContainerBuild=true
+    ;;
+  j)
+    testContainerBuild=true
+    justTestContainerBuild=true
     ;;
   k)
     deleteArtifacts=false
@@ -138,7 +143,16 @@ fi
 
 if [ -z "$bootVersions" ]
 then
+  # Still need one boot version for loop even if
+  # it's not actually going to be built
   bootVersions="boot3"
+  if $testContainerBuild
+  then
+    justTestContainerBuild=true
+    echo "Not building Boot starter"
+  else
+    echo "Building default Boot starter version: " $bootVersions
+  fi
 fi
 
 bootVersionCount=`echo $bootVersions | sort -u | wc -w`
@@ -223,6 +237,10 @@ do
   fi
 
   # Possible Targets are: publishAllPublicationsToMavenRepository publishToMavenLocal
+  if $justTestContainerBuild
+  then
+    export TESTCONTAINERBUILDONLY=true
+  fi
   (./gradlew $args --warning-mode all clean jar $target $tasks 2>&1;echo $? > $rcFile) | tee -a $buildLog
 
   # Always make sure we've got a dummy properties file - the values are not needed from here on

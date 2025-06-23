@@ -22,8 +22,12 @@ buildscript {
 }
 
 dependencies {
-  // These must be built first
-  implementation project(':mq-java-testcontainer')
+  // These must be built first if needed. Do not need
+  // the testcontainer project if it has not changed: public
+  // version can be used as the dependency
+  if (System.getenv('TESTCONTAINERBUILD') != null) {
+    implementation project(':mq-java-testcontainer')
+  }
   implementation project(':mq-jms-spring-boot-starter')
   
   api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion

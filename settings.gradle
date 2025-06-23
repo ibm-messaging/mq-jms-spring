@@ -24,6 +24,9 @@ if (System.getenv('BOOTVERSION') == null ) {
       project(':mq-java-testcontainer').name='mq-java-testcontainer'
     }
 
+    // There's an option to build ONLY the Testcontainer module that
+    // might be useful
+    if (System.getenv('TESTCONTAINERBUILDONLY') == null) {
     if (System.getenv('BOOTVERSION') == 'boot4') {
       println("Including BOOT4 subproject")
       include(':mq-boot4-spring-testcontainer')
@@ -44,6 +47,7 @@ if (System.getenv('BOOTVERSION') == null ) {
       project(":mq-boot2-spring-boot-starter").name="mq-jms-spring-boot-starter"
     } else {
       throw new GradleException("Unrecognised value for BOOTVERSION environment variable");
+    }
     }
 }
 
