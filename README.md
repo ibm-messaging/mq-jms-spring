@@ -14,8 +14,9 @@ on Spring 2. Further updates will follow the Spring 3 path only. If you want to 
 versions of the MQ jars, then overriding the version inherited from the mq-jms-spring-boot in your parent pom.xml should
 be possible. However, this would not give easy access via configuration to any new features available in the MQ client.
 
-NOTE: Spring Boot 4 is under development planned for release later in 2025. While this package does not currently do
-anything specific for Boot 4, the pieces are already in place to be able to build against it once it is available.
+NOTE: Spring Boot 4 is under development planned for release later in 2025. Early milestones are starting to appear.
+While this package does not currently have a formal release for Boot 4, the pieces are now in place to allow you do
+build against it: `RUNME.sh -b4` will create Boot4-compatible modules.
 
 ## Installation and Usage
 

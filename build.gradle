@@ -44,8 +44,8 @@ subprojects {
   // It's only built once, so we don't need to put the MQ-specific module in one of the version properties.
   // The MQ version ought to match the base version, but it's not an absolute requirement so we split the
   // properties.
-  ext.tcVer   = '1.21.2'
-  ext.mqTCVer = '1.21.2'
+  ext.tcVer   = '1.21.3'
+  ext.mqTCVer = '1.21.3'
 
   // The groupid for the compiled jars when uploaded
   group = mqGroup
@@ -64,9 +64,10 @@ subprojects {
 
   // Include variable debug info in the compiled classes
   compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+
   // Fail on javac warnings
   if (bootVer != "boot2") {
-    compileJava.options.compilerArgs << "-Werror"
+    compileJava.options.compilerArgs << "-Werror" // << "-verbose"
   }
   task mqPrereq(type:Exec)  {
      commandLine ("../prereqCheck.sh", mqGroup, mqJar, mqVersion)
@@ -83,6 +84,13 @@ subprojects {
     targetCompatibility=javaSourceCompatibility
   }
 
+/*
+  tasks.named('jar') {
+     manifest {
+        attributes('Automatic-Module-Name': project.name)
+     }
+  }
+*/
   task sourcesJar(type: Jar, dependsOn: ['mqPrereq',classes]) {
     archiveClassifier = 'sources'
     sourceSets.all {
@@ -193,11 +201,12 @@ subprojects {
     repositories {
       maven {
         def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-        def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+        // def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+        def releasesUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2"
         url = version.endsWith('SNAPSHOT') ? snapshotUrl : releasesUrl
         credentials {
-          username ossrhUsername
-          password ossrhPassword
+          username = ossrhUsername
+          password = ossrhPassword
         }
       }
     }

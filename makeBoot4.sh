@@ -26,10 +26,17 @@ fi
 mkdir $out >/dev/null 2>&1
 cd $in
 # Create the structure
-find . -type f | cpio -upad $out
+find . -type f |\
+   grep -v bin/ |\
+   cpio -upad $out
 # And recopy the Java files doing any modifications as we go
-find . -type f -name "*.java" | while read f
+find . -type f -name "*.java" |\
+ grep -v bin/ |\
+ while read f
 do
-   cp $f $out/$f 
+   # Boot4 moved a bunch of imported classes
+   cat $f |\
+   sed "s/org.springframework.boot.autoconfigure.jms/org.springframework.boot.jms.autoconfigure/g" |\
+   sed "s/org.springframework.boot.autoconfigure.transaction.jta/org.springframework.boot.transaction.jta.autoconfigure/g" > $out/$f 
 done
 

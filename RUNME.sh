@@ -138,7 +138,7 @@ done
 shift $((OPTIND-1))
 if [ "$1" != "" ]
 then
-  tasks=$*    
+  tasks=$*
 fi
 
 if [ -z "$bootVersions" ]
@@ -243,6 +243,10 @@ do
   fi
   (./gradlew $args --warning-mode all clean jar $target $tasks 2>&1;echo $? > $rcFile) | tee -a $buildLog
 
+  user=`cat gradle.properties | grep ossrhUsername | cut -f2 -d=`
+  pass=`cat gradle.properties | grep ossrhPassword | cut -f2 -d=`
+
+
   # Always make sure we've got a dummy properties file - the values are not needed from here on
   cp -p gradle.properties.template gradle.properties
 
@@ -277,12 +281,25 @@ done
 
 if $gaRelease
 then
+  # This is using the Staging API as the migration step to the new Sonatype interface.
+  # The upload has already happened, we are now moving the modules from the staging system
+  # to the real Central Repository, from which it can be released.
+  echo "Doing upload preparation and migration"
+
+  bearer=$(printf "$user:$pass" | base64)
+  curl --request POST \
+       --header "Authorization: Bearer $bearer" \
+       https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.ibm.mq
+
+  echo
+
   cat << EOF
 
 The files appear to have been successfully uploaded to Maven Central.
 You now need to log on to Sonatype Nexus, and check the newly-created repository or
-repositories. There might be one for each of BOOT2, BOOT3 and BOOT4, or they might be combined in a single repo.
-If it all looks OK, then CLOSE and RELEASE the repo.
+repositories at https://central.sonatype.com/publishing/deployments.
+There might be one for each of BOOT2, BOOT3 and BOOT4, or they might be combined in a single repo.
+If it all looks OK, then PUBLISH the repo.
 
 EOF
 fi

@@ -35,11 +35,16 @@ dependencies {
   api group: 'org.springframework',      name: 'spring-context', version: springVersion
   api group: 'org.springframework',      name: 'spring-beans',   version: springVersion
   api group: 'org.springframework',      name: 'spring-jms',     version: springVersion
-  
-  api group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
-  api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion     
-  api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
-  
+
+  if (!springBootVersion.startsWith("4")) {
+    api group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+    api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion     
+    api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
+  } else {
+    api group: 'org.springframework.boot', name: 'spring-boot-starter-jms', version: springBootVersion
+    api group: 'org.springframework.boot', name: 'spring-boot-tx', version: springBootVersion
+  }
+
   annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
 
   api group: 'org.messaginghub',        name: 'pooled-jms',     version: pooledJmsVersion     

@@ -1,8 +1,13 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.4 (2025-07-28)
+- Update Spring dependencies
+- Update Testcontainers dependencies
+- Enable building against Spring Boot 4 milestone M1
+
 ## 3.5.3 (2025-06-23)
-- Update to match Spring Boot versions after their rapid reissues 
+- Update to match Spring Boot versions after their rapid reissues
 
 ## 3.5.1 (2025-06-19)
 - Update to MQ 9.4.3.0
@@ -12,14 +17,14 @@ Newest updates are at the top of this file
   - See samples/s5
 
 ## <No new version> (2025-03-06)
-- Add Narayana-based global transaction sample 
+- Add Narayana-based global transaction sample
 - Update build process in preparation for Boot 4.
 
 ## 3.4.3 (2025-02-28)
 - Update Spring dependencies
   - Samples using Atomikos not updated because of [this](https://github.com/atomikos/transactions-essentials/issues/234)
 - Update to MQ 9.4.2.0
-- Add "balancingInstanceMode" property 
+- Add "balancingInstanceMode" property
 - Simplify creation of Pooled XAConnectionFactories
 
 ## 3.3.5 (2024-10-25)
