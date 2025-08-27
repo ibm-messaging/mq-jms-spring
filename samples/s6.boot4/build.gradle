@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.5.5")
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:4.0.0-M2")
     }
 }
 
@@ -12,22 +12,17 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '3.5.5'
-ext.narayanaVersion= '3.4.3'
+ext.starterVersion = '4.0.0-M2'
 // The local, flatDir configuration lets us use a modified version from
 // this repository without needing it released via maven
 repositories {
   flatDir() {
     dirs '../../mq-jms-spring-boot-starter'
   }
-  mavenCentral()
   mavenLocal()
-
+  mavenCentral()
 }
 
 dependencies {
-  implementation(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter", version:starterVersion)
-  implementation(group:"dev.snowdrop", name:"narayana-spring-boot-starter", version:narayanaVersion)
+  implementation(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter",version: starterVersion)
 }
-
-

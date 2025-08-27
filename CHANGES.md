@@ -1,6 +1,11 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.5 (2025-08-27)
+- Update Spring dependencies
+- Update Narayana dependency
+- Add samples/s6.boot4
+
 ## 3.5.4 (2025-07-28)
 - Update Spring dependencies
 - Update Testcontainers dependencies

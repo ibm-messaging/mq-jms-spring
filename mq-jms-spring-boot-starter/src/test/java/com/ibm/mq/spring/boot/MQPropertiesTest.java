@@ -36,8 +36,8 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes={MQAutoConfiguration.class})
 @TestPropertySource(properties = {
-	    "logging.level.root=TRACE",
-	    "logging.level.com.ibm.mq.spring.boot=TRACE"
+	    "logging.level.root=INFO",
+	    "logging.level.com.ibm.mq.spring.boot=INFO"
 	})
 @EnableAutoConfiguration
 @TestPropertySource(properties = {

@@ -32,8 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes={MQConfigurationPropertiesJndi.class})
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
-	    "logging.level.root=TRACE",
-	    "logging.level.com.ibm.mq.spring.boot=TRACE"
+	    "logging.level.root=INFO",
+	    "logging.level.com.ibm.mq.spring.boot=INFO"
 	})
 public class MQConfigurationPropertiesJndiTest {
 
