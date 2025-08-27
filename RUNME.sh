@@ -311,4 +311,5 @@ EOF
        https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.ibm.mq
 
   echo
+  echo "Done."
 fi
