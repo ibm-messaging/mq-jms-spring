@@ -1,0 +1,690 @@
+Date: Wed Oct 15 09:33:40 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1062144
+--------------------------------------------------------------------
+15 October 2025, 09:33:40 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 09:33:40 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 09:38:15 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1065374
+--------------------------------------------------------------------
+15 October 2025, 09:38:15 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 09:38:15 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:50:11 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1192443
+--------------------------------------------------------------------
+15 October 2025, 12:50:11 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:50:11 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:52:14 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1194117
+--------------------------------------------------------------------
+15 October 2025, 12:52:14 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:52:14 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:52:53 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1194703
+--------------------------------------------------------------------
+15 October 2025, 12:52:53 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:52:53 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:53:39 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1195268
+--------------------------------------------------------------------
+15 October 2025, 12:53:39 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:53:39 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:54:14 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1195675
+--------------------------------------------------------------------
+15 October 2025, 12:54:14 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:54:14 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:56:08 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1196928
+--------------------------------------------------------------------
+15 October 2025, 12:56:08 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:56:08 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:56:27 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1197227
+--------------------------------------------------------------------
+15 October 2025, 12:56:27 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:56:27 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:56:52 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1197548
+--------------------------------------------------------------------
+15 October 2025, 12:56:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:56:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 12:58:21 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1200985
+--------------------------------------------------------------------
+15 October 2025, 12:58:21 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 12:58:21 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:00:56 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1203224
+--------------------------------------------------------------------
+15 October 2025, 13:00:56 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:00:56 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:03:44 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1205054
+--------------------------------------------------------------------
+15 October 2025, 13:03:44 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:03:44 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:04:03 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1205382
+--------------------------------------------------------------------
+15 October 2025, 13:04:03 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:04:03 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:04:24 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1205679
+--------------------------------------------------------------------
+15 October 2025, 13:04:24 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:04:24 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:04:48 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1205992
+--------------------------------------------------------------------
+15 October 2025, 13:04:48 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:04:48 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:08:37 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1208466
+--------------------------------------------------------------------
+15 October 2025, 13:08:37 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:08:37 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:10:04 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1209433
+--------------------------------------------------------------------
+15 October 2025, 13:10:04 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:10:04 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:12:34 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1211074
+--------------------------------------------------------------------
+15 October 2025, 13:12:34 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:12:34 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:14:52 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1212436
+--------------------------------------------------------------------
+15 October 2025, 13:14:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:14:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:16:21 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1213400
+--------------------------------------------------------------------
+15 October 2025, 13:16:21 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:16:21 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Wed Oct 15 13:16:40 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1213701
+--------------------------------------------------------------------
+15 October 2025, 13:16:40 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+15 October 2025, 13:16:40 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 07:32:05 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1911217
+--------------------------------------------------------------------
+16 October 2025, 07:32:05 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 07:32:05 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 07:32:28 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1911532
+--------------------------------------------------------------------
+16 October 2025, 07:32:28 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 07:32:28 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 07:32:53 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1911862
+--------------------------------------------------------------------
+16 October 2025, 07:32:53 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 07:32:53 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 07:59:15 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1929395
+--------------------------------------------------------------------
+16 October 2025, 07:59:15 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 07:59:15 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 07:59:46 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1929790
+--------------------------------------------------------------------
+16 October 2025, 07:59:46 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 07:59:46 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 08:09:26 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1936599
+--------------------------------------------------------------------
+16 October 2025, 08:09:26 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 08:09:26 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 08:10:52 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1937738
+--------------------------------------------------------------------
+16 October 2025, 08:10:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 08:10:52 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+Date: Thu Oct 16 08:30:36 BST 2025
+MQ Build Level=X.X.X(p943-L250527)
+Java version: 21.0.8(21.0.8+9)
+Process ID: 1951740
+--------------------------------------------------------------------
+16 October 2025, 08:30:36 BST[Test worker] com.ibm.msg.client.commonservices.j2se.trace.DefaultTracer
+Property 'com.ibm.msg.client.commonservices.trace.parameter' has value 'TRACE'
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------
+16 October 2025, 08:30:36 BST[Test worker] com.ibm.msg.client.commonservices.j2se.wmqsupport.TracerImpl
+The IBM MQ messaging client trace mechanism is tracing to the console
+
+EXPLANATION:
+null
+
+ACTION:
+null
+--------------------------------------------------------------------

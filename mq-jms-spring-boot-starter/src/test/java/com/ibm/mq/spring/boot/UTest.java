@@ -13,28 +13,24 @@
  */
 package com.ibm.mq.spring.boot;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes= {U.class})
-@RunWith(SpringRunner.class)
 public class UTest {
 
-	@Test
-	public void testIsNullOrEmpty() {
-		assertThat(U.isNullOrEmpty("Hello")).isFalse();
-		assertThat(U.isNullOrEmpty("")).isTrue();
-		assertThat(U.isNullOrEmpty(null)).isTrue();
-	}
+  @Test
+  public void testIsNullOrEmpty() {
+    Assertions.assertFalse(U.isNullOrEmpty("Hello"));
+    Assertions.assertTrue(U.isNullOrEmpty(""));
+    Assertions.assertTrue(U.isNullOrEmpty(null));
+  }
 
-	@Test
-	public void testIsNotNullOrEmpty() {
-		assertThat(U.isNotNullOrEmpty("Hello")).isTrue();
-		assertThat(U.isNotNullOrEmpty("")).isFalse();
-		assertThat(U.isNotNullOrEmpty(null)).isFalse();
-	}
+  @Test
+  public void testIsNotNullOrEmpty() {
+    Assertions.assertTrue(U.isNotNullOrEmpty("Hello"));
+    Assertions.assertFalse(U.isNotNullOrEmpty(""));
+    Assertions.assertFalse(U.isNotNullOrEmpty(null));
+  }
 }

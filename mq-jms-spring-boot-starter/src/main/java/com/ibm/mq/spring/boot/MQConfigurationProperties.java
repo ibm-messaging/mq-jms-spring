@@ -518,9 +518,11 @@ public class MQConfigurationProperties {
       break;
     case "DISABLED":
     case "NO":
+    case "FALSE":
       rc = WMQConstants.WMQ_CLIENT_RECONNECT_DISABLED;
       break;
     case "YES":
+    case "TRUE":
     case "ANY":
       rc = WMQConstants.WMQ_CLIENT_RECONNECT;
       break;

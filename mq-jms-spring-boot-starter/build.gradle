@@ -25,7 +25,7 @@ plugins {
     id 'jacoco'
 }
 
-ext.mockitoVersion = '5.12.0'
+ext.mockitoVersion = '5.20.0'
 
 dependencies {
   // Using "api" in this section means that the dependency ends up being listed
@@ -56,13 +56,33 @@ dependencies {
   api group: 'org.messaginghub',        name: 'pooled-jms',     version: pooledJmsVersion
 
   // Testing - these are not put into the pom.xml describing our uploaded jars
-  testImplementation group: 'junit', name: 'junit', version: jUnitVersion
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
   testImplementation group: 'org.mockito', name:'mockito-core', version: mockitoVersion
+  
+  // Setting up the dependencies needed for JUnit5 testing
+  testImplementation group:'org.junit.jupiter', name:'junit-jupiter-api',    version: jUnitVersion
+  testRuntimeOnly    group:'org.junit.jupiter', name:'junit-jupiter-engine', version: jUnitVersion
+  testRuntimeOnly    group:'org.junit.platform', name:'junit-platform-launcher'
 }
 
 // This can be useful during development
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
     options.deprecation = true
+}
+
+configurations {
+    // We seem to get two versions of the org.json classes. Since we're not doing anything with
+    // android, exclude it to avoid any warning messages.
+    all*.exclude module: 'android-json'
+}
+
+tasks.test {
+  useJUnitPlatform()
+  jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
+  testLogging {
+       //events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+       events "PASSED", "SKIPPED", "FAILED"
+      
+  }
 }

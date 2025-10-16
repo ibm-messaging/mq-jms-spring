@@ -13,80 +13,76 @@
  */
 package com.ibm.mq.spring.boot;
 
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes={MQConfigurationPropertiesJndi.class})
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = {
-	    "logging.level.root=INFO",
-	    "logging.level.com.ibm.mq.spring.boot=INFO"
-	})
+    "logging.level.root=INFO",
+    "logging.level.com.ibm.mq.spring.boot=INFO"
+})
 public class MQConfigurationPropertiesJndiTest {
 
-	@Autowired
-	private MQConfigurationPropertiesJndi mQConfigurationPropertiesJndi;
-	
-	@Test
-	public void testMQConfigurationPropertiesJndiNotNull() {
-		assertThat(mQConfigurationPropertiesJndi).isNotNull();
-	}
-	
-	@Test
-	public void testGetProviderUrl() {
-		String providerUrl = "https://mykeycloak.server.com:32030/realms/master/protocol/openid-connect/token";
-		assertThat(mQConfigurationPropertiesJndi.getProviderUrl()).isNull();
-		mQConfigurationPropertiesJndi.setProviderUrl(providerUrl);
-		assertThat(mQConfigurationPropertiesJndi.getProviderUrl()).isEqualTo(providerUrl);
-	}
-	
-	@Test
-	public void testProviderContextFactory() {
-		String providerFactory = "KeycloakServer";
-		assertThat(mQConfigurationPropertiesJndi.getProviderContextFactory()).isNull();
-		mQConfigurationPropertiesJndi.setProviderContextFactory(providerFactory);
-		assertThat(mQConfigurationPropertiesJndi.getProviderContextFactory()).isEqualTo(providerFactory);
-	}
-	
-	@Test
-	public void testAdditionalProperties() {
-		assertThat(mQConfigurationPropertiesJndi.getAdditionalProperties().size()).isEqualTo(0);
-		Map<String,String> additionalProps = new HashMap<>();
-		additionalProps.put("key", "value");
-		mQConfigurationPropertiesJndi.setAdditionalProperties(additionalProps);
-		assertThat(mQConfigurationPropertiesJndi.getAdditionalProperties().size()).isEqualTo(1);
-		assertTrue(mQConfigurationPropertiesJndi.getAdditionalProperties().containsKey("key"));
-		assertTrue(mQConfigurationPropertiesJndi.getAdditionalProperties().containsValue("value"));
-	}
-	
-	@Test
-	public void testTrace() {
-		 Logger mockLogger = Mockito.mock(Logger.class);
-		 when(mockLogger.isTraceEnabled()).thenReturn(true);
-	     Map<String,String> additionalProps = new HashMap<>();
-		 additionalProps.put("server.port", "9090");
-		 additionalProps.put("application.name", "app");
-		 mQConfigurationPropertiesJndi.setAdditionalProperties(additionalProps);
-		 assertThat(mQConfigurationPropertiesJndi.getAdditionalProperties().size()).isEqualTo(2);
-		 mQConfigurationPropertiesJndi.traceProperties("ConnFactory");
-		 reset();
-	}
+  @Autowired
+  private MQConfigurationPropertiesJndi mQConfigurationPropertiesJndi;
 
-	private void reset() {
-		mQConfigurationPropertiesJndi.setAdditionalProperties(new HashMap<>());
-	}
-	
+  @Test
+  public void testMQConfigurationPropertiesJndiNotNull() {
+    Assertions.assertNotNull(mQConfigurationPropertiesJndi);
+  }
+
+  @Test
+  public void testGetProviderUrl() {
+    String providerUrl = "https://mykeycloak.server.com:32030/realms/master/protocol/openid-connect/token";
+    Assertions.assertNull(mQConfigurationPropertiesJndi.getProviderUrl());
+    mQConfigurationPropertiesJndi.setProviderUrl(providerUrl);
+    Assertions.assertEquals(mQConfigurationPropertiesJndi.getProviderUrl(),providerUrl);
+  }
+
+  @Test
+  public void testProviderContextFactory() {
+    String providerFactory = "KeycloakServer";
+    Assertions.assertNull(mQConfigurationPropertiesJndi.getProviderContextFactory());
+    mQConfigurationPropertiesJndi.setProviderContextFactory(providerFactory);
+    Assertions.assertEquals(mQConfigurationPropertiesJndi.getProviderContextFactory(),providerFactory);
+  }
+
+  @Test
+  public void testAdditionalProperties() {
+    Assertions.assertEquals(mQConfigurationPropertiesJndi.getAdditionalProperties().size(),0);
+    Map<String,String> additionalProps = new HashMap<>();
+    additionalProps.put("key", "value");
+    mQConfigurationPropertiesJndi.setAdditionalProperties(additionalProps);
+    Assertions.assertEquals(mQConfigurationPropertiesJndi.getAdditionalProperties().size(),1);
+    Assertions.assertTrue(mQConfigurationPropertiesJndi.getAdditionalProperties().containsKey("key"));
+    Assertions.assertTrue(mQConfigurationPropertiesJndi.getAdditionalProperties().containsValue("value"));
+  }
+
+  @Test
+  public void testTrace() {
+    Logger mockLogger = Mockito.mock(Logger.class);
+    when(mockLogger.isTraceEnabled()).thenReturn(true);
+    Map<String,String> additionalProps = new HashMap<>();
+    additionalProps.put("server.port", "9090");
+    additionalProps.put("application.name", "app");
+    mQConfigurationPropertiesJndi.setAdditionalProperties(additionalProps);
+    Assertions.assertEquals(mQConfigurationPropertiesJndi.getAdditionalProperties().size(),2);
+    mQConfigurationPropertiesJndi.traceProperties("ConnFactory");
+    reset();
+  }
+
+  private void reset() {
+    mQConfigurationPropertiesJndi.setAdditionalProperties(new HashMap<>());
+  }
+
 }

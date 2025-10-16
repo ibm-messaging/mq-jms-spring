@@ -13,64 +13,61 @@
  */
 package com.ibm.mq.spring.boot;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes={MQConfigurationPropertiesTokenServer.class})
 @TestPropertySource(properties = {
-	    "logging.level.root=INFO",
-	    "logging.level.com.ibm.mq.spring.boot=INFO"
-	})
+    "logging.level.root=INFO",
+    "logging.level.com.ibm.mq.spring.boot=INFO"
+})
 public class MQConfigurationPropertiesTokenServerTest {
 
 
-	@Autowired
-	private MQConfigurationPropertiesTokenServer mqConfigurationPropertiesTokenServer;
+  @Autowired
+  private MQConfigurationPropertiesTokenServer mqConfigurationPropertiesTokenServer;
 
-	@Test
-	public void testMqConfigurationPropertiesTokenServer() {
-		assertThat(mqConfigurationPropertiesTokenServer).isNotNull();
-	}
+  @Test
+  public void testMqConfigurationPropertiesTokenServer() {
+    Assertions.assertNotNull(mqConfigurationPropertiesTokenServer);
+  }
 
-	@Test
-	public void testGetEndPoint() {
-		String tokenEndpoint = "https://mykeycloak.server.com:32030/realms/master/protocol/openid-connect/token";
-		assertThat(mqConfigurationPropertiesTokenServer.getEndpoint()).isEqualTo(null);
-		mqConfigurationPropertiesTokenServer.setEndpoint(tokenEndpoint);
-		assertThat(mqConfigurationPropertiesTokenServer.getEndpoint()).isEqualTo(tokenEndpoint);
-	}
+  @Test
+  public void testGetEndPoint() {
+    String tokenEndpoint = "https://mykeycloak.server.com:32030/realms/master/protocol/openid-connect/token";
+    Assertions.assertNull(mqConfigurationPropertiesTokenServer.getEndpoint());
+    mqConfigurationPropertiesTokenServer.setEndpoint(tokenEndpoint);
+    Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getEndpoint(),tokenEndpoint);
+  }
 
-	@Test
-	public void testGetClientId() {
-		String clientId = "jms-client";
-		assertThat(mqConfigurationPropertiesTokenServer.getClientId()).isEqualTo(null);
-		mqConfigurationPropertiesTokenServer.setClientId(clientId);
-		assertThat(mqConfigurationPropertiesTokenServer.getClientId()).isEqualTo(clientId);
-	}
+  @Test
+  public void testGetClientId() {
+    String clientId = "jms-client";
+    Assertions.assertNull(mqConfigurationPropertiesTokenServer.getClientId());
+    mqConfigurationPropertiesTokenServer.setClientId(clientId);
+    Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getClientId(),clientId);
+  }
 
-	@Test
-	public void testGetClientSecret() {
-		String secret = "fioOBXlM7yg8q6trJi1xpjR5smSA8WRp";
-		assertThat(mqConfigurationPropertiesTokenServer.getClientSecret()).isEqualTo(null);
-		mqConfigurationPropertiesTokenServer.setClientSecret(secret);
-		assertThat(mqConfigurationPropertiesTokenServer.getClientSecret()).isEqualTo(secret);
-	}
+  @Test
+  public void testGetClientSecret() {
+    String secret = "fioOBXlM7yg8q6trJi1xpjR5smSA8WRp";
+    Assertions.assertNull(mqConfigurationPropertiesTokenServer.getClientSecret());
+    mqConfigurationPropertiesTokenServer.setClientSecret(secret);
+    Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getClientSecret(),secret);
+  }
 
 
-	@Test
-	public void testTrace() {
-		 Logger mockLogger = Mockito.mock(Logger.class);
-		 when(mockLogger.isTraceEnabled()).thenReturn(true);
-		 mqConfigurationPropertiesTokenServer.traceProperties(mockLogger);
-	}
+  @Test
+  public void testTrace() {
+    Logger mockLogger = Mockito.mock(Logger.class);
+    when(mockLogger.isTraceEnabled()).thenReturn(true);
+    mqConfigurationPropertiesTokenServer.traceProperties(mockLogger);
+  }
 }
