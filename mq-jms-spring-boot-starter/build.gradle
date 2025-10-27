@@ -42,13 +42,13 @@ dependencies {
   api group: 'org.springframework',      name: 'spring-beans',   version: springVersion
   api group: 'org.springframework',      name: 'spring-jms',     version: springVersion
 
-  if (!springBootVersion.startsWith("4")) {
+  if (springBootVersion.startsWith("4")) {
+    api group: 'org.springframework.boot', name: 'spring-boot-starter-jms', version: springBootVersion
+    api group: 'org.springframework.boot', name: 'spring-boot-transaction', version: springBootVersion
+  } else {
     api group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
     api group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
     api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
-  } else {
-    api group: 'org.springframework.boot', name: 'spring-boot-starter-jms', version: springBootVersion
-    api group: 'org.springframework.boot', name: 'spring-boot-tx', version: springBootVersion
   }
 
   annotationProcessor group:'org.springframework.boot', name:'spring-boot-configuration-processor', version: springBootVersion
@@ -58,7 +58,7 @@ dependencies {
   // Testing - these are not put into the pom.xml describing our uploaded jars
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
   testImplementation group: 'org.mockito', name:'mockito-core', version: mockitoVersion
-  
+
   // Setting up the dependencies needed for JUnit5 testing
   testImplementation group:'org.junit.jupiter', name:'junit-jupiter-api',    version: jUnitVersion
   testRuntimeOnly    group:'org.junit.jupiter', name:'junit-jupiter-engine', version: jUnitVersion
@@ -83,6 +83,6 @@ tasks.test {
   testLogging {
        //events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
        events "PASSED", "SKIPPED", "FAILED"
-      
+
   }
 }

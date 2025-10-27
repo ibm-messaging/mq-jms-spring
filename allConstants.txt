@@ -553,4 +553,4 @@ are the only type that might be used for a CF configuration property.
   public static final String XMSC_MESSAGE_BUFFER = "XMSC_MESSAGE_BUFFER";
   public static final String XMSC_MESSAGE_ID = "XMSC_MESSAGE_ID";
   public static final String XMSC_SUBSCRIBER_Q_NAME = "XMSC_SUBSCRIBER_Q_NAME";
-CMQC.java: * Build Level:   p943-L250417                                
+CMQC.java: * Build Level:   p944-L250905                                

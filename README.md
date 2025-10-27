@@ -451,6 +451,8 @@ This package is provided as-is with no guarantees of support or updates. You can
 future versions of the package; the API is subject to change based on any feedback. Versioned releases are made to
 assist with using stable APIs.
 
+This does not affect the status of the underlying MQ Java client libraries which have their own support conditions.
+
 ### Issues
 
 Before opening a new issue please consider the following:

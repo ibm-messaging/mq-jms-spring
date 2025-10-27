@@ -26,7 +26,7 @@
 
 function printSyntax {
   cat << EOF
-Usage: RUNME.sh [-b bootVersion] [-c] [-k] [-n] [-r]
+Usage: RUNME.sh [-b bootVersion] [-c] [-k] [-n] [-p] [-r]
 Options:
    -b Spring Boot Version ("boot2", "boot3" or "boot4"): can be repeated to get combinations.
       Default builds boot3 only.
@@ -34,6 +34,7 @@ Options:
       the version number has not changed.
    -k Keep artifacts built previously at a different version
    -n Do not sign the generated artifacts for local builds
+   -p Check prereqs for local builds (always done for release builds)
    -r Release to Maven staging or snapshot area
 Note that after pushing files to the STAGING area they will
 still require a manual release.
@@ -97,7 +98,7 @@ chmod +x makeBoot*.sh
 # git seems to lose permissions for this one sometimes so force it
 chmod +x prereqCheck.sh
 
-while getopts :b:cjknr o
+while getopts :b:cjknpr o
 do
   case $o in
   b)
@@ -124,7 +125,9 @@ do
     deleteArtifacts=false
     ;;
   n) export NOSIGN=true
-      ;;
+     ;;
+  p) export prereqCheck=true
+     ;;
   r)
     gaRelease=true
     ;;
@@ -269,7 +272,7 @@ do
 done
 
 # And see what we've created - this was useful debug during devt of the build scripts
-find . -newer $timeStamp -type f -name "mq*.jar" -ls
+find . -newer $timeStamp -type f -name "mq*.jar" -ls | grep -v javadoc | grep -v sources
 #find $curdir/mq-jms*-boot-starter/build -name "*.asc"
 #find $HOME/.gradle/ $HOME/.m2 -type f -ls | grep mq-jms-spring
 #find $HOME/.gradle/ $HOME/.m2 -name "$strProject.*.pom" | xargs more

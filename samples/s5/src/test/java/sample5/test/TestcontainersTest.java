@@ -20,12 +20,12 @@ package sample5.test;
  */
 
 import static java.lang.Thread.sleep;
-import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -34,12 +34,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.dockerjava.api.model.Bind;
 import com.ibm.mq.testcontainers.MQContainer;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @EnableAutoConfiguration
 @Import(TestcontainersTest.Config.class)
 //@TestPropertySource(locations = "classpath:application.properties")
@@ -73,7 +72,8 @@ public class TestcontainersTest {
    * @throws InterruptedException
    */
   @Test
-  public void test1() throws InterruptedException {
+  void test1() throws InterruptedException  {
+
     // Print the container startup logs
     // System.out.println("LOGS:" + container.getLogs());
 
@@ -85,7 +85,7 @@ public class TestcontainersTest {
     while (Listener.lastMessage == null) {
       sleep(500);
     }
-    assertThat(Listener.lastMessage).isEqualTo(testMessage);
+    Assertions.assertEquals(Listener.lastMessage,testMessage);
 
     // Uncommenting this line makes the test run for a very long time, giving a chance
     // to log into the container to check it looks how you expect.
@@ -98,7 +98,7 @@ public class TestcontainersTest {
    * @throws InterruptedException
    */
   @Test
-  public void test2() throws InterruptedException {
+  void test2() throws InterruptedException {
 
     String testMessage = "Hello again from JMS";
     System.out.printf("Running another test put/get\n");
@@ -108,7 +108,7 @@ public class TestcontainersTest {
     while (Listener.lastMessage == null) {
       sleep(500);
     }
-    assertThat(Listener.lastMessage).isEqualTo(testMessage);
+    Assertions.assertEquals(Listener.lastMessage,testMessage);
   }
 
   @TestComponent

@@ -2,9 +2,6 @@
 
 # Generate a Boot4-compatible source from the primary tree (JMS3/Boot3):
 #
-# This is just a skeleton until we understand what - if any - changes
-# are needed to move from Boot3 to Boot4. For now, the Boot3 tree is 
-# simply copied unmodified.
 
 curdir=`pwd`
 in="$1"

@@ -37,15 +37,15 @@ subprojects {
   apply plugin: 'signing'
 
   // This is the MQ client version
-  ext.mqVersion = '9.4.3.0'
+  ext.mqVersion = '9.4.4.0'
   ext.mqGroup = 'com.ibm.mq'
 
   // This is the testcontainers base jar version - these should match the current org.testcontainers level
   // It's only built once, so we don't need to put the MQ-specific module in one of the version properties.
   // The MQ version ought to match the base version, but it's not an absolute requirement so we split the
   // properties.
-  ext.tcVer   = '1.21.3'
-  ext.mqTCVer = '1.21.3'
+  ext.tcVer   = '2.0.1'
+  ext.mqTCVer = '2.0.1'
 
   // The groupid for the compiled jars when uploaded
   group = mqGroup
@@ -59,7 +59,7 @@ subprojects {
   }
   
   dependencies {
-    // Now live in the underlying project's build.gradle files
+    // Now live in the underlying project's build.gradle files 
   }  
 
   // Include variable debug info in the compiled classes

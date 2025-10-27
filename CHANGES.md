@@ -1,6 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.7 (2025-10-23)
+- Update to MQ 9.4.4.0
+- Update Spring dependencies
+- Update Testcontainer dependency to V2.0.1
+  - Change samples/s5/build.gradle to ensure gradle can run tests
+
 ## 3.5.5 (2025-08-27)
 - Update Spring dependencies
 - Update Narayana dependency

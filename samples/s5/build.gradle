@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.5.5")
+	 classpath("org.springframework.boot:spring-boot-gradle-plugin:3.5.7")
     }
 }
 
@@ -12,7 +12,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 // The designated version should match the current version in the root of the repo
-ext.starterVersion = '3.5.5'
+ext.starterVersion = '3.5.7'
 ext.mqStarterVersion = starterVersion
 ext.springBootVersion = starterVersion
 
@@ -24,8 +24,10 @@ repositories {
 
 dependencies {
   implementation(group:"com.ibm.mq", name:"mq-jms-spring-boot-starter",version: mqStarterVersion)
+  
   testImplementation(group:"com.ibm.mq", name:"mq-jms-spring-testcontainer",version: mqStarterVersion)
   testImplementation(group:"org.springframework.boot", name:"spring-boot-starter-test", version: springBootVersion)
+
 }
 
 configurations {
@@ -35,6 +37,7 @@ configurations {
 }
 
 test {
+  useJUnitPlatform()
   jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
   testLogging {
       events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
