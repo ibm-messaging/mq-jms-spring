@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import com.ibm.mq.MQEnvironment;
 import com.ibm.msg.client.jakarta.wmq.WMQConstants;
 
 /**
@@ -698,6 +699,25 @@ public class MQConfigurationProperties {
       return;
     }
 
+    // Try to get the version of MQ that we're running with. This OUGHT to be the version associated
+    // with the starter's package version, but might have been overridden.
+    // There is a string available in one class from which we'll extract the number.
+    // This is totally dependent on the format having the version as the last element.
+    String mqVer = "N/A";
+    try {
+      mqVer = MQEnvironment.getVersionNotice();
+      if (U.isNotNullOrEmpty(mqVer)) {
+        String parts[] = mqVer.split(" ");
+        if (parts != null && parts.length > 0) {
+          mqVer = parts[parts.length - 1].trim();
+        }
+      }
+    }
+    catch (Exception e) {
+      // Ignore any error
+    }
+
+    logger.trace("MQ Version      : {}", mqVer);
     logger.trace("queueManager    : {}", connectionDetails.getQueueManager());
     logger.trace("applicationName : {}", getApplicationName());
     logger.trace("ccdtUrl         : {}", getCcdtUrl());
