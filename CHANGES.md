@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.9 (2025-12-19)
+- Update Spring dependencies
+- Update Testcontainer dependency
+
 ## 3.5.7 (2025-10-23)
 - Update to MQ 9.4.4.0
 - Update Spring dependencies

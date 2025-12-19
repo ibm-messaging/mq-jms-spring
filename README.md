@@ -133,7 +133,7 @@ to be made to the token server:
 * The keystore/truststore uses process-wide environment variables that might affect other components of the application
   if they also use the `javax.net.ssl` properties.
 * The keystore/truststore must be local JKS files, not embedded in the jar and its classpath
-* The `validateCertificatePolicy` setting cannot be used to always trust a token server's certificate
+* The `sslCertificateValPolicy` setting cannot be used to always trust a token server's certificate
 
 
 #### Explicity-provided tokens

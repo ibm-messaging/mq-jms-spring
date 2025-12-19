@@ -44,8 +44,8 @@ subprojects {
   // It's only built once, so we don't need to put the MQ-specific module in one of the version properties.
   // The MQ version ought to match the base version, but it's not an absolute requirement so we split the
   // properties.
-  ext.tcVer   = '2.0.1'
-  ext.mqTCVer = '2.0.1'
+  ext.tcVer   = '2.0.3'
+  ext.mqTCVer = '2.0.3'
 
   // The groupid for the compiled jars when uploaded
   group = mqGroup
