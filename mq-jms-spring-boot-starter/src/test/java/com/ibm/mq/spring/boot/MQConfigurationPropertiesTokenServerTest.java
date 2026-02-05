@@ -63,6 +63,21 @@ public class MQConfigurationPropertiesTokenServerTest {
     Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getClientSecret(),secret);
   }
 
+  @Test
+  public void testGetSslBundle() {
+    String sslBundle = "token";
+    Assertions.assertNull(mqConfigurationPropertiesTokenServer.getSslBundle());
+    mqConfigurationPropertiesTokenServer.setSslBundle(sslBundle);
+    Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getSslBundle(),sslBundle);
+  }
+
+  @Test
+  public void testGetHttpsPolicy() {
+    String httpsPolString = "NONE";
+    Assertions.assertNull(mqConfigurationPropertiesTokenServer.getHttpsCertValPolicy());
+    mqConfigurationPropertiesTokenServer.setHttpsCertValPolicy(httpsPolString);
+    Assertions.assertEquals(mqConfigurationPropertiesTokenServer.getHttpsCertValPolicy(),httpsPolString);
+  }
 
   @Test
   public void testTrace() {

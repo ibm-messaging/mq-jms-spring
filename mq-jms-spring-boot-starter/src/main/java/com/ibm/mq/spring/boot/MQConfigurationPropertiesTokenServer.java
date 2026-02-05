@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 IBM Corp. All rights reserved.
+ * Copyright © 2025, 2026 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -40,6 +40,19 @@ public class MQConfigurationPropertiesTokenServer {
    * Client secret for authenticating with the token provider
    */
   private String clientSecret;
+
+  /**
+   * The key to the SSL Bundle properties configured for Token endpoint retrieval
+   */
+  private String sslBundle;
+
+  /**
+   * HTTPS Certificate Validation Policy. It accepts "NONE" "HOSTNAMECN" "ANY".
+   * "NONE" - allows connection without checking if the server's cert is known/trusted
+   * "ANY"  - checks if the server's cert is known/trusted,
+   * "HOSTNAMECN" - checks if the server's cert is known/trusted, and that the certificate distinguished name matches that of the HTTP server
+   */
+  private String httpsCertValPolicy;
 
   /**
    * Returns the JWT authentication server token URL.
@@ -96,6 +109,42 @@ public class MQConfigurationPropertiesTokenServer {
   }
 
   /**
+   * Returns the SSL certificate bundle.
+   *
+   * @return the SSL certificate bundle as a string
+   */
+  public String getSslBundle() {
+    return sslBundle;
+  }
+
+  /**
+   * Sets the SSL bundle for the configuration.
+   *
+   * @param sslBundle The SSL bundle string to be set.
+   */
+  public void setSslBundle(String sslBundle) {
+    this.sslBundle = sslBundle;
+  }
+
+  /**
+   * Returns the value of the HTTPS certificate validation policy for token.
+   *
+   * @return the HTTPS certificate validation policy value
+   */
+  public String getHttpsCertValPolicy() {
+    return httpsCertValPolicy;
+  }
+
+  /**
+   * Sets the HTTPS certificate validation policy for token.
+   *
+   * @param httpsCertValPolicy The policy to set for HTTPS certificate validation.
+   */
+  public void setHttpsCertValPolicy(String httpsCertValPolicy) {
+    this.httpsCertValPolicy = httpsCertValPolicy;
+  }
+
+  /**
    * Traces the configuration attributes of the current object.
    * Use the parent logger so it appears neater in the output.
    */
@@ -105,9 +154,12 @@ public class MQConfigurationPropertiesTokenServer {
     }
 
     parentLogger.trace("Token Server");
-    parentLogger.trace("  clientId         : {}", getClientId());
-    parentLogger.trace("  endpoint         : {}", getEndpoint());
-    parentLogger.trace("  clientSecret set : {}", (getClientSecret() != null && getClientSecret().length() > 0) ? "YES":"NO");
+    parentLogger.trace("  clientId            : {}", getClientId());
+    parentLogger.trace("  endpoint            : {}", getEndpoint());
+    parentLogger.trace("  clientSecret set    : {}", (getClientSecret() != null && getClientSecret().length() > 0) ? "YES":"NO");
+    parentLogger.trace("  sslBundle           : {}", getSslBundle());
+    parentLogger.trace("  httpsCertValPolicy  : \'{}\' [{}]", getHttpsCertValPolicy(), MQConnectionFactoryFactory.getHttpsCertValPolVal(getHttpsCertValPolicy()));
+
   }
 
 }

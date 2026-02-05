@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2025 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2026 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -27,7 +27,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.JmsPoolConnectionFactoryProperties;
 import org.springframework.boot.autoconfigure.jms.JmsProperties;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,10 +53,9 @@ public class MQConnectionFactoryConfiguration {
     @ConditionalOnProperty(prefix = "spring.jms.cache", name = "enabled", havingValue = "false")
     public MQConnectionFactory jmsConnectionFactory(MQConnectionDetails connectionDetails,
         MQConfigurationProperties properties, ObjectProvider<SslBundles> sslBundles,
-        ObjectProvider<SslProperties> sslProperties,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
       logger.trace("Creating single MQConnectionFactory");
-      return createConnectionFactory(connectionDetails, properties, sslBundles, sslProperties, factoryCustomizers);
+      return createConnectionFactory(connectionDetails, properties, sslBundles, factoryCustomizers);
     }
 
     @Bean
@@ -65,7 +63,6 @@ public class MQConnectionFactoryConfiguration {
     public CachingConnectionFactory cachingJmsConnectionFactory(MQConnectionDetails connectionDetails,
         MQConfigurationProperties properties,
         ObjectProvider<SslBundles> sslBundles,
-        ObjectProvider<SslProperties> sslProperties,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers,
         JmsProperties jmsProperties) {
 
@@ -73,7 +70,7 @@ public class MQConnectionFactoryConfiguration {
 
       logger.trace("Creating caching MQConnectionFactory");
       MQConnectionFactory wrappedConnectionFactory = createConnectionFactory(connectionDetails,
-          properties, sslBundles, sslProperties, factoryCustomizers);
+          properties, sslBundles, factoryCustomizers);
 
       CachingConnectionFactory connectionFactory = new CachingConnectionFactory(wrappedConnectionFactory);
       connectionFactory.setCacheConsumers(cacheProperties.isConsumers());
@@ -87,9 +84,9 @@ public class MQConnectionFactoryConfiguration {
 
   private static MQConnectionFactory createConnectionFactory(MQConnectionDetails connectionDetails,
       MQConfigurationProperties properties,
-      ObjectProvider<SslBundles> sslBundles, ObjectProvider<SslProperties> sslProperties,
+      ObjectProvider<SslBundles> sslBundles,
       ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
-    return new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), sslProperties.getIfAvailable(), factoryCustomizers.getIfAvailable())
+    return new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable())
         .createConnectionFactory(MQConnectionFactory.class);
   }
 
@@ -100,11 +97,11 @@ public class MQConnectionFactoryConfiguration {
     @Bean(destroyMethod = "stop")
     @ConditionalOnProperty(prefix = "ibm.mq.pool", name = "enabled", havingValue = "true", matchIfMissing = false)
     public JmsPoolConnectionFactory pooledJmsConnectionFactory(MQConnectionDetails connectionDetails,MQConfigurationProperties properties,
-        ObjectProvider<SslBundles> sslBundles,  ObjectProvider<SslProperties> sslProperties,
+        ObjectProvider<SslBundles> sslBundles,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
       logger.trace("Creating pooled MQConnectionFactory");
-      MQConnectionFactory connectionFactory = createConnectionFactory(connectionDetails, properties, sslBundles, sslProperties, factoryCustomizers);
+      MQConnectionFactory connectionFactory = createConnectionFactory(connectionDetails, properties, sslBundles, factoryCustomizers);
 
       return createInstance(JmsPoolConnectionFactory.class, connectionFactory, properties.getPool());
     }

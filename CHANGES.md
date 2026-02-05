@@ -1,6 +1,12 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 3.5.10 (2026-02-06)
+- Update to MQ 9.4.5.0
+- Update Spring dependencies
+- Add CCDT SSL Bundle support and HTTPS certificate validation policy for secure CCDT retrieval
+- Add Token Server SSL Bundle support and HTTPS certificate validation policy for secure JWT retrieval
+
 ## 3.5.9 (2025-12-19)
 - Update Spring dependencies
 - Update Testcontainer dependency

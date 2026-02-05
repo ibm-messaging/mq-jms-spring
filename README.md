@@ -128,14 +128,6 @@ explicitly contact the token server itself. The application needs configuration 
 the communication to the token server (eg Keycloak) is handled automatically. The `ibm.mq.tokenServer` section of the
 configuration provides the route and authentication mechanism for the server.
 
-**Note:** There are some current constraints on how this mechanism works, with respect to the HTTPS connection that needs
-to be made to the token server:
-* The keystore/truststore uses process-wide environment variables that might affect other components of the application
-  if they also use the `javax.net.ssl` properties.
-* The keystore/truststore must be local JKS files, not embedded in the jar and its classpath
-* The `sslCertificateValPolicy` setting cannot be used to always trust a token server's certificate
-
-
 #### Explicity-provided tokens
 Having the token provided directly in the application configuration continues to work, but is not the recommended
 approach, now that the MQ JMS layer can do that retrieval itself. To use this method, you can either set `ibm.mq.token`
@@ -278,6 +270,46 @@ and
 
 These deprecated JKS options are an alternative to setting the `javax.net.ssl` system properties, usually done on the
 command line. They are not used if you have set the `sslBundle` property.
+
+#### CCDT TLS Configuration
+
+When using CCDT (Client Channel Definition Table) URLs over HTTPS, you can configure TLS settings specifically for
+CCDT retrieval. This allows separate configuration from the main MQ connection, using Spring Boot's SSL Bundle
+feature.
+
+| Option (ibm.mq)            | Description                                                                    |
+| ---------------------------| ------------------------------------------------------------------------------ |
+| ccdtSslBundle              | SSL Bundle identifier for secure CCDT retrieval over HTTPS                     |
+| ccdtHttpsCertValPolicy     | Certificate validation policy for CCDT retrieval (ANY/NONE/HOSTNAMECN). Default is HOSTNAMECN |
+
+The `ccdtSslBundle` is key name that references a Spring SSL Bundle configuration (e.g., `spring.ssl.bundle.jks.<key>`)
+that defines the keystore and truststore for HTTPS connections to the CCDT server. The `ccdtHttpsCertValPolicy`
+determines certificate validation behavior:
+- **HOSTNAMECN** (default): Full validation - verifies the certificate is trusted and signed by a valid authority, and
+  ensures the certificate's Common Name (CN) or Subject Alternative Names (SAN) match the CCDT server's hostname
+- **ANY**: Partial validation - verifies the certificate is trusted and signed by a valid authority, but skips hostname
+  verification (CN/SAN matching is skipped)
+- **NONE**: No validation - accepts all certificates
+
+#### Token Server TLS Configuration
+
+When using JWT token authentication, you can configure TLS settings specifically for the token server connection.
+This enables secure communication with token servers like Keycloak. The TLS confuguration can be done using Spring
+Boot's SSL Bundle feature.
+
+| Option (ibm.mq.tokenServer)  | Description                                                                    |
+| -----------------------------| ------------------------------------------------------------------------------ |
+| sslBundle                    | SSL Bundle identifier for secure token server connections over HTTPS           |
+| httpsCertValPolicy           | Certificate validation policy for token server (ANY/NONE/HOSTNAMECN). Default is HOSTNAMECN |
+
+The `sslBundle` is a key name that references a Spring SSL Bundle configuration (e.g., `spring.ssl.bundle.jks.<key>`)
+that defines the keystore and truststore for HTTPS connections to the token server. The `httpsCertValPolicy` determines
+certificate validation behavior:
+- **HOSTNAMECN** (default): Full validation - verifies the certificate is trusted and signed by a valid authority, and
+  ensures the certificate's Common Name (CN) or Subject Alternative Names (SAN) match the Token server's hostname
+- **ANY**: Partial validation - verifies the certificate is trusted and signed by a valid authority, but skips hostname
+  verification (CN/SAN matching is skipped)
+- **NONE**: No validation - accepts all certificates
 
 #### Caching connection factory options
 

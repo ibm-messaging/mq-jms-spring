@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2025 IBM Corp. All rights reserved.
+ * Copyright © 2018,2026 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -35,8 +35,6 @@ import javax.net.ssl.X509TrustManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.ssl.JksSslBundleProperties;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.boot.ssl.NoSuchSslBundleException;
 import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
@@ -60,7 +58,6 @@ public class MQConnectionFactoryFactory {
   private final List<MQConnectionFactoryCustomizer> factoryCustomizers;
   private static Logger logger = LoggerFactory.getLogger(MQConnectionFactoryFactory.class);
   private SslBundles sslBundles;
-  private SslProperties sslProperties;
 
   /*
    * Create a trust manager that accepts all received certificates. This is
@@ -88,7 +85,6 @@ public class MQConnectionFactoryFactory {
   public MQConnectionFactoryFactory(MQConnectionDetails connectionDetails,
       MQConfigurationProperties properties,
       SslBundles sslBundles,
-      SslProperties sslProperties,
       List<MQConnectionFactoryCustomizer> factoryCustomizers) {
     if (connectionDetails == null) {
       this.connectionDetails = new PropertiesMQConnectionDetails(properties);
@@ -97,7 +93,6 @@ public class MQConnectionFactoryFactory {
     }
     this.properties = properties;
     this.sslBundles = sslBundles;
-    this.sslProperties = sslProperties;
     this.factoryCustomizers = (List<MQConnectionFactoryCustomizer>) (factoryCustomizers != null ? factoryCustomizers : Collections.emptyList());
     logger.trace("constructor");
     // logger.trace("!! Bundles = {} ", (sslBundles == null) ? "null" : (getSSLSocketFactory("ibmmq") != null) ? "Has IBMMQ" : "No IBMMQ bundle");
@@ -114,7 +109,7 @@ public class MQConnectionFactoryFactory {
 
   @SuppressWarnings("unchecked")
   public MQConnectionFactoryFactory(MQConfigurationProperties properties, SslBundles sslBundles, List<MQConnectionFactoryCustomizer> factoryCustomizers) {
-    this(null, properties, sslBundles, null, factoryCustomizers);
+    this(null, properties, sslBundles, factoryCustomizers);
   }
 
   @SuppressWarnings("unchecked")
@@ -122,6 +117,8 @@ public class MQConnectionFactoryFactory {
     String err = null;
     T cf = null;
     SSLSocketFactory sf = null;
+    SSLSocketFactory ccdSocketFactory = null;
+    SSLSocketFactory tokenSocketFactory = null;
 
     String jndiProviderUrl = this.properties.getJndi().getProviderUrl();
     String jndiCF = this.properties.getJndi().getProviderContextFactory();
@@ -130,6 +127,10 @@ public class MQConnectionFactoryFactory {
 
     /* Keystore System properties don't need the CF to be already created */
     String sslBundle = this.properties.getSslBundle();
+
+    String ccdtSslBundle = this.properties.getCcdtSslBundle();
+
+    String tokenSslBundle = this.properties.getTokenServer().getSslBundle();
 
     /*
      * Set any system properties that might control tracing/ffdcs etc
@@ -140,18 +141,21 @@ public class MQConnectionFactoryFactory {
      * From Spring Boot 3.1, we can put sets of SSL configuration items in a bundle
      * The bundle name takes priority over the ibm.mq.jks properties
      */
-    if (sslBundles != null && U.isNotNullOrEmpty(sslBundle)) {
-      sf = getSSLSocketFactory(sslBundle);
-      // The JWT Token Server code does not currently respect custom SSLSocketFactories. It can only
-      // work with the older environment variable-based configuration. To avoid having to
-      // deal with that duplicated config in the application's resource file, we extract
-      // information from the Bundle. There are still restrictions noted in the below function.
-      if (U.isNotNullOrEmpty(this.properties.getTokenServer().getEndpoint())) {
-        setTokenServerSslProps(sslBundle);
+    if (sslBundles != null) {
+      if (U.isNotNullOrEmpty(sslBundle)) {
+        sf = getSSLSocketFactory(sslBundle, false);
       }
-    }
-    else {
-      configureTLSStores(this.properties);
+      else {
+        configureTLSStores(this.properties);
+      }
+
+      if (U.isNotNullOrEmpty(ccdtSslBundle)) {
+        ccdSocketFactory = getSSLSocketFactory(ccdtSslBundle, true);
+      }
+
+      if (U.isNotNullOrEmpty(tokenSslBundle)) {
+        tokenSocketFactory = getSSLSocketFactory(tokenSslBundle, true);
+      }
     }
 
     if (U.isNotNullOrEmpty(jndiProviderUrl) && U.isNotNullOrEmpty(jndiCF)) {
@@ -178,6 +182,14 @@ public class MQConnectionFactoryFactory {
           }
         }
 
+        if (ccdSocketFactory != null && cf.getCCDTURL() != null) {
+          cf.setObjectProperty(WMQConstants.WMQ_CCDT_SSL_SOCKET_FACTORY, ccdSocketFactory);
+        }
+
+        if (tokenSocketFactory != null && cf.getTokenEndpoint() != null) {
+          cf.setObjectProperty(WMQConstants.TOKEN_SSL_SOCKET_FACTORY, tokenSocketFactory);
+        }
+
         // We will not dump the properties as they are not used for most of the configuration.
         // The JNDI config may well have overridden the actual values in any resource files.
         // But we will still allow the customize methods to be used.
@@ -191,7 +203,7 @@ public class MQConnectionFactoryFactory {
     else {
       try {
         cf = createConnectionFactoryInstance(factoryClass);
-        configureConnectionFactory(cf, this.connectionDetails, this.properties, sf);
+        configureConnectionFactory(cf, this.connectionDetails, this.properties, sf, ccdSocketFactory, tokenSocketFactory);
         customize(cf);
       }
       catch (JMSException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
@@ -204,13 +216,67 @@ public class MQConnectionFactoryFactory {
     return cf;
   }
 
+  /**
+   *
+   * This method configures certification validation policy for CCDT and Token HTTPS connections
+   *
+   * @param cf - MQ connection factory
+   * @param props - spring MQ configuration properties
+   */
+  private static void configureHttpsCertValPolicy(MQConnectionFactory cf, MQConfigurationProperties props) {
+    String tokenHttpsCertValPolicy = props.getTokenServer().getHttpsCertValPolicy();
+    int tokenHttpsCertValPolicyInt = getHttpsCertValPolVal(tokenHttpsCertValPolicy);
+
+    if (tokenHttpsCertValPolicyInt != MQConstants.MQ_HTTPSCERTVAL_DEFAULT) {
+      try {
+        cf.setTokenHttpsCertValidationPolicy(tokenHttpsCertValPolicyInt);
+      }
+      catch (JMSException e) {
+        logger.error("Failed to set Token Https Certificate Validation Policy ", e);
+      }
+    }
+
+    String ccdtHttpsCertValPolicy = props.getCcdtHttpsCertValPolicy();
+    int ccdtHttpsCertValPolicyInt = getHttpsCertValPolVal(ccdtHttpsCertValPolicy);
+
+    if (ccdtHttpsCertValPolicyInt != MQConstants.MQ_HTTPSCERTVAL_DEFAULT) {
+      try {
+        cf.setCCDTHttpsCertValidationPolicy(ccdtHttpsCertValPolicyInt);
+      }
+      catch (JMSException e) {
+        logger.error("Failed to set CCDT Https Certificate Validation Policy ", e);
+      }
+    }
+  }
+
+  /**
+   * This method converts the string value of the certificate validation policy to the corresponding MQ constant value
+   *
+   * @param httpsCertValPolicy as a string
+   * @return httpsCertValPolicy as a MQ constant value
+   */
+  static int getHttpsCertValPolVal(String policy) {
+    int policyInt = MQConstants.MQ_HTTPSCERTVAL_DEFAULT;
+    if (U.isNotNullOrEmpty(policy)) {
+      if  (policy.equalsIgnoreCase("any")) {
+        policyInt = MQConstants.MQ_HTTPSCERTVAL_ANY;
+      } else if (policy.equalsIgnoreCase("none")) {
+        policyInt = MQConstants.MQ_HTTPSCERTVAL_NONE;
+      } else if (policy.equalsIgnoreCase("hostnamecn")) {
+        policyInt = MQConstants.MQ_HTTPSCERTVAL_HOSTNAMECN;
+      } else {
+        throw new IllegalArgumentException(String.format("Certificate Validation Policy value \'%s\' not recognised", policy));
+      }
+    }
+    return policyInt;
+  }
 
   /*
    * This method allows someone to create their own CF and then have it configured
    * using the same MQConfigurationProperties class - which might have been assigned
    * from a different prefix in the properties file.
    */
-  public static void configureConnectionFactory(MQConnectionFactory cf, MQConnectionDetails connectionDetails, MQConfigurationProperties props, SSLSocketFactory sf) throws JMSException {
+  public static void configureConnectionFactory(MQConnectionFactory cf, MQConnectionDetails connectionDetails, MQConfigurationProperties props, SSLSocketFactory sf, SSLSocketFactory ccdtSslSocketFactory, SSLSocketFactory tokenSslSocketFactory) throws JMSException {
     // Should usually provide a queue manager name but it can be empty, to connect to the
     // default queue manager.
     boolean bindingsMode = false;
@@ -235,6 +301,9 @@ public class MQConnectionFactoryFactory {
     if (!U.isNullOrEmpty(ccdtUrl)) {
       cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
       cf.setStringProperty(WMQConstants.WMQ_CCDTURL, ccdtUrl);
+      if (ccdtSslSocketFactory != null) {
+        cf.setObjectProperty(WMQConstants.WMQ_CCDT_SSL_SOCKET_FACTORY, ccdtSslSocketFactory);
+      }
     }
     else {
       if (U.isNullOrEmpty(channel) || U.isNullOrEmpty(connName)) {
@@ -322,7 +391,9 @@ public class MQConnectionFactoryFactory {
       cf.setStringProperty(WMQConstants.TOKEN_ENDPOINT, tokenServerProperties.getEndpoint());
       cf.setStringProperty(WMQConstants.TOKEN_CLIENT_ID, tokenServerProperties.getClientId());
       cf.setStringProperty(WMQConstants.TOKEN_CLIENT_SECRET, tokenServerProperties.getClientSecret());
-
+      if (tokenSslSocketFactory != null) {
+        cf.setObjectProperty(WMQConstants.TOKEN_SSL_SOCKET_FACTORY, tokenSslSocketFactory);
+      }
       cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
 
     }
@@ -364,6 +435,8 @@ public class MQConnectionFactoryFactory {
     if (!U.isNullOrEmpty(props.getTempModel())) {
       cf.setStringProperty(WMQConstants.WMQ_TEMPORARY_MODEL, props.getTempModel());
     }
+
+    configureHttpsCertValPolicy(cf, props);
 
     /*
      * Additional properties that are not in the pre-defined recognised set can be put onto the
@@ -436,6 +509,11 @@ public class MQConnectionFactoryFactory {
         logger.trace("Using setStringProperty with key {} and value {}", key, v);
       }
     }
+  }
+
+  // For backwards compatibility
+  public static void configureConnectionFactory(MQConnectionFactory cf, MQConnectionDetails connectionDetails, MQConfigurationProperties props, SSLSocketFactory sf) throws JMSException {
+    configureConnectionFactory(cf, connectionDetails, props, sf, null, null);
   }
 
   // For backwards compatibility
@@ -534,7 +612,7 @@ public class MQConnectionFactoryFactory {
     return ctx;
   }
 
-  private SSLSocketFactory getSSLSocketFactory(String b) {
+  private SSLSocketFactory getSSLSocketFactory(String b, boolean ishttps) {
     SSLSocketFactory sf = null;
 
     if (b == null || b.isEmpty()) {
@@ -553,7 +631,7 @@ public class MQConnectionFactoryFactory {
 
         // If the insecure mode option is set, then override the trust manager
         // associated with the bundle's socket context
-        if (this.properties.isSslCertificateValidationNone()) {
+        if (this.properties.isSslCertificateValidationNone() && !ishttps) {
           SslManagerBundle mgrs = sb.getManagers();
           KeyManager[] keymanagers = mgrs.getKeyManagers();
 
@@ -576,51 +654,5 @@ public class MQConnectionFactoryFactory {
       }
     }
     return sf;
-  }
-
-
-
-  /**
-   * The JWT Token Server code does not respect currently custom SSLSocketFactories. It can only
-   * work with the older environment variable-based configuration. To avoid having to
-   * deal with that duplicated config in the application's resource file, we extract
-   * information from the Bundle.
-   *
-   * Constraints here include
-   * a) The environment variables might affect other components of the application
-   * b) The keystore/truststore must be local JKS files, not embedded in the jar and its classpath
-   * c) The validateCertificatePolicy setting cannot be used to always trust a Token Server's certificate
-   *
-   */
-  private void setTokenServerSslProps(String sslBundle) {
-    logger.trace("setTokenServerSslProps Bundle: {}", sslBundle);
-
-    // This function is removed for the auto-conversion of source when building for Spring Boot 2
-    // as none of the SSLBundle methods are available
-    // NOTBOOT2 START
-    try {
-      JksSslBundleProperties jksSslBundleProperties = null;
-
-      jksSslBundleProperties = this.sslProperties.getBundle().getJks().get(sslBundle);
-      if (jksSslBundleProperties != null) {
-        properties.getJks().setKeyStore(stripProtocol(jksSslBundleProperties.getKeystore().getLocation()));
-        properties.getJks().setKeyStorePassword(jksSslBundleProperties.getKeystore().getPassword());
-        properties.getJks().setTrustStore(stripProtocol(jksSslBundleProperties.getTruststore().getLocation()));
-        properties.getJks().setTrustStorePassword(jksSslBundleProperties.getTruststore().getPassword());
-        configureTLSStores(properties);
-      }
-    } catch (NoSuchSslBundleException e) {
-      logger.error("SSL JKS bundle for {} - not found", sslBundle);
-    }
-    // NOTBOOT2 END
-  }
-
-  /** The location of a JKS file may look like "file:key.jks". That's not going to work for the environment variable form needed (for
-   * now) with the JWT access mechanism. There might be other protocol elements, but that's the only one we'll pay special attention to.
-   * Other protocols will simply fail.
-   */
-  private String stripProtocol(String s) {
-    s = s.replaceFirst("^file:","");
-    return s;
   }
 }

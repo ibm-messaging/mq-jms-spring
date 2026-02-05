@@ -326,7 +326,6 @@ are the only type that might be used for a CF configuration property.
   public static final String OVERRIDE_CF_PREFIX = "jmscf.";
   public static final String PASSWORD_PROPERTY = "password";
   public static final String PASSWORD_WAS_NULL = "XMSC_PASSWORD_WAS_NULL";
-  public static final String PASSWORD = "XMSC_PASSWORD";
   public static final String PORT_PROPERTY = "port";
   public static final String PRIORITY = "priority";
   public static final String PROPERTY_FOLDER_ATTRIBUTE = "content"; //$NON-NLS-1$
@@ -392,8 +391,9 @@ are the only type that might be used for a CF configuration property.
   public static final String THREAD_AFFINITY = "Thread affinity";
   public static final String TIME_TO_LIVE = "timeToLive";
   public static final String TOKEN_CLIENT_ID = "XMSC_TOKEN_CLIENT_ID";
-  public static final String TOKEN_CLIENT_SECRET = "XMSC_TOKEN_CLIENT_SECRET";
   public static final String TOKEN_ENDPOINT = "XMSC_TOKEN_ENDPOINT";
+  public static final String TOKEN_HTTPS_CERT_VALIDATION_POLICY = "XMSC_TOKEN_HTTPS_CERT_VALIDATION_POLICY";
+  public static final String TOKEN_SSL_SOCKET_FACTORY = "XMSC_TOKEN_SSL_SOCKET_FACTORY";
   public static final String TOPIC_PREFIX = "topic://";
   public static final String TRANSACTED = "XMSC_TRANSACTED";
   public static final String TRANSPORT_MQJD = "MQJD";
@@ -426,6 +426,8 @@ are the only type that might be used for a CF configuration property.
   public static final String WMQ_CAPABILITY_ADVANCED = "XMSC_WMQ_CAPABILITY_ADVANCED";
   public static final String WMQ_CC_DEF_D_SHARED_QUEUE = "SYSTEM.JMS.D.CC.SUBSCRIBER.QUEUE";
   public static final String WMQ_CC_DEF_ND_SHARED_QUEUE = "SYSTEM.JMS.ND.CC.SUBSCRIBER.QUEUE";
+  public static final String WMQ_CCDT_HTTPS_CERT_VALIDATION_POLICY = "XMSC_WMQ_CCDT_HTTPS_CERT_VALIDATION_POLICY";
+  public static final String WMQ_CCDT_SSL_SOCKET_FACTORY = "XMSC_WMQ_CCDT_SSL_SOCKET_FACTORY";
   public static final String WMQ_CCDTURL = "XMSC_WMQ_CCDTURL";
   public static final String WMQ_CCSID = "CCSID";
   public static final String WMQ_CF_DESCRIPTION = "XMSC_WMQ_CF_DESCRIPTION";
@@ -553,4 +555,3 @@ are the only type that might be used for a CF configuration property.
   public static final String XMSC_MESSAGE_BUFFER = "XMSC_MESSAGE_BUFFER";
   public static final String XMSC_MESSAGE_ID = "XMSC_MESSAGE_ID";
   public static final String XMSC_SUBSCRIBER_Q_NAME = "XMSC_SUBSCRIBER_Q_NAME";
-CMQC.java: * Build Level:   p944-L250905                                

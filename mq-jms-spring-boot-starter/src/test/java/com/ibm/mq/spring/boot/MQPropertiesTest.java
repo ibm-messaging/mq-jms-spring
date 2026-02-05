@@ -63,7 +63,9 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants;
     "ibm.mq.sslKeyResetCount=2",
     "ibm.mq.balancingInstanceMode=3",
     "ibm.mq.tempTopicPrefix=3",
-    "ibm.mq.tempModel=model"
+    "ibm.mq.tempModel=model",
+    "ibm.mq.ccdtHttpsCertValPolicy=ANY",
+    "ibm.mq.ccdtSslBundle=ccdt"
 })
 public class MQPropertiesTest {
 
@@ -107,6 +109,8 @@ public class MQPropertiesTest {
     Assertions.assertEquals(properties.getTempModel(),"model");
     Assertions.assertNotNull(properties.getPool());
     Assertions.assertNotNull(properties.getJks());
+    Assertions.assertEquals(properties.getCcdtSslBundle(),"ccdt");
+    Assertions.assertEquals(properties.getCcdtHttpsCertValPolicy(),"ANY");
   }
 
   @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018,2025 IBM Corp. All rights reserved.
+ * Copyright © 2018,2026 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -189,6 +189,11 @@ public class MQConfigurationProperties {
   private String ccdtUrl;
 
   /**
+   * The key to the SSL Bundle properties configured for CCDT url retrieval
+   */
+  private String ccdtSslBundle;
+
+  /**
    * The prefix to be used to form the name of an MQ dynamic queue.
    */
   private String tempQPrefix = null;
@@ -219,6 +224,15 @@ public class MQConfigurationProperties {
    * file is spelled this way: "CertificateValPolicy" in the SSL stanza.
    */
   private String sslCertificateValPolicy = "";
+
+
+  /**
+   * HTTPS Certificate Validation Policy for CCDT. It accepts "NONE" "HOSTNAMECN" "ANY".
+   * "NONE" - allows connection without checking if the server's cert is known/trusted
+   * "ANY"  - checks if the server's cert is known/trusted,
+   * "HOSTNAMECN" - checks if the server's cert is known/trusted, and that the certificate distinguished name matches that of the HTTP server
+   */
+  private String ccdtHttpsCertValPolicy = "";
 
   /**
    * The key to the SSL Bundle attributes available from Spring Boot 3.1
@@ -589,6 +603,22 @@ public class MQConfigurationProperties {
     return balancingOptions;
   }
 
+  public String getCcdtSslBundle() {
+    return ccdtSslBundle;
+  }
+
+  public void setCcdtSslBundle(String ccdtSslBundle) {
+    this.ccdtSslBundle = ccdtSslBundle;
+  }
+
+  public String getCcdtHttpsCertValPolicy() {
+    return ccdtHttpsCertValPolicy;
+  }
+
+  public void setCcdtHttpsCertValPolicy(String ccdtHttpsCertValPolicy) {
+    this.ccdtHttpsCertValPolicy = ccdtHttpsCertValPolicy;
+  }
+
   public int getBalancingApplicationTypeValue() {
     int rc = 0;
     if (balancingApplicationType == null || balancingApplicationType.equals("")) {
@@ -721,6 +751,7 @@ public class MQConfigurationProperties {
     logger.trace("queueManager    : {}", connectionDetails.getQueueManager());
     logger.trace("applicationName : {}", getApplicationName());
     logger.trace("ccdtUrl         : {}", getCcdtUrl());
+    logger.trace("ccdtSslBundle   : {}", getCcdtSslBundle());
     logger.trace("channel         : {}", connectionDetails.getChannel());
     logger.trace("clientId        : {}", getClientId());
     logger.trace("connName        : {}", connectionDetails.getConnName());
@@ -748,6 +779,7 @@ public class MQConfigurationProperties {
 
     logger.trace("sslFIPSRequired        : {}", isSslFIPSRequired());
     logger.trace("sslCertValPolicy       : \'{}\'", getSslCertificateValPolicy());
+    logger.trace("ccdtHttpsCertValPolicy : \'{}\' [{}]", getCcdtHttpsCertValPolicy(), MQConnectionFactoryFactory.getHttpsCertValPolVal(getCcdtHttpsCertValPolicy()));
     logger.trace("useIBMCipherMappings   : {}", isUseIBMCipherMappings());
     logger.trace("userAuthenticationMQCSP: {}", isUseAuthenticationMQCSP());
     logger.trace("outboundSNI            : \'{}\'", getOutboundSNI());

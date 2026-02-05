@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018, 2025 IBM Corp. All rights reserved.
+ * Copyright © 2018, 2026 IBM Corp. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -25,7 +25,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
@@ -53,11 +52,10 @@ class MQXAConnectionFactoryConfiguration {
   public ConnectionFactory jmsConnectionFactory(MQConnectionDetails connectionDetails,
       MQConfigurationProperties properties,
       ObjectProvider<SslBundles> sslBundles,
-      ObjectProvider<SslProperties> sslProperties,
       ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers,
       XAConnectionFactoryWrapper wrapper) throws Exception {
     logger.trace("Creating MQXAConnectionFactory");
-    MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), sslProperties.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
+    MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
     return wrapper.wrapConnectionFactory(connectionFactory);
   }
 
@@ -65,10 +63,9 @@ class MQXAConnectionFactoryConfiguration {
   public ConnectionFactory nonXaJmsConnectionFactory(MQConnectionDetails connectionDetails,
       MQConfigurationProperties properties,
       ObjectProvider<SslBundles> sslBundles,
-      ObjectProvider<SslProperties> sslProperties,
       ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
     logger.trace("Creating non-XA MQConnectionFactory");
-    return new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), sslProperties.getIfAvailable(),
+    return new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(),
         factoryCustomizers.getIfAvailable()).createConnectionFactory(MQConnectionFactory.class);
   }
 
@@ -81,11 +78,10 @@ class MQXAConnectionFactoryConfiguration {
     JmsPoolXAConnectionFactory pooledJmsXAConnectionFactory(MQConnectionDetails connectionDetails,
         MQConfigurationProperties properties,
         ObjectProvider<SslBundles> sslBundles,
-        ObjectProvider<SslProperties> sslProperties,
         ObjectProvider<List<MQConnectionFactoryCustomizer>> factoryCustomizers) {
 
       logger.trace("Creating pooled MQXAConnectionFactory");
-      MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(), sslProperties.getIfAvailable(),
+      MQXAConnectionFactory connectionFactory = new MQConnectionFactoryFactory(connectionDetails, properties, sslBundles.getIfAvailable(),
           factoryCustomizers.getIfAvailable()).createConnectionFactory(MQXAConnectionFactory.class);
 
       return PooledMQConnectionFactoryConfiguration.createInstance(JmsPoolXAConnectionFactory.class, connectionFactory, properties.getPool());

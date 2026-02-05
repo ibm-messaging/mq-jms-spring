@@ -25,6 +25,8 @@ Older versions of the samples have been removed.
 * s5 - A very simple (and not very interesting) application, but this also shows how to use the Testcontainer enablement
   in the _src/test/java_ directory.
 * s6.boot4 - Show how the new Spring Boot 4/Framework 7 JmsClient class can be used as an alternative to JmsTemplate
+* s7.boot4 - Shows how to retrieve CCDT and JWT from an https server to connect to IBM MQ. Also uses Boot 4
+
 
 ### Note: Atomikos samples
 The current version of Atomikos does not work with the latest Spring Boot, as it uses deprecated and now-removed
