@@ -37,7 +37,7 @@ subprojects {
   apply plugin: 'signing'
 
   // This is the MQ client version
-  ext.mqVersion = '10.0.0.0'
+  ext.mqVersion = '10.0.1.0'
   ext.mqGroup = 'com.ibm.mq'
 
   // This is the testcontainers base jar version - these should match the current org.testcontainers level
@@ -47,7 +47,7 @@ subprojects {
   ext.tcVer   = '2.0.5'
   ext.mqTCVer = '2.0.5'
 
-  ext.mockitoVersion = '5.23.0'
+  ext.mockitoVersion = '5.24.0'
 
   // The groupid for the compiled jars when uploaded
   group = mqGroup

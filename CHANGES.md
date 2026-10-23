@@ -1,6 +1,10 @@
 # Changelog
 Newest updates are at the top of this file
 
+## 4.1.2 (2026-10-23)
+- Update to MQ 10.0.1.0
+- Update Spring dependencies
+
 ## 4.1.0 (2026-06-16)
 - Update to MQ 10.0.0.0
 - Update Spring dependencies

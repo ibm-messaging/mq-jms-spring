@@ -2,7 +2,8 @@ This file is a convenient extract of a subset of the constants in the MQ JMS
 libraries. It is used to see changes between MQ releases to then prompt
 any corresponding changes in the Spring Boot Starter. Note that it does
 NOT contain every defined constant - only the Strings are included as those
-are the only type that might be used for a CF configuration property.
+are the only type that might be used for a CF configuration property. And new strings
+do not necessarily imply they are required here; it's just a potential new property.
 
   public static final String ACKNOWLEDGE_MODE = "XMSC_ACKNOWLEDGE_MODE";
   public static final String ADMIN_OBJECT_TYPE = "XMSC_ADMIN_OBJECT_TYPE";
@@ -130,6 +131,7 @@ are the only type that might be used for a CF configuration property.
   public static final String JMS_IBM_MQMD_REPLYTOQMGR = "JMS_IBM_MQMD_ReplyToQMgr";
   public static final String JMS_IBM_MQMD_REPORT = "JMS_IBM_MQMD_Report";
   public static final String JMS_IBM_MQMD_USERIDENTIFIER = "JMS_IBM_MQMD_UserIdentifier";
+  public static final String JMS_IBM_MSGTOKEN = "JMS_IBM_MsgToken";
   public static final String JMS_IBM_MSGTYPE = "JMS_IBM_MsgType";
   public static final String JMS_IBM_PUTAPPLTYPE = "JMS_IBM_PutApplType";
   public static final String JMS_IBM_PUTDATE = "JMS_IBM_PutDate";

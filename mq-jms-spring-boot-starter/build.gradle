@@ -58,9 +58,11 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:' + mockitoVersion
 
   // Setting up the dependencies needed for JUnit5 testing
-  testImplementation 'org.junit.jupiter:junit-jupiter-api: ' + jUnitVersion
-  testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:' + jUnitVersion
-  testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
+  if (springBootVersion.startsWith("4")) {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api: ' + jUnitVersion
+    testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:' + jUnitVersion
+    testRuntimeOnly    'org.junit.platform:junit-platform-launcher:' + jUnitVersion
+  }
 }
 
 // This can be useful during development

@@ -29,6 +29,10 @@ dependencies {
     // android, exclude it to avoid any warning messages.
     exclude(module:'android-json')
   }
+  testImplementation 'org.junit.jupiter:junit-jupiter-api: ' + jUnitVersion
+  testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:' + jUnitVersion
+  testRuntimeOnly    'org.junit.platform:junit-platform-launcher:' + jUnitVersion
+
 }
 
 test {
